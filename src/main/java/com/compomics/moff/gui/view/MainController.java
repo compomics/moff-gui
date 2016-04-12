@@ -5,9 +5,12 @@
  */
 package com.compomics.moff.gui.view;
 
+import com.compomics.moff.gui.control.step.MoFFApexStep;
+import com.compomics.moff.gui.control.step.MoFFMBRStep;
 import com.compomics.moff.gui.view.filter.CpsFileFilter;
 import com.compomics.moff.gui.view.filter.RawFileFilter;
 import com.compomics.moff.gui.view.filter.TabSeparatedFileFilter;
+import com.compomics.pladipus.core.model.processing.ProcessingStep;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -15,6 +18,7 @@ import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -373,7 +377,7 @@ public class MainController {
                 validationMessages.add("Add at least two RAW and identification files.");
             }
         } else {
-            validationMessages.add("Each RAW file has to be linked to one and only one identifiation file.");
+            validationMessages.add("Each RAW file has to be linked to one and only one identification file.");
         }
 
         return validationMessages;
@@ -559,8 +563,23 @@ public class MainController {
             LOGGER.info("starting spectrum similarity score pipeline");
             System.out.println("start ----------------------");
             Thread.sleep(5000);
-            System.out.println("finish ----------------------");
-
+            ProcessingStep moffStep;
+            HashMap<String, String> moffParameters;
+            if (mainFrame.getApexModeRadioButton().isSelected()) {
+                //run apex step
+                moffStep = new MoFFApexStep();
+                moffParameters = getApexParametersFromGUI();
+            } else {
+                //run MBR step
+                moffStep = new MoFFMBRStep();
+                moffParameters = getMBRParametersFromGUI();
+            }
+            moffStep.setParameters(moffParameters);
+            if (moffStep.doAction()) {
+                System.out.println("finish ----------------------");
+            } else {
+                System.out.println("an error occurred ----------------------");
+            }
             return null;
         }
 
@@ -572,16 +591,28 @@ public class MainController {
                 List<String> messages = new ArrayList<>();
                 messages.add("The score pipeline has finished.");
                 showMessageDialog("moFF run completed", messages, JOptionPane.INFORMATION_MESSAGE);
-            } catch (InterruptedException | ExecutionException ex) {
+            } catch (CancellationException ex) {
+                LOGGER.info("the moFF run was cancelled");
+            } catch (Exception ex) {
                 LOGGER.error(ex.getMessage(), ex);
                 List<String> messages = new ArrayList<>();
                 messages.add(ex.getMessage());
                 showMessageDialog("Unexpected error", messages, JOptionPane.ERROR_MESSAGE);
-            } catch (CancellationException ex) {
-                LOGGER.info("the moFF run was cancelled");
             } finally {
 
             }
+        }
+
+        private HashMap<String, String> getApexParametersFromGUI() {
+            HashMap<String, String> parameters = new HashMap<>();
+            //@ToDo fill the parameters
+            return parameters;
+        }
+
+        private HashMap<String, String> getMBRParametersFromGUI() {
+            HashMap<String, String> parameters = new HashMap<>();
+            //@ToDo fill the parameters
+            return parameters;
         }
 
     }

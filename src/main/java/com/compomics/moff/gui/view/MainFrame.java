@@ -503,6 +503,11 @@ public class MainFrame extends javax.swing.JFrame {
         startButton.setMaximumSize(new java.awt.Dimension(80, 25));
         startButton.setMinimumSize(new java.awt.Dimension(80, 25));
         startButton.setPreferredSize(new java.awt.Dimension(80, 25));
+        startButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startButtonActionPerformed(evt);
+            }
+        });
 
         cancelButton.setText("cancel");
         cancelButton.setPreferredSize(new java.awt.Dimension(80, 25));
@@ -580,6 +585,10 @@ public class MainFrame extends javax.swing.JFrame {
     private void precursorMassToleranceTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precursorMassToleranceTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_precursorMassToleranceTextFieldActionPerformed
+
+    private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_startButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
