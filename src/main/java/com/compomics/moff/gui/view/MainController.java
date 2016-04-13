@@ -15,7 +15,11 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -47,6 +51,7 @@ public class MainController {
      * Logger instance.
      */
     private static final Logger LOGGER = Logger.getLogger(MainController.class);
+    private static final String LINK_SEPARATOR = "\t";
 
     private static final String FIRST_PANEL = "firstPanel";
     private static final String SECOND_PANEL = "secondPanel";
@@ -58,7 +63,11 @@ public class MainController {
      */
     private final DefaultMutableTreeNode fileLinkerRootNode = new DefaultMutableTreeNode("RAW - identification file links");
     private final DefaultTreeModel fileLinkerTreeModel = new DefaultTreeModel(fileLinkerRootNode);
-    MoffRunSwingWorker moffRunSwingWorker;
+    private MoffRunSwingWorker moffRunSwingWorker;
+    /**
+     * The moFF output directory.
+     */
+    private File outPutDirectory;
     /**
      * The views of this controller.
      */
@@ -68,6 +77,9 @@ public class MainController {
      * Initialize the controller.
      */
     public void init() {
+        //select directories only
+        mainFrame.getOutputDirectoryChooser().setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
         //select only files
         mainFrame.getRawFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
         mainFrame.getCpsFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -112,6 +124,15 @@ public class MainController {
         updateInfo("Click on \"proceed\" to link the RAW and identification files.");
 
         //add action listeners
+        mainFrame.getOutputDirectoryChooseButton().addActionListener(e -> {
+            int returnVal = mainFrame.getOutputDirectoryChooser().showOpenDialog(mainFrame);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                outPutDirectory = mainFrame.getOutputDirectoryChooser().getSelectedFile();
+
+                mainFrame.getOutputDirectoryTextField().setText(outPutDirectory.getAbsolutePath());
+            }
+        });
+
         mainFrame.getPeptideShakerRadioButton().addActionListener(e -> {
             removeAllIdentificationFiles();
         });
@@ -556,6 +577,32 @@ public class MainController {
         return (CardLayout) mainFrame.getTopPanel().getLayout();
     }
 
+    /**
+     * This method takes a file a writes the file links to it. The format is
+     * 'RAW_file_path'-TAB-'identification_file_path'.
+     *
+     * @param fileLinksFile the file where the file links will be written to
+     */
+    private void writeFileLinksToFile(File fileLinksFile) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(fileLinksFile.toPath())) {
+            //iterate over the nodes
+            Enumeration children = fileLinkerRootNode.children();
+            while (children.hasMoreElements()) {
+                DefaultMutableTreeNode rawFileNode = (DefaultMutableTreeNode) children.nextElement();
+                //write to the file
+                writer.write(((File) rawFileNode.getUserObject()).getAbsolutePath()
+                        + LINK_SEPARATOR
+                        + ((File) ((DefaultMutableTreeNode) rawFileNode.getChildAt(0)).getUserObject()).getAbsolutePath());
+                if (children.hasMoreElements()) {
+                    writer.newLine();
+                }
+            }
+        }
+    }
+
+    /**
+     * MoFF Swing worker for running moFF.
+     */
     private class MoffRunSwingWorker extends SwingWorker<Void, Void> {
 
         @Override

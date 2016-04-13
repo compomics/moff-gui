@@ -24,6 +24,10 @@ import javax.swing.JTree;
 public class MainFrame extends javax.swing.JFrame {
 
     /**
+     * Output directory chooser.
+     */
+    private final JFileChooser outputDirectoryChooser = new JFileChooser();
+    /**
      * RAW file chooser.
      */
     private final JFileChooser rawFileChooser = new JFileChooser();
@@ -151,6 +155,18 @@ public class MainFrame extends javax.swing.JFrame {
         return clearButton;
     }
 
+    public JButton getOutputDirectoryChooseButton() {
+        return outputDirectoryChooseButton;
+    }
+
+    public JTextField getOutputDirectoryTextField() {
+        return outputDirectoryTextField;
+    }
+
+    public JFileChooser getOutputDirectoryChooser() {
+        return outputDirectoryChooser;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -171,6 +187,9 @@ public class MainFrame extends javax.swing.JFrame {
         moffModeLabel = new javax.swing.JLabel();
         apexModeRadioButton = new javax.swing.JRadioButton();
         matchingBetweenRunsRadioButton = new javax.swing.JRadioButton();
+        outputDirectoryLabel = new javax.swing.JLabel();
+        outputDirectoryTextField = new javax.swing.JTextField();
+        outputDirectoryChooseButton = new javax.swing.JButton();
         secondPanel = new javax.swing.JPanel();
         fileLinkerTreeScrollPane = new javax.swing.JScrollPane();
         fileLinkerTree = new javax.swing.JTree();
@@ -232,20 +251,33 @@ public class MainFrame extends javax.swing.JFrame {
         moffModeButtonGroup.add(matchingBetweenRunsRadioButton);
         matchingBetweenRunsRadioButton.setText("Matching between runs");
 
+        outputDirectoryLabel.setText("Choose an output directory:");
+
+        outputDirectoryTextField.setEnabled(false);
+
+        outputDirectoryChooseButton.setText("choose");
+        outputDirectoryChooseButton.setToolTipText("Select a directory for the moFF output");
+        outputDirectoryChooseButton.setMaximumSize(new java.awt.Dimension(80, 25));
+        outputDirectoryChooseButton.setMinimumSize(new java.awt.Dimension(80, 25));
+        outputDirectoryChooseButton.setPreferredSize(new java.awt.Dimension(80, 25));
+
         javax.swing.GroupLayout firstPanelLayout = new javax.swing.GroupLayout(firstPanel);
         firstPanel.setLayout(firstPanelLayout);
         firstPanelLayout.setHorizontalGroup(
             firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(firstPanelLayout.createSequentialGroup()
-                .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(identificationDataTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
-                        .addComponent(peptideShakerRadioButton)
-                        .addComponent(tabSeparatedRadioButton)
-                        .addComponent(moffModeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(identificationDataTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+                    .addComponent(peptideShakerRadioButton)
+                    .addComponent(tabSeparatedRadioButton)
+                    .addComponent(moffModeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(apexModeRadioButton)
-                    .addComponent(matchingBetweenRunsRadioButton))
-                .addGap(0, 395, Short.MAX_VALUE))
+                    .addComponent(matchingBetweenRunsRadioButton)
+                    .addComponent(outputDirectoryLabel)
+                    .addComponent(outputDirectoryTextField))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(outputDirectoryChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 309, Short.MAX_VALUE))
         );
         firstPanelLayout.setVerticalGroup(
             firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -261,7 +293,13 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(apexModeRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(matchingBetweenRunsRadioButton)
-                .addGap(0, 139, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(outputDirectoryLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(outputDirectoryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(outputDirectoryChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 67, Short.MAX_VALUE))
         );
 
         topPanel.add(firstPanel, "firstPanel");
@@ -620,6 +658,9 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel moffModeLabel;
     private javax.swing.JLabel outlierThresholdLabel;
     private javax.swing.JTextField outlierThresholdTextField;
+    private javax.swing.JButton outputDirectoryChooseButton;
+    private javax.swing.JLabel outputDirectoryLabel;
+    private javax.swing.JTextField outputDirectoryTextField;
     private javax.swing.JPanel parentPanel;
     private javax.swing.JLabel peakRetentionTimeWindowLabel;
     private javax.swing.JTextField peakRetentionTimeWindowTextField;

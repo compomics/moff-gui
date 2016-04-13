@@ -109,17 +109,19 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="identificationDataTypeLabel" pref="363" max="32767" attributes="0"/>
-                                  <Component id="peptideShakerRadioButton" min="-2" max="-2" attributes="0"/>
-                                  <Component id="tabSeparatedRadioButton" min="-2" max="-2" attributes="0"/>
-                                  <Component id="moffModeLabel" alignment="0" max="32767" attributes="0"/>
-                              </Group>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="identificationDataTypeLabel" pref="363" max="32767" attributes="0"/>
+                              <Component id="peptideShakerRadioButton" min="-2" max="-2" attributes="0"/>
+                              <Component id="tabSeparatedRadioButton" min="-2" max="-2" attributes="0"/>
+                              <Component id="moffModeLabel" alignment="0" max="32767" attributes="0"/>
                               <Component id="apexModeRadioButton" min="-2" max="-2" attributes="0"/>
                               <Component id="matchingBetweenRunsRadioButton" min="-2" max="-2" attributes="0"/>
+                              <Component id="outputDirectoryLabel" min="-2" max="-2" attributes="0"/>
+                              <Component id="outputDirectoryTextField" alignment="0" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="395" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="outputDirectoryChooseButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="309" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -137,7 +139,14 @@
                           <Component id="apexModeRadioButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="matchingBetweenRunsRadioButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="139" max="32767" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="outputDirectoryLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="outputDirectoryTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="outputDirectoryChooseButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="0" pref="67" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -183,6 +192,31 @@
                       <ComponentRef name="moffModeButtonGroup"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Matching between runs"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="outputDirectoryLabel">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Choose an output directory:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="outputDirectoryTextField">
+                  <Properties>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="outputDirectoryChooseButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="choose"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Select a directory for the moFF output"/>
+                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[80, 25]"/>
+                    </Property>
+                    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[80, 25]"/>
+                    </Property>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[80, 25]"/>
+                    </Property>
                   </Properties>
                 </Component>
               </SubComponents>
