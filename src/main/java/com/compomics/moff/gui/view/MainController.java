@@ -302,6 +302,29 @@ public class MainController {
     }
 
     /**
+     * This method takes a file a writes the file links to it. The format is
+     * 'RAW_file_path'-TAB-'identification_file_path'.
+     *
+     * @param fileLinksFile the file where the file links will be written to
+     */
+    private void writeFileLinksToFile(File fileLinksFile) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(fileLinksFile.toPath())) {
+            //iterate over the nodes
+            Enumeration children = fileLinkerRootNode.children();
+            while (children.hasMoreElements()) {
+                DefaultMutableTreeNode rawFileNode = (DefaultMutableTreeNode) children.nextElement();
+                //write to the file
+                writer.write(((File) rawFileNode.getUserObject()).getAbsolutePath()
+                        + LINK_SEPARATOR
+                        + ((File) ((DefaultMutableTreeNode) rawFileNode.getChildAt(0)).getUserObject()).getAbsolutePath());
+                if (children.hasMoreElements()) {
+                    writer.newLine();
+                }
+            }
+        }
+    }
+
+    /**
      * Show a message dialog with a text area if the messages list contains more
      * than one message.
      *
@@ -575,29 +598,6 @@ public class MainController {
      */
     private CardLayout getCardLayout() {
         return (CardLayout) mainFrame.getTopPanel().getLayout();
-    }
-
-    /**
-     * This method takes a file a writes the file links to it. The format is
-     * 'RAW_file_path'-TAB-'identification_file_path'.
-     *
-     * @param fileLinksFile the file where the file links will be written to
-     */
-    private void writeFileLinksToFile(File fileLinksFile) throws IOException {
-        try (BufferedWriter writer = Files.newBufferedWriter(fileLinksFile.toPath())) {
-            //iterate over the nodes
-            Enumeration children = fileLinkerRootNode.children();
-            while (children.hasMoreElements()) {
-                DefaultMutableTreeNode rawFileNode = (DefaultMutableTreeNode) children.nextElement();
-                //write to the file
-                writer.write(((File) rawFileNode.getUserObject()).getAbsolutePath()
-                        + LINK_SEPARATOR
-                        + ((File) ((DefaultMutableTreeNode) rawFileNode.getChildAt(0)).getUserObject()).getAbsolutePath());
-                if (children.hasMoreElements()) {
-                    writer.newLine();
-                }
-            }
-        }
     }
 
     /**
