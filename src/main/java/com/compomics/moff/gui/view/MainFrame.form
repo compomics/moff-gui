@@ -9,7 +9,6 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
-    <Property name="title" type="java.lang.String" value="moFF GUI"/>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="ff" green="ff" red="ff" type="rgb"/>
     </Property>
@@ -508,7 +507,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="outlierThresholdLabel">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Threshold (seconds):"/>
+                        <Property name="text" type="java.lang.String" value="Width:"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="outlierThresholdTextField">

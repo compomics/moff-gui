@@ -7,6 +7,7 @@ package com.compomics.moff.gui.view;
 
 import com.compomics.moff.gui.control.step.MoFFApexStep;
 import com.compomics.moff.gui.control.step.MoFFMBRStep;
+import com.compomics.moff.gui.view.config.ConfigHolder;
 import com.compomics.moff.gui.view.filter.CpsFileFilter;
 import com.compomics.moff.gui.view.filter.RawFileFilter;
 import com.compomics.moff.gui.view.filter.TabSeparatedFileFilter;
@@ -97,6 +98,8 @@ public class MainController {
         mainFrame.getFileLinkerTree().setRootVisible(true);
         mainFrame.getFileLinkerTree().setModel(fileLinkerTreeModel);
 
+        mainFrame.setTitle("moFF GUI " + ConfigHolder.getInstance().getString("moff_gui.version", "N/A"));
+
         //add log text area appender
         LogTextAreaAppender logTextAreaAppender = new LogTextAreaAppender();
         logTextAreaAppender.setThreshold(Level.INFO);
@@ -116,9 +119,6 @@ public class MainController {
         mainFrame.getPeptideShakerRadioButton().setSelected(true);
         //select the APEX radio button
         mainFrame.getApexModeRadioButton().setSelected(true);
-
-        //disable outliers threshold text field
-        mainFrame.getOutlierThresholdTextField().setEnabled(false);
 
         //show info
         updateInfo("Click on \"proceed\" to link the RAW and identification files.");
@@ -237,8 +237,13 @@ public class MainController {
             String currentCardName = getVisibleChildComponent(mainFrame.getTopPanel());
             switch (currentCardName) {
                 case FIRST_PANEL:
-                    getCardLayout().show(mainFrame.getTopPanel(), SECOND_PANEL);
-                    onCardSwitch();
+                    List<String> firstPanelValidationMessages = validateFirstPanel();
+                    if (firstPanelValidationMessages.isEmpty()) {
+                        getCardLayout().show(mainFrame.getTopPanel(), SECOND_PANEL);
+                        onCardSwitch();
+                    } else {
+                        showMessageDialog("Validation failure", firstPanelValidationMessages, JOptionPane.WARNING_MESSAGE);
+                    }
                     break;
                 case SECOND_PANEL:
                     List<String> secondPanelValidationMessages = validateSecondPanel();
@@ -291,6 +296,8 @@ public class MainController {
             mainFrame.dispose();
         });
 
+        //load the parameters from the properties file
+        loadParameterValues();
     }
 
     /**
@@ -299,6 +306,21 @@ public class MainController {
     public void showView() {
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
+    }
+
+    /**
+     * Load the parameter values from the properties file and set them in the
+     * matching fields.
+     */
+    private void loadParameterValues() {
+        mainFrame.getXicRetentionTimeWindowTextField().setText(ConfigHolder.getInstance().getString("retention_time.xic.window"));
+        mainFrame.getPeakRetentionTimeWindowTextField().setText(ConfigHolder.getInstance().getString("retention_time.peak.window"));
+        mainFrame.getPrecursorMassToleranceTextField().setText(ConfigHolder.getInstance().getString("precursor_mass.tolerane"));
+        mainFrame.getMatchedPeaksRetentionTimeWindowTextField().setText(ConfigHolder.getInstance().getString("retention_time.matched_peak.window"));
+        mainFrame.getCombinationWeighingCheckBox().setSelected(ConfigHolder.getInstance().getBoolean("combination_weighing"));
+        mainFrame.getFilterOutliersCheckBox().setSelected(ConfigHolder.getInstance().getBoolean("outliers_filtering"));
+        mainFrame.getOutlierThresholdTextField().setEnabled(mainFrame.getFilterOutliersCheckBox().isSelected());
+        mainFrame.getOutlierThresholdTextField().setText(Double.toString(ConfigHolder.getInstance().getDouble("outliers_filtering.window")));
     }
 
     /**
@@ -399,6 +421,22 @@ public class MainController {
      */
     private void updateInfo(String message) {
         mainFrame.getInfoLabel().setText(message);
+    }
+
+    /**
+     * Validate the user input in the first panel.
+     *
+     * @return the list of validation messages.
+     */
+    private List<String> validateFirstPanel() {
+        List<String> validationMessages = new ArrayList<>();
+
+        //check if an output directory has been chosen
+        if (mainFrame.getOutputDirectoryTextField().getText().isEmpty()) {
+            validationMessages.add("Please choose an output directory.");
+        }
+
+        return validationMessages;
     }
 
     /**

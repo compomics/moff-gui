@@ -223,7 +223,6 @@ public class MainFrame extends javax.swing.JFrame {
         cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("moFF GUI");
         setBackground(new java.awt.Color(255, 255, 255));
 
         parentPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -433,7 +432,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         filterOutliersCheckBox.setText("Filter outliers");
 
-        outlierThresholdLabel.setText("Threshold (seconds):");
+        outlierThresholdLabel.setText("Width:");
 
         javax.swing.GroupLayout matchingBetweenRunsSettingsPanelLayout = new javax.swing.GroupLayout(matchingBetweenRunsSettingsPanel);
         matchingBetweenRunsSettingsPanel.setLayout(matchingBetweenRunsSettingsPanelLayout);

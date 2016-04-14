@@ -81,8 +81,7 @@
                                     <directory>src/main/resources</directory> 
                                     <filtering>true</filtering> 
                                     <includes>
-                                        <include>MS2Similarity.properties</include>
-                                        <include>BookChapter.properties</include>
+                                        <include>moff_gui.properties</include>
                                     </includes>                                                                                                               
                                 </resource>                                
                             </resources>
@@ -116,14 +115,9 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.6</version>
                 <configuration>
-                    <excludes>
-                        <exclude>BookChapter.properties</exclude>
-                        <exclude>MS2Similarity.properties</exclude>
-                        <exclude>ProteinDiversity.properties</exclude>                        
-                    </excludes>   
                     <archive>
                         <manifest>                            
-                            <!--mainClass>main.ScorePipelineStarter</mainClass-->                          
+                            <mainClass>com.compomics.moff.gui.MoffGuiStarter</mainClass>                          
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib</classpathPrefix>
                         </manifest>
@@ -156,8 +150,7 @@
         </plugins>
     </build>    
             
-    <dependencies>
-        
+    <dependencies>        
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>Pladipus-core</artifactId>
@@ -186,7 +179,11 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
-
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.10</version>
+        </dependency>
     </dependencies>
                               
 </project>
