@@ -7,6 +7,7 @@ package com.compomics.moff.gui.view;
 
 import com.compomics.moff.gui.control.step.MoFFApexStep;
 import com.compomics.moff.gui.control.step.MoFFMBRStep;
+import com.compomics.moff.gui.control.step.MoFFPeptideShakerConversionStep;
 import com.compomics.moff.gui.view.config.ConfigHolder;
 import com.compomics.moff.gui.view.filter.CpsFileFilter;
 import com.compomics.moff.gui.view.filter.RawFileFilter;
@@ -18,7 +19,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -26,7 +26,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -647,24 +646,46 @@ public class MainController {
         protected Void doInBackground() throws Exception {
             LOGGER.info("starting spectrum similarity score pipeline");
             System.out.println("start ----------------------");
-            Thread.sleep(5000);
-            ProcessingStep moffStep;
+            // make a new mapping for input files and the result files?
+            HashMap<File, File> cpsToMoffMapping = new HashMap<>();
+            // get the MoFF parameters
             HashMap<String, String> moffParameters;
             if (mainFrame.getApexModeRadioButton().isSelected()) {
-                //run apex step
-                moffStep = new MoFFApexStep();
                 moffParameters = getApexParametersFromGUI();
             } else {
-                //run MBR step
-                moffStep = new MoFFMBRStep();
                 moffParameters = getMBRParametersFromGUI();
             }
-            moffStep.setParameters(moffParameters);
-            if (moffStep.doAction()) {
-                System.out.println("finish ----------------------");
-            } else {
-                System.out.println("an error occurred ----------------------");
+            //get the fasta file and the MGF file mapping?
+            File fastaFile = getFastaFile();
+            HashMap<File, File> mgfFileMapping = getMgfFileMapping();
+            //converting the peptideshaker input files where necessary to the MoFF format
+            for (File peptideShakerInputFile : getPeptideShakerInputFiles()) {
+                HashMap<String, String> parameters = new HashMap<>();
+                File mgfFile = mgfFileMapping.get(peptideShakerInputFile);
+                parameters.put("ps_output", peptideShakerInputFile.getAbsolutePath());
+                if (peptideShakerInputFile.getName().toUpperCase().endsWith(".cpsx")) {
+                    parameters.put("mgf", mgfFile.getAbsolutePath());
+                    parameters.put("fasta", fastaFile.getAbsolutePath());
+                }
+                MoFFPeptideShakerConversionStep conversion = new MoFFPeptideShakerConversionStep();
+                conversion.setParameters(parameters);
+                conversion.doAction();
+             //make the new mapping (especially for MBR ?)
+                cpsToMoffMapping.put(peptideShakerInputFile, conversion.getMoffFile());
+                //if there are moffSteps, it's one by one...
+                if (mainFrame.getApexModeRadioButton().isSelected()) {
+                    MoFFApexStep moffStep = new MoFFApexStep();
+                    moffParameters.put("--input", conversion.getMoffFile().getAbsolutePath());
+                    moffStep.setParameters(moffParameters);
+                    moffStep.doAction();
+                }
             }
+            if (!mainFrame.getApexModeRadioButton().isSelected()) {
+                MoFFMBRStep moffStep = new MoFFMBRStep();
+                moffStep.setParameters(moffParameters);
+                moffStep.doAction();
+            }
+            System.out.println("finish ----------------------");
             return null;
         }
 
@@ -691,13 +712,65 @@ public class MainController {
         private HashMap<String, String> getApexParametersFromGUI() {
             HashMap<String, String> parameters = new HashMap<>();
             //@ToDo fill the parameters
+            //parameters.put("--input NAME", "");    //                    specify the input file with the of MS2 peptides (automatic)
+            parameters.put("--tol", "");    //                     specify the tollerance parameter in ppm
+            parameters.put("--rt_w", "");    //                    specify rt window for xic (minute). Default value is 3 min
+            parameters.put("--rt_p", "");    //                  specify the time windows for the peak ( minute). Default value is 0.1
+            parameters.put("--rt_p_match", "");    //      specify the time windows for the matched peptide peak ( minute). Default value is 0.4
+            parameters.put("--raw_repo", "");    //                      specify the raw file repository
+            parameters.put("--output_folder", "");    //             specify the folder output
             return parameters;
         }
 
         private HashMap<String, String> getMBRParametersFromGUI() {
             HashMap<String, String> parameters = new HashMap<>();
-            //@ToDo fill the parameters
+            //@ToDo fill the parameters --> is this up to date?
+            parameters.put("--inputF", "");    //           specify the folder of the input MS2 peptide list files
+            parameters.put("--sample", "");    //           specify witch replicated use for mbr reg_exp are valid
+            parameters.put("--ext", "");    //                 specify the file extentention of the input like
+            parameters.put("--log_file_name", "");    //     a label name to use for the log file
+            parameters.put("--filt_width", "");    //       width value of the filter k * mean(Dist_Malahobis)
+            parameters.put("--out_filt", "");    //       filter outlier in each rt time allignment
+            parameters.put("--weight_comb", "");    //      weights for model combination combination : 0 for no weight 1 weighted devised by trein err of the model.
+            parameters.put("--tol", "");    //                specify the tollerance parameter in ppm
+            parameters.put("--rt_w", "");    //          specify rt window for xic (minute). Default value is  3  min
+            parameters.put("--rt_p", "");    //        specify the time windows for the peak ( minute). Default value is 0.1
+            parameters.put("--rt_p_match", "");    //    	specify the time windows for the matched peptide peak ( minute). Default value is 0.4
+            parameters.put("--raw_repo", "");    //            	specify the raw file repository
+            parameters.put("--output_folder", "");    //    		specify the folder output
             return parameters;
+        }
+
+        /**
+         * This method gets the fasta file (should be the same for all files,
+         * otherwise there's no point in comparing?")
+         *
+         * @return the used fasta file
+         */
+        private File getFastaFile() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        /**
+         * This method gets a collection of peptideshaker output files that need
+         * to be processed, these can be either cpsx, zip or extended report
+         * (tsv)
+         *
+         * @return a collection of peptideshaker output files
+         */
+        private Iterable<File> getPeptideShakerInputFiles() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        /**
+         * This method gets a mapping of peptideshaker output files that need to
+         * be processed to their MGF file, only in the case of CPSX files
+         *
+         * @return the mapping of peptideshaker output files to their MGF file
+         * (CPSX ONLY)
+         */
+        private HashMap<File, File> getMgfFileMapping() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
     }

@@ -37,7 +37,7 @@ public class PSOutputParser {
     private static final int CONFIDENCE = 19;
     private static final int VALIDATION = 20;
 
-    private static final String P_HEADER="prot\t"
+    private static final String P_HEADER = "prot\t"
             + "peptide\t"
             + "var_mod\t"
             + "fix_mod\t"
@@ -57,7 +57,7 @@ public class PSOutputParser {
             + "d-score\t"
             + "confidence\t"
             + "validation";
- 
+
     /**
      * This constructor takes the PS output file. This has to be created by
      * command line option -reports 9 !
@@ -66,7 +66,7 @@ public class PSOutputParser {
      * @param moffFile the moff file output
      * @throws java.io.FileNotFoundException
      */
-    public static void convert(File psOutputFile, File moffFile) throws FileNotFoundException, IOException {
+    public static void convertReport(File psOutputFile, File moffFile) throws FileNotFoundException, IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(psOutputFile)); BufferedWriter writer = new BufferedWriter(new FileWriter(moffFile));) {
             String line;
             //peptideshaker headers
@@ -78,7 +78,7 @@ public class PSOutputParser {
                 //filter out shared peptides and decoys
                 if (!split[PROTEINS].contains(",") && split[DECOY].equals("0")) {
                     //write the requested line to file
-                    writer.append(line.substring(line.indexOf("\t")+1)).append(System.lineSeparator()).flush();
+                    writer.append(line.substring(line.indexOf("\t") + 1)).append(System.lineSeparator()).flush();
                 }
             }
             writer.flush();

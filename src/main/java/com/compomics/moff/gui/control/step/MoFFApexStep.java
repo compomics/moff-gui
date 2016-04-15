@@ -82,7 +82,7 @@ public class MoFFApexStep extends ProcessingStep {
         //if the file is a peptideshaker file ?
         if (parameters.containsKey("preprocess_extended_report")) {
             LOGGER.info("Converting PeptideShaker TSV format to MoFF format");
-            PSOutputParser.convert(inputFile, moffInputFile);
+            PSOutputParser.convertReport(inputFile, moffInputFile);
         } else if (parameters.containsKey("preprocess_cpsx")) {
             throw new UnsupportedOperationException("Not yet implemented...");
         }

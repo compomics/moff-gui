@@ -81,7 +81,7 @@ public class MoFFMBRStep extends ProcessingStep {
                 File peptideShakerReport = new File(parameters.get(aRawFile.getAbsolutePath()));
                 File moffInputFile = new File(peptideShakerReport.getParentFile(), aRawFile.getName().toLowerCase().replace(".raw", ".txt"));
                 LOGGER.info("Converting " + peptideShakerReport.getName() + " to MoFF formatted file : " + moffInputFile.getName());
-                PSOutputParser.convert(peptideShakerReport, moffInputFile);
+                PSOutputParser.convertReport(peptideShakerReport, moffInputFile);
                 //delete the original peptideshaker output
                 peptideShakerReport.delete();
             }
