@@ -5,26 +5,26 @@
  */
 package com.compomics.moff.gui.view;
 
-import com.compomics.moff.gui.control.step.MoFFApexStep;
-import com.compomics.moff.gui.control.step.MoFFMBRStep;
 import com.compomics.moff.gui.control.step.MoFFPeptideShakerConversionStep;
+import com.compomics.moff.gui.control.step.MoFFStep;
 import com.compomics.moff.gui.view.config.ConfigHolder;
 import com.compomics.moff.gui.view.filter.CpsFileFilter;
 import com.compomics.moff.gui.view.filter.RawFileFilter;
 import com.compomics.moff.gui.view.filter.TabSeparatedFileFilter;
-import com.compomics.pladipus.core.model.processing.ProcessingStep;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
@@ -346,6 +346,23 @@ public class MainController {
     }
 
     /**
+     * This method gets the mapping between peptideshaker output and raw
+     *
+     * @param fileLinksFile the file where the file links will be written to
+     */
+    private HashMap<File, File> getRAWFileMapping() {
+        HashMap<File, File> rawFileMapping = new HashMap<>();
+        //iterate over the nodes
+        Enumeration children = fileLinkerRootNode.children();
+        while (children.hasMoreElements()) {
+            DefaultMutableTreeNode rawFileNode = (DefaultMutableTreeNode) children.nextElement();
+            //write to the file
+            rawFileMapping.put((File) rawFileNode.getUserObject(), (File) ((DefaultMutableTreeNode) rawFileNode.getChildAt(0)).getUserObject());
+        }
+        return rawFileMapping;
+    }
+
+    /**
      * Show a message dialog with a text area if the messages list contains more
      * than one message.
      *
@@ -659,7 +676,9 @@ public class MainController {
             File fastaFile = getFastaFile();
             HashMap<File, File> mgfFileMapping = getMgfFileMapping();
             //converting the peptideshaker input files where necessary to the MoFF format
-            for (File peptideShakerInputFile : getPeptideShakerInputFiles()) {
+            HashMap<File, File> rawFilePeptideShakerMapping = getRAWFileMapping();
+            for (Map.Entry<File, File> moffEntry : rawFilePeptideShakerMapping.entrySet()) {
+                File peptideShakerInputFile = moffEntry.getKey();
                 HashMap<String, String> parameters = new HashMap<>();
                 File mgfFile = mgfFileMapping.get(peptideShakerInputFile);
                 parameters.put("ps_output", peptideShakerInputFile.getAbsolutePath());
@@ -670,23 +689,42 @@ public class MainController {
                 MoFFPeptideShakerConversionStep conversion = new MoFFPeptideShakerConversionStep();
                 conversion.setParameters(parameters);
                 conversion.doAction();
-             //make the new mapping (especially for MBR ?)
-                cpsToMoffMapping.put(peptideShakerInputFile, conversion.getMoffFile());
-                //if there are moffSteps, it's one by one...
-                if (mainFrame.getApexModeRadioButton().isSelected()) {
-                    MoFFApexStep moffStep = new MoFFApexStep();
-                    moffParameters.put("--input", conversion.getMoffFile().getAbsolutePath());
-                    moffStep.setParameters(moffParameters);
-                    moffStep.doAction();
-                }
+                //make the new mapping (especially for MBR ?)
+                cpsToMoffMapping.put(conversion.getMoffFile(), moffEntry.getValue());
             }
+            //write the cpsToMoffMapping to a File?
+            File tempMappingFile = writeToTempFile(cpsToMoffMapping);
+            moffParameters.put("--map_file", tempMappingFile.getAbsolutePath());
+
             if (!mainFrame.getApexModeRadioButton().isSelected()) {
-                MoFFMBRStep moffStep = new MoFFMBRStep();
-                moffStep.setParameters(moffParameters);
-                moffStep.doAction();
+                moffParameters.put("mode", "APEX");
+            } else {
+                moffParameters.put("mode", "MBR");
             }
+            //execute MoFF itself
+            MoFFStep moffStep = new MoFFStep();
+            moffStep.setParameters(moffParameters);
+            moffStep.doAction();
             System.out.println("finish ----------------------");
             return null;
+        }
+
+        private File writeToTempFile(HashMap<File, File> fileMapping) throws IOException {
+            File tempFile = new File(outPutDirectory, "mapping.tsv");
+            if (tempFile.exists()) {
+                //@ToDo how to handle this properly?
+                throw new IOException(tempFile.getAbsolutePath() + " already exists.");
+            }
+            try (FileWriter writer = new FileWriter(tempFile)) {
+                for (Map.Entry<File, File> aPeptideShakerFile : fileMapping.entrySet()) {
+                    writer.append(aPeptideShakerFile.getKey().getAbsolutePath()
+                            + LINK_SEPARATOR
+                            + aPeptideShakerFile.getValue().getAbsolutePath())
+                            .append(System.lineSeparator())
+                            .flush();
+                }
+            }
+            return tempFile;
         }
 
         @Override
@@ -712,12 +750,11 @@ public class MainController {
         private HashMap<String, String> getApexParametersFromGUI() {
             HashMap<String, String> parameters = new HashMap<>();
             //@ToDo fill the parameters
-            //parameters.put("--input NAME", "");    //                    specify the input file with the of MS2 peptides (automatic)
+          //  parameters.put("--map_file", "");    //                    specify the input file with the of MS2 peptides (automatic)
             parameters.put("--tol", "");    //                     specify the tollerance parameter in ppm
             parameters.put("--rt_w", "");    //                    specify rt window for xic (minute). Default value is 3 min
             parameters.put("--rt_p", "");    //                  specify the time windows for the peak ( minute). Default value is 0.1
             parameters.put("--rt_p_match", "");    //      specify the time windows for the matched peptide peak ( minute). Default value is 0.4
-            parameters.put("--raw_repo", "");    //                      specify the raw file repository
             parameters.put("--output_folder", "");    //             specify the folder output
             return parameters;
         }
@@ -725,19 +762,16 @@ public class MainController {
         private HashMap<String, String> getMBRParametersFromGUI() {
             HashMap<String, String> parameters = new HashMap<>();
             //@ToDo fill the parameters --> is this up to date?
-            parameters.put("--inputF", "");    //           specify the folder of the input MS2 peptide list files
-            parameters.put("--sample", "");    //           specify witch replicated use for mbr reg_exp are valid
-            parameters.put("--ext", "");    //                 specify the file extentention of the input like
-            parameters.put("--log_file_name", "");    //     a label name to use for the log file
-            parameters.put("--filt_width", "");    //       width value of the filter k * mean(Dist_Malahobis)
-            parameters.put("--out_filt", "");    //       filter outlier in each rt time allignment
-            parameters.put("--weight_comb", "");    //      weights for model combination combination : 0 for no weight 1 weighted devised by trein err of the model.
-            parameters.put("--tol", "");    //                specify the tollerance parameter in ppm
-            parameters.put("--rt_w", "");    //          specify rt window for xic (minute). Default value is  3  min
-            parameters.put("--rt_p", "");    //        specify the time windows for the peak ( minute). Default value is 0.1
-            parameters.put("--rt_p_match", "");    //    	specify the time windows for the matched peptide peak ( minute). Default value is 0.4
-            parameters.put("--raw_repo", "");    //            	specify the raw file repository
-            parameters.put("--output_folder", "");    //    		specify the folder output
+        //    parameters.put("--map_file", "");    // MAP_FILE  specify a map file that contains input files  and raw file     
+            parameters.put("--log_file_name", "");    // LOG_LABEL a label name to use for the log file  (not mandatory, moFF_mbr_.log is the default name)
+            parameters.put("--filt_width", "");    // W_FILT   width value of the filter k * mean(Dist_Malahobis)  Default val = 1.5
+            parameters.put("--out_filt", "");    // OUT_FLAG   filter outlier in each rt time allignment   Default val =1
+            parameters.put("--weight_comb", "");    // W_COMB  weights for model combination combination : 0 for no weight 1 weighted devised by trein err of the model. Default val =1
+            parameters.put("--tol", "");    // TOLL            specify the tollerance parameter in ppm
+            parameters.put("--rt_w", "");    // RT_WINDOW      specify rt window for xic (minute). Default value is  5  min
+            parameters.put("--rt_p", "");    // RT_P_WINDOW    specify the time windows for the peak ( minute). Default value is 0.1
+            parameters.put("--rt_p", "");    //_match RT_P_WINDOW_MATCH  specify the time windows for the matched peptide peak ( minute). Default value is 0.4
+            parameters.put("--output_folder", "");    // LOC_OUT         specify the folder output (mandatory)
             return parameters;
         }
 
