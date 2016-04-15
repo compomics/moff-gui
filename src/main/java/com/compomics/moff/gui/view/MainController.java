@@ -672,9 +672,11 @@ public class MainController {
             } else {
                 moffParameters = getMBRParametersFromGUI();
             }
+            
             //get the fasta file and the MGF file mapping?
             File fastaFile = getFastaFile();
             HashMap<File, File> mgfFileMapping = getMgfFileMapping();
+            
             //converting the peptideshaker input files where necessary to the MoFF format
             HashMap<File, File> rawFilePeptideShakerMapping = getRAWFileMapping();
             for (Map.Entry<File, File> moffEntry : rawFilePeptideShakerMapping.entrySet()) {
@@ -689,7 +691,7 @@ public class MainController {
                 MoFFPeptideShakerConversionStep conversion = new MoFFPeptideShakerConversionStep();
                 conversion.setParameters(parameters);
                 conversion.doAction();
-                //make the new mapping (especially for MBR ?)
+                //make the new mapping with the converted files 
                 cpsToMoffMapping.put(conversion.getMoffFile(), moffEntry.getValue());
             }
             //write the cpsToMoffMapping to a File?
@@ -782,17 +784,6 @@ public class MainController {
          * @return the used fasta file
          */
         private File getFastaFile() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        /**
-         * This method gets a collection of peptideshaker output files that need
-         * to be processed, these can be either cpsx, zip or extended report
-         * (tsv)
-         *
-         * @return a collection of peptideshaker output files
-         */
-        private Iterable<File> getPeptideShakerInputFiles() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
