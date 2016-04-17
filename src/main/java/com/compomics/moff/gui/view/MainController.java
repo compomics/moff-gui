@@ -730,7 +730,7 @@ public class MainController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            LOGGER.info("starting spectrum similarity score pipeline");
+            LOGGER.info("starting moFF run");
             System.out.println("start ----------------------");
             // make a new mapping for input files and the result files?
             HashMap<File, File> cpsToMoffMapping = new HashMap<>();
@@ -804,7 +804,7 @@ public class MainController {
                 get();
                 LOGGER.info("finished moFF run");
                 List<String> messages = new ArrayList<>();
-                messages.add("The score pipeline has finished.");
+                messages.add("The moFF run has finished successfully.");
                 showMessageDialog("moFF run completed", messages, JOptionPane.INFORMATION_MESSAGE);
             } catch (CancellationException ex) {
                 LOGGER.info("the moFF run was cancelled");
@@ -822,11 +822,11 @@ public class MainController {
             HashMap<String, String> parameters = new HashMap<>();
             //@ToDo fill the parameters
             //  parameters.put("--map_file", "");    //                    specify the input file with the of MS2 peptides (automatic)
-            parameters.put("--tol", "");    //                     specify the tollerance parameter in ppm
-            parameters.put("--rt_w", "");    //                    specify rt window for xic (minute). Default value is 3 min
-            parameters.put("--rt_p", "");    //                  specify the time windows for the peak ( minute). Default value is 0.1
-            parameters.put("--rt_p_match", "");    //      specify the time windows for the matched peptide peak ( minute). Default value is 0.4
-            parameters.put("--output_folder", "");    //             specify the folder output
+            parameters.put("--tol", mainFrame.getPrecursorMassToleranceTextField().getText());    //                     specify the tollerance parameter in ppm
+            parameters.put("--rt_w", mainFrame.getXicRetentionTimeWindowTextField().getText());    //                    specify rt window for xic (minute). Default value is 3 min
+            parameters.put("--rt_p", mainFrame.getPeakRetentionTimeWindowTextField().getText());    //                  specify the time windows for the peak ( minute). Default value is 0.1
+            parameters.put("--rt_p_match", mainFrame.getMatchedPeaksRetentionTimeWindowTextField().getText());    //      specify the time windows for the matched peptide peak ( minute). Default value is 0.4
+            parameters.put("--output_folder", mainFrame.getOutputDirectoryChooser().getSelectedFile().getAbsolutePath());    //             specify the folder output
             return parameters;
         }
 
@@ -835,19 +835,27 @@ public class MainController {
             //@ToDo fill the parameters --> is this up to date?
             //    parameters.put("--map_file", "");    // MAP_FILE  specify a map file that contains input files  and raw file
             parameters.put("--log_file_name", "");    // LOG_LABEL a label name to use for the log file  (not mandatory, moFF_mbr_.log is the default name)
-            parameters.put("--filt_width", "");    // W_FILT   width value of the filter k * mean(Dist_Malahobis)  Default val = 1.5
-            parameters.put("--out_filt", "");    // OUT_FLAG   filter outlier in each rt time allignment   Default val =1
-            parameters.put("--weight_comb", "");    // W_COMB  weights for model combination combination : 0 for no weight 1 weighted devised by trein err of the model. Default val =1
-            parameters.put("--tol", "");    // TOLL            specify the tollerance parameter in ppm
-            parameters.put("--rt_w", "");    // RT_WINDOW      specify rt window for xic (minute). Default value is  5  min
-            parameters.put("--rt_p", "");    // RT_P_WINDOW    specify the time windows for the peak ( minute). Default value is 0.1
-            parameters.put("--rt_p", "");    //_match RT_P_WINDOW_MATCH  specify the time windows for the matched peptide peak ( minute). Default value is 0.4
-            parameters.put("--output_folder", "");    // LOC_OUT         specify the folder output (mandatory)
+            if (mainFrame.getFilterOutliersCheckBox().isSelected()) {
+                parameters.put("--out_filt", "1");    // OUT_FLAG   filter outlier in each rt time allignment   Default val =1
+                parameters.put("--filt_width", mainFrame.getOutlierThresholdTextField().getText());    // W_FILT   width value of the filter k * mean(Dist_Malahobis)  Default val = 1.5
+            } else {
+                parameters.put("--out_filt", "0");
+            }
+            if (mainFrame.getCombinationWeighingCheckBox().isSelected()) {
+                parameters.put("--weight_comb", "1");    // W_COMB  weights for model combination combination : 0 for no weight 1 weighted devised by trein err of the model. Default val =1
+            } else {
+                parameters.put("--weight_comb", "0");
+            }
+            parameters.put("--tol", mainFrame.getPrecursorMassToleranceTextField().getText());   // TOLL            specify the tollerance parameter in ppm
+            parameters.put("--rt_w", mainFrame.getXicRetentionTimeWindowTextField().getText());    // RT_WINDOW      specify rt window for xic (minute). Default value is  5  min
+            parameters.put("--rt_p", mainFrame.getPeakRetentionTimeWindowTextField().getText());    // RT_P_WINDOW    specify the time windows for the peak ( minute). Default value is 0.1
+            parameters.put("--rt_p_match", mainFrame.getMatchedPeaksRetentionTimeWindowTextField().getText());    //_match RT_P_WINDOW_MATCH  specify the time windows for the matched peptide peak ( minute). Default value is 0.4
+            parameters.put("--output_folder", mainFrame.getOutputDirectoryChooser().getSelectedFile().getAbsolutePath());    // LOC_OUT         specify the folder output (mandatory)
             return parameters;
         }
 
         /**
-         * This method gets the fasta file (should be the same for all files,
+         * This method gets the FASTA file (should be the same for all files,
          * otherwise there's no point in comparing?")
          *
          * @return the used fasta file
@@ -857,10 +865,10 @@ public class MainController {
         }
 
         /**
-         * This method gets a mapping of peptideshaker output files that need to
+         * This method gets a mapping of PeptideShaker output files that need to
          * be processed to their MGF file, only in the case of CPSX files
          *
-         * @return the mapping of peptideshaker output files to their MGF file
+         * @return the mapping of PeptideShaker output files to their MGF file
          * (CPSX ONLY)
          */
         private HashMap<File, File> getMgfFileMapping() {
