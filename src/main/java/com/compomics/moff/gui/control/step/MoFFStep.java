@@ -1,11 +1,11 @@
 package com.compomics.moff.gui.control.step;
 
 import com.compomics.moff.gui.control.util.MoffInstaller;
-import com.compomics.moff.gui.control.util.ToolManager;
 import com.compomics.pladipus.core.control.engine.ProcessingEngine;
 import com.compomics.pladipus.core.control.engine.callback.CallbackNotifier;
 import com.compomics.pladipus.core.model.processing.ProcessingStep;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -31,22 +31,23 @@ public class MoFFStep extends ProcessingStep {
     /**
      * The moff apex script file
      */
-    private static final File MOFF_APEX_SCRIPT_FILE = new File(ToolManager.getInstance().getMoffFolder(), "moff.py");
+    private static final File MOFF_APEX_SCRIPT_FILE = new File(MoffInstaller.getMoFFFolder(), "moff.py");
     /**
      * The moff mbr script file
      */
-    private static final File MOFF_MBR_SCRIPT_FILE = new File(ToolManager.getInstance().getMoffFolder(), "moff_all.pyy");
+    private static final File MOFF_MBR_SCRIPT_FILE = new File(MoffInstaller.getMoFFFolder(), "moff_all.pyy");
     /**
      * The mode in which this step will run (APEX or MBR)
      */
     private String mode = "APEX";
-    
+
     public MoFFStep() {
-        
+
     }
-    
+
     @Override
     public boolean doAction() throws Exception {
+        //Determine the script that needs to be used
         File MOFF_SCRIPT_FILE;
         mode = parameters.getOrDefault("mode", "APEX");
         if (mode.equalsIgnoreCase("APEX")) {
@@ -55,7 +56,16 @@ public class MoFFStep extends ProcessingStep {
             MOFF_SCRIPT_FILE = MOFF_MBR_SCRIPT_FILE;
         }
         LOGGER.info("Running MoFF in " + mode.toUpperCase() + " mode.");
-        tempResources = new File(ToolManager.getInstance().getMoffFolder(), "temp");
+        //check the installation
+        if (!MOFF_SCRIPT_FILE.exists()) {
+            LOGGER.info("Installing MoFF...");
+            MoffInstaller.installMoff();
+            //check if the installation was correct
+            if (!MOFF_SCRIPT_FILE.exists()) {
+                throw new FileNotFoundException("MoFF installation could not be found! Please check user privileges and try again.");
+            }
+        }
+        tempResources = new File(MoffInstaller.getMoFFFolder(), "temp");
         tempResources.mkdirs();
         //convert the arguments
         List<String> constructArguments = constructArguments(MOFF_SCRIPT_FILE);
@@ -68,7 +78,7 @@ public class MoFFStep extends ProcessingStep {
                 .startProcess(MOFF_SCRIPT_FILE, constructArguments, callbackNotifier, errorKeyWords);
         return true;
     }
-    
+
     private List<String> constructArguments(File MOFF_SCRIPT_FILE) throws IOException, XMLStreamException, URISyntaxException {
         if (!MOFF_SCRIPT_FILE.exists()) {
             MoffInstaller.installMoff();
@@ -82,10 +92,10 @@ public class MoFFStep extends ProcessingStep {
         }
         return cmdArgs;
     }
-    
+
     @Override
     public String getDescription() {
         return "Running MoFF (" + mode + ")";
     }
-    
+
 }
