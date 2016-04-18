@@ -37,9 +37,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 
 /**
  * The GUI main controller.
@@ -113,18 +111,8 @@ public class MainController {
         //set PeptideShaker directory
         mainFrame.getPeptideShakerDirectoryTextField().setText(ConfigHolder.getInstance().getString("peptide_shaker.directory"));
 
-        //add log text area appender
-        LogTextAreaAppender logTextAreaAppender = new LogTextAreaAppender();
-        logTextAreaAppender.setThreshold(Level.INFO);
-        logTextAreaAppender.setImmediateFlush(true);
-        PatternLayout layout = new org.apache.log4j.PatternLayout();
-        layout.setConversionPattern("%d{yyyy-MM-dd HH:mm:ss} - %m%n");
-        logTextAreaAppender.setLayout(layout);
-
-        //LOGGER.addAppender(logTextAreaAppender);$
-        Logger.getRootLogger().addAppender(logTextAreaAppender);
-        LOGGER.setLevel((Level) Level.INFO);
-
+        //get the gui appender for setting the log text area
+        LogTextAreaAppender logTextAreaAppender = (LogTextAreaAppender) Logger.getRootLogger().getAppender("gui");
         logTextAreaAppender.setLogTextArea(mainFrame.getLogTextArea());
 
         mainFrame.getLogTextArea().setText("..." + System.lineSeparator());
