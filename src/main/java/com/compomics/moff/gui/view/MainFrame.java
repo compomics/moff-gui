@@ -28,6 +28,10 @@ public class MainFrame extends javax.swing.JFrame {
      */
     private final JFileChooser outputDirectoryChooser = new JFileChooser();
     /**
+     * PeptideShaker directory chooser.
+     */
+    private final JFileChooser peptideShakerDirectoryChooser = new JFileChooser();
+    /**
      * RAW file chooser.
      */
     private final JFileChooser rawFileChooser = new JFileChooser();
@@ -175,6 +179,18 @@ public class MainFrame extends javax.swing.JFrame {
         return fastaAndMgfFileChooser;
     }
 
+    public JButton getPeptideShakerDirectoryChooseButton() {
+        return peptideShakerDirectoryChooseButton;
+    }
+
+    public JTextField getPeptideShakerDirectoryTextField() {
+        return peptideShakerDirectoryTextField;
+    }
+
+    public JFileChooser getPeptideShakerDirectoryChooser() {
+        return peptideShakerDirectoryChooser;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -198,6 +214,8 @@ public class MainFrame extends javax.swing.JFrame {
         outputDirectoryLabel = new javax.swing.JLabel();
         outputDirectoryTextField = new javax.swing.JTextField();
         outputDirectoryChooseButton = new javax.swing.JButton();
+        peptideShakerDirectoryTextField = new javax.swing.JTextField();
+        peptideShakerDirectoryChooseButton = new javax.swing.JButton();
         secondPanel = new javax.swing.JPanel();
         fileLinkerTreeScrollPane = new javax.swing.JScrollPane();
         fileLinkerTree = new javax.swing.JTree();
@@ -268,30 +286,54 @@ public class MainFrame extends javax.swing.JFrame {
         outputDirectoryChooseButton.setMinimumSize(new java.awt.Dimension(80, 25));
         outputDirectoryChooseButton.setPreferredSize(new java.awt.Dimension(80, 25));
 
+        peptideShakerDirectoryTextField.setEnabled(false);
+
+        peptideShakerDirectoryChooseButton.setText("choose");
+        peptideShakerDirectoryChooseButton.setToolTipText("Choose the PeptideShaker directory location\n");
+        peptideShakerDirectoryChooseButton.setMaximumSize(new java.awt.Dimension(80, 25));
+        peptideShakerDirectoryChooseButton.setMinimumSize(new java.awt.Dimension(80, 25));
+        peptideShakerDirectoryChooseButton.setPreferredSize(new java.awt.Dimension(80, 25));
+
         javax.swing.GroupLayout firstPanelLayout = new javax.swing.GroupLayout(firstPanel);
         firstPanel.setLayout(firstPanelLayout);
         firstPanelLayout.setHorizontalGroup(
             firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(firstPanelLayout.createSequentialGroup()
-                .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(identificationDataTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
-                    .addComponent(peptideShakerRadioButton)
-                    .addComponent(tabSeparatedRadioButton)
-                    .addComponent(moffModeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(apexModeRadioButton)
-                    .addComponent(matchingBetweenRunsRadioButton)
-                    .addComponent(outputDirectoryLabel)
-                    .addComponent(outputDirectoryTextField))
+                .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(firstPanelLayout.createSequentialGroup()
+                        .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(identificationDataTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)
+                            .addComponent(moffModeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(86, 86, 86))
+                    .addGroup(firstPanelLayout.createSequentialGroup()
+                        .addComponent(peptideShakerRadioButton)
+                        .addGap(132, 132, 132)
+                        .addComponent(peptideShakerDirectoryTextField))
+                    .addGroup(firstPanelLayout.createSequentialGroup()
+                        .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tabSeparatedRadioButton)
+                            .addComponent(apexModeRadioButton)
+                            .addComponent(matchingBetweenRunsRadioButton))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(firstPanelLayout.createSequentialGroup()
+                        .addComponent(outputDirectoryLabel)
+                        .addGap(70, 70, 70)
+                        .addComponent(outputDirectoryTextField)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(outputDirectoryChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 309, Short.MAX_VALUE))
+                .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(peptideShakerDirectoryChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(outputDirectoryChooseButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         firstPanelLayout.setVerticalGroup(
             firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(firstPanelLayout.createSequentialGroup()
                 .addComponent(identificationDataTypeLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(peptideShakerRadioButton)
+                .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(peptideShakerRadioButton)
+                    .addComponent(peptideShakerDirectoryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(peptideShakerDirectoryChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tabSeparatedRadioButton)
                 .addGap(18, 18, 18)
@@ -301,12 +343,11 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(matchingBetweenRunsRadioButton)
                 .addGap(18, 18, 18)
-                .addComponent(outputDirectoryLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(outputDirectoryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(outputDirectoryChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 67, Short.MAX_VALUE))
+                    .addComponent(outputDirectoryLabel)
+                    .addComponent(outputDirectoryChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(outputDirectoryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 85, Short.MAX_VALUE))
         );
 
         topPanel.add(firstPanel, "firstPanel");
@@ -669,6 +710,8 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel parentPanel;
     private javax.swing.JLabel peakRetentionTimeWindowLabel;
     private javax.swing.JTextField peakRetentionTimeWindowTextField;
+    private javax.swing.JButton peptideShakerDirectoryChooseButton;
+    private javax.swing.JTextField peptideShakerDirectoryTextField;
     private javax.swing.JRadioButton peptideShakerRadioButton;
     private javax.swing.JLabel precursorMassToleranceLabel;
     private javax.swing.JTextField precursorMassToleranceTextField;

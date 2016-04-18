@@ -1,4 +1,4 @@
-package com.compomics.moff.gui.view.config;
+package com.compomics.moff.gui.config;
 
 import java.io.File;
 import org.springframework.core.io.ClassPathResource;

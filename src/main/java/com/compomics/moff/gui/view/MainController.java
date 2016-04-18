@@ -7,7 +7,7 @@ package com.compomics.moff.gui.view;
 
 import com.compomics.moff.gui.control.step.MoFFPeptideShakerConversionStep;
 import com.compomics.moff.gui.control.step.MoFFStep;
-import com.compomics.moff.gui.view.config.ConfigHolder;
+import com.compomics.moff.gui.config.ConfigHolder;
 import com.compomics.moff.gui.view.filter.CpsFileFilter;
 import com.compomics.moff.gui.view.filter.FastaAndMgfFileFilter;
 import com.compomics.moff.gui.view.filter.RawFileFilter;
@@ -67,6 +67,10 @@ public class MainController {
     private final DefaultTreeModel fileLinkerTreeModel = new DefaultTreeModel(fileLinkerRootNode);
     private MoffRunSwingWorker moffRunSwingWorker;
     /**
+     * The PeptideShaker directory.
+     */
+    private File peptideShakerDirectory;
+    /**
      * The moFF output directory.
      */
     private File outPutDirectory;
@@ -81,6 +85,7 @@ public class MainController {
     public void init() {
         //select directories only
         mainFrame.getOutputDirectoryChooser().setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        mainFrame.getPeptideShakerDirectoryChooser().setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         //select only files
         mainFrame.getRawFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -88,6 +93,8 @@ public class MainController {
         mainFrame.getTsvFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
         mainFrame.getFastaAndMgfFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
         //disable multiple file selection
+        mainFrame.getOutputDirectoryChooser().setMultiSelectionEnabled(false);
+        mainFrame.getPeptideShakerDirectoryChooser().setMultiSelectionEnabled(false);
         mainFrame.getRawFileChooser().setMultiSelectionEnabled(false);
         mainFrame.getCpsFileChooser().setMultiSelectionEnabled(false);
         mainFrame.getTsvFileChooser().setMultiSelectionEnabled(false);
@@ -103,6 +110,9 @@ public class MainController {
         mainFrame.getFileLinkerTree().setModel(fileLinkerTreeModel);
 
         mainFrame.setTitle("moFF GUI " + ConfigHolder.getInstance().getString("moff_gui.version", "N/A"));
+
+        //set PeptideShaker directory
+        mainFrame.getPeptideShakerDirectoryTextField().setText(ConfigHolder.getInstance().getString("peptide_shaker.directory"));
 
         //add log text area appender
         LogTextAreaAppender logTextAreaAppender = new LogTextAreaAppender();
@@ -128,6 +138,15 @@ public class MainController {
         updateInfo("Click on \"proceed\" to link the RAW and identification files.");
 
         //add action listeners
+        mainFrame.getPeptideShakerDirectoryChooseButton().addActionListener(e -> {
+            int returnVal = mainFrame.getPeptideShakerDirectoryChooser().showOpenDialog(mainFrame);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                peptideShakerDirectory = mainFrame.getPeptideShakerDirectoryChooser().getSelectedFile();
+
+                mainFrame.getPeptideShakerDirectoryTextField().setText(peptideShakerDirectory.getAbsolutePath());
+            }
+        });
+
         mainFrame.getOutputDirectoryChooseButton().addActionListener(e -> {
             int returnVal = mainFrame.getOutputDirectoryChooser().showOpenDialog(mainFrame);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -373,43 +392,64 @@ public class MainController {
     }
 
     /**
-     * This method takes a file a writes the file links to it. The format is
-     * 'RAW_file_path'-TAB-'identification_file_path'.
+     * Get the file link map in case of tab-separated identification files (key:
+     * RAW file absolute path; value: tab-separated file absolute path).
      *
-     * @param fileLinksFile the file where the file links will be written to
+     * @return the link map
      */
-    private void writeFileLinksToFile(File fileLinksFile) throws IOException {
-        try (BufferedWriter writer = Files.newBufferedWriter(fileLinksFile.toPath())) {
-            //iterate over the nodes
-            Enumeration children = fileLinkerRootNode.children();
-            while (children.hasMoreElements()) {
-                DefaultMutableTreeNode rawFileNode = (DefaultMutableTreeNode) children.nextElement();
-                //write to the file
-                writer.write(((File) rawFileNode.getUserObject()).getAbsolutePath()
-                        + LINK_SEPARATOR
-                        + ((File) ((DefaultMutableTreeNode) rawFileNode.getChildAt(0)).getUserObject()).getAbsolutePath());
-                if (children.hasMoreElements()) {
-                    writer.newLine();
-                }
-            }
-        }
-    }
+    private Map<String, String> getRawTabSeparatedLinks() {
+        Map<String, String> links = new HashMap<>();
 
-    /**
-     * This method gets the mapping between peptideshaker output and raw
-     *
-     * @param fileLinksFile the file where the file links will be written to
-     */
-    private HashMap<File, File> getRAWFileMapping() {
-        HashMap<File, File> rawFileMapping = new HashMap<>();
         //iterate over the nodes
         Enumeration children = fileLinkerRootNode.children();
         while (children.hasMoreElements()) {
             DefaultMutableTreeNode rawFileNode = (DefaultMutableTreeNode) children.nextElement();
-            //write to the file
-            rawFileMapping.put((File) rawFileNode.getUserObject(), (File) ((DefaultMutableTreeNode) rawFileNode.getChildAt(0)).getUserObject());
+            File rawFile = ((File) ((DefaultMutableTreeNode) rawFileNode).getUserObject());
+            File tsvFile = ((File) ((DefaultMutableTreeNode) rawFileNode.getChildAt(0)).getUserObject());
+            links.put(rawFile.getAbsolutePath(), tsvFile.getAbsolutePath());
         }
-        return rawFileMapping;
+
+        return links;
+    }
+
+    /**
+     * Get the file link map in case of PeptideShaker identification files (key:
+     * RAW file absolute path; value: an array with 3 PeptideShaker related
+     * files (first element: the PeptideShaker .cpsx file; second element: the
+     * FASTA file; third element: the MGF file)).
+     *
+     * @return the link map
+     */
+    private Map<String, File[]> getRawPeptideShakerLinks() {
+        Map<String, File[]> links = new HashMap<>();
+
+        //iterate over the nodes
+        Enumeration children = fileLinkerRootNode.children();
+        while (children.hasMoreElements()) {
+            DefaultMutableTreeNode rawFileNode = (DefaultMutableTreeNode) children.nextElement();
+            File rawFile = ((File) ((DefaultMutableTreeNode) rawFileNode).getUserObject());
+
+            DefaultMutableTreeNode peptideShakerNode = (DefaultMutableTreeNode) rawFileNode.getChildAt(0);
+            File peptideShakerFile = ((File) (peptideShakerNode).getUserObject());
+            File[] peptideShakerFiles = new File[3];
+            peptideShakerFiles[0] = peptideShakerFile;
+
+            //add FASTA and MGF files
+            Enumeration peptideShakerChildren = peptideShakerNode.children();
+            while (peptideShakerChildren.hasMoreElements()) {
+                DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) peptideShakerChildren.nextElement();
+                File fastaOrMgfFile = ((File) (childNode).getUserObject());
+                if (FilenameUtils.getExtension(fastaOrMgfFile.getName()).equals("fasta")) {
+                    peptideShakerFiles[1] = fastaOrMgfFile;
+                } else {
+                    peptideShakerFiles[2] = fastaOrMgfFile;
+                }
+            }
+
+            links.put(rawFile.getAbsolutePath(), peptideShakerFiles);
+        }
+
+        return links;
     }
 
     /**
@@ -500,6 +540,15 @@ public class MainController {
         //check if an output directory has been chosen
         if (mainFrame.getOutputDirectoryTextField().getText().isEmpty()) {
             validationMessages.add("Please choose an output directory.");
+        }
+        if (mainFrame.getPeptideShakerRadioButton().isSelected() && !mainFrame.getPeptideShakerDirectoryTextField().getText().isEmpty()) {
+            //check if the PeptideShaker directory exists
+            File peptideShakerDirectory = new File(mainFrame.getPeptideShakerDirectoryTextField().getText());
+            if (!peptideShakerDirectory.exists()) {
+                validationMessages.add("The specified PeptideShaker directory location doesn't exist.");
+            }
+        } else {
+            validationMessages.add("Please provide the PeptideShaker directory location.");
         }
 
         return validationMessages;
@@ -742,16 +791,14 @@ public class MainController {
                 moffParameters = getMBRParametersFromGUI();
             }
 
-            //get the fasta file and the MGF file mapping?
-            File fastaFile = getFastaFile();
-            HashMap<File, File> mgfFileMapping = getMgfFileMapping();
-
             //converting the peptideshaker input files where necessary to the MoFF format
-            HashMap<File, File> rawFilePeptideShakerMapping = getRAWFileMapping();
-            for (Map.Entry<File, File> moffEntry : rawFilePeptideShakerMapping.entrySet()) {
-                File peptideShakerInputFile = moffEntry.getKey();
+            Map<String, File[]> rawFilePeptideShakerMapping = getRawPeptideShakerLinks();
+            for (Map.Entry<String, File[]> moffEntry : rawFilePeptideShakerMapping.entrySet()) {
+                File peptideShakerInputFile = moffEntry.getValue()[0];
+                File fastaFile = moffEntry.getValue()[1];
+                File mgfFile = moffEntry.getValue()[2];
+
                 HashMap<String, String> parameters = new HashMap<>();
-                File mgfFile = mgfFileMapping.get(peptideShakerInputFile);
                 parameters.put("ps_output", peptideShakerInputFile.getAbsolutePath());
                 if (peptideShakerInputFile.getName().toUpperCase().endsWith(".cpsx")) {
                     parameters.put("mgf", mgfFile.getAbsolutePath());
@@ -761,7 +808,7 @@ public class MainController {
                 conversion.setParameters(parameters);
                 conversion.doAction();
                 //make the new mapping with the converted files
-                cpsToMoffMapping.put(conversion.getMoffFile(), moffEntry.getValue());
+                cpsToMoffMapping.put(conversion.getMoffFile(), moffEntry.getValue()[0]);
             }
             //write the cpsToMoffMapping to a File?
             File tempMappingFile = writeToTempFile(cpsToMoffMapping);
@@ -825,7 +872,6 @@ public class MainController {
             parameters.put("--tol", mainFrame.getPrecursorMassToleranceTextField().getText());    //                     specify the tollerance parameter in ppm
             parameters.put("--rt_w", mainFrame.getXicRetentionTimeWindowTextField().getText());    //                    specify rt window for xic (minute). Default value is 3 min
             parameters.put("--rt_p", mainFrame.getPeakRetentionTimeWindowTextField().getText());    //                  specify the time windows for the peak ( minute). Default value is 0.1
-            parameters.put("--rt_p_match", mainFrame.getMatchedPeaksRetentionTimeWindowTextField().getText());    //      specify the time windows for the matched peptide peak ( minute). Default value is 0.4
             parameters.put("--output_folder", mainFrame.getOutputDirectoryChooser().getSelectedFile().getAbsolutePath());    //             specify the folder output
             return parameters;
         }
@@ -853,28 +899,5 @@ public class MainController {
             parameters.put("--output_folder", mainFrame.getOutputDirectoryChooser().getSelectedFile().getAbsolutePath());    // LOC_OUT         specify the folder output (mandatory)
             return parameters;
         }
-
-        /**
-         * This method gets the FASTA file (should be the same for all files,
-         * otherwise there's no point in comparing?")
-         *
-         * @return the used fasta file
-         */
-        private File getFastaFile() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        /**
-         * This method gets a mapping of PeptideShaker output files that need to
-         * be processed to their MGF file, only in the case of CPSX files
-         *
-         * @return the mapping of PeptideShaker output files to their MGF file
-         * (CPSX ONLY)
-         */
-        private HashMap<File, File> getMgfFileMapping() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
     }
-
 }
