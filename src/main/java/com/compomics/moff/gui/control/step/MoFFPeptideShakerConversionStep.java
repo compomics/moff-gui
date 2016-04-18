@@ -7,6 +7,7 @@ import com.compomics.pladipus.core.model.feedback.Checkpoint;
 import com.compomics.pladipus.search.checkpoints.PeptideShakerReportCheckPoints;
 import com.compomics.pladipus.search.processsteps.PeptideShakerStep;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class MoFFPeptideShakerConversionStep extends PeptideShakerStep {
             File inputFolder = inputFile.getParentFile();
             dataFolder = new File(inputFolder, "data");
             deleteDataFolder = !dataFolder.exists();
-            if (inputFile.getName().toUpperCase().endsWith(".cpsx")) {
+            if (inputFile.getName().toUpperCase().endsWith(".CPSX")) {
                 //check if the fasta and MGF are present...if not, get them from the parameters and copy them over to the temp folder?
                 dataFolder.mkdirs();
                 //first check if the mgf and fasta are specified in parameters AND if they exist?
@@ -110,11 +111,15 @@ public class MoFFPeptideShakerConversionStep extends PeptideShakerStep {
         }
         new ProcessingEngine().startProcess(peptideShakerJar, cmdArgs, callbackNotifier);
         //get the resulting file and clean up
-        File temp = tempFolder.listFiles()[0];
-        reportFile = new File(inputFile.getAbsolutePath() + ".report.tsv");
-        temp.renameTo(reportFile);
-        FileUtils.deleteDirectory(temp);
-        return reportFile;
+        File[] listFiles = tempFolder.listFiles();
+        if (listFiles.length == 0) {
+            throw new FileNotFoundException("Result file was not created.");
+        } else {
+            File temp = listFiles[0];
+            reportFile = new File(inputFile.getAbsolutePath() + ".report.tsv");
+            temp.renameTo(reportFile);
+            return reportFile;
+        }
     }
 
     @Override
@@ -122,7 +127,7 @@ public class MoFFPeptideShakerConversionStep extends PeptideShakerStep {
         inputFile = new File(parameters.get("ps_output"));
         File reportFile = prepareReportFile(inputFile);
         moffFile = new File(reportFile.getAbsolutePath() + ".moff.tsv");
-        PSOutputParser.convertReport(inputFile, moffFile);
+        PSOutputParser.convertReport(reportFile, moffFile);
         clearDataFolder();
         return true;
     }

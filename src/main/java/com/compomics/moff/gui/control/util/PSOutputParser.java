@@ -16,6 +16,7 @@ import java.io.IOException;
  */
 public class PSOutputParser {
 
+    private static final int LINE = 0;
     private static final int PROTEINS = 1;
     private static final int SEQUENCE = 2;
     private static final int VAR_MODS = 3;
@@ -74,11 +75,16 @@ public class PSOutputParser {
             writer.append(P_HEADER).append(System.lineSeparator());
             //content
             while ((line = reader.readLine()) != null) {
-                String[] split = line.split("\t");
-                //filter out shared peptides and decoys
-                if (!split[PROTEINS].contains(",") && split[DECOY].equals("0")) {
-                    //write the requested line to file
-                    writer.append(line.substring(line.indexOf("\t") + 1)).append(System.lineSeparator()).flush();
+                System.out.println(line);
+                if (!line.isEmpty()) {
+                    String[] split = line.split("\t");
+                    if (split.length > 1) {
+                        //filter out shared peptides and decoys
+                        if (!split[PROTEINS].contains(",") && split[DECOY].equals("0")) {
+                            //write the requested line to file
+                            writer.append(line.substring(line.indexOf("\t") + 1)).append(System.lineSeparator()).flush();
+                        }
+                    }
                 }
             }
             writer.flush();

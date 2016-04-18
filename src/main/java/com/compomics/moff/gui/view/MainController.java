@@ -122,7 +122,8 @@ public class MainController {
         layout.setConversionPattern("%d{yyyy-MM-dd HH:mm:ss} - %m%n");
         logTextAreaAppender.setLayout(layout);
 
-        LOGGER.addAppender(logTextAreaAppender);
+        //LOGGER.addAppender(logTextAreaAppender);$
+        Logger.getRootLogger().addAppender(logTextAreaAppender);
         LOGGER.setLevel((Level) Level.INFO);
 
         logTextAreaAppender.setLogTextArea(mainFrame.getLogTextArea());
@@ -420,8 +421,8 @@ public class MainController {
      *
      * @return the link map
      */
-    private Map<String, File[]> getRawPeptideShakerLinks() {
-        Map<String, File[]> links = new HashMap<>();
+    private Map<File, File[]> getRawPeptideShakerLinks() {
+        Map<File, File[]> links = new HashMap<>();
 
         //iterate over the nodes
         Enumeration children = fileLinkerRootNode.children();
@@ -446,7 +447,7 @@ public class MainController {
                 }
             }
 
-            links.put(rawFile.getAbsolutePath(), peptideShakerFiles);
+            links.put(rawFile, peptideShakerFiles);
         }
 
         return links;
@@ -787,20 +788,23 @@ public class MainController {
             HashMap<String, String> moffParameters;
             if (mainFrame.getApexModeRadioButton().isSelected()) {
                 moffParameters = getApexParametersFromGUI();
+                moffParameters.put("mode","APEX");
             } else {
                 moffParameters = getMBRParametersFromGUI();
+                  moffParameters.put("mode","MBR");
             }
 
             //converting the peptideshaker input files where necessary to the MoFF format
-            Map<String, File[]> rawFilePeptideShakerMapping = getRawPeptideShakerLinks();
-            for (Map.Entry<String, File[]> moffEntry : rawFilePeptideShakerMapping.entrySet()) {
+            Map<File, File[]> rawFilePeptideShakerMapping = getRawPeptideShakerLinks();
+            for (Map.Entry<File, File[]> moffEntry : rawFilePeptideShakerMapping.entrySet()) {
                 File peptideShakerInputFile = moffEntry.getValue()[0];
                 File fastaFile = moffEntry.getValue()[1];
                 File mgfFile = moffEntry.getValue()[2];
 
                 HashMap<String, String> parameters = new HashMap<>();
+                parameters.put("ps_folder", peptideShakerDirectory.getAbsolutePath());
                 parameters.put("ps_output", peptideShakerInputFile.getAbsolutePath());
-                if (peptideShakerInputFile.getName().toUpperCase().endsWith(".cpsx")) {
+                if (peptideShakerInputFile.getName().toUpperCase().endsWith(".CPSX")) {
                     parameters.put("mgf", mgfFile.getAbsolutePath());
                     parameters.put("fasta", fastaFile.getAbsolutePath());
                 }
@@ -808,13 +812,14 @@ public class MainController {
                 conversion.setParameters(parameters);
                 conversion.doAction();
                 //make the new mapping with the converted files
-                cpsToMoffMapping.put(conversion.getMoffFile(), moffEntry.getValue()[0]);
+                //key = raw file, value = tsv
+                cpsToMoffMapping.put(moffEntry.getKey(), conversion.getMoffFile());
             }
             //write the cpsToMoffMapping to a File?
             File tempMappingFile = writeToTempFile(cpsToMoffMapping);
             moffParameters.put("--map_file", tempMappingFile.getAbsolutePath());
 
-            if (!mainFrame.getApexModeRadioButton().isSelected()) {
+            if (mainFrame.getApexModeRadioButton().isSelected()) {
                 moffParameters.put("mode", "APEX");
             } else {
                 moffParameters.put("mode", "MBR");
@@ -831,7 +836,7 @@ public class MainController {
             File tempFile = new File(outPutDirectory, "mapping.tsv");
             if (tempFile.exists()) {
                 //@ToDo how to handle this properly?
-                throw new IOException(tempFile.getAbsolutePath() + " already exists.");
+                LOGGER.warn("Mapping file already exists, overriding...");
             }
             try (FileWriter writer = new FileWriter(tempFile)) {
                 for (Map.Entry<File, File> aPeptideShakerFile : fileMapping.entrySet()) {

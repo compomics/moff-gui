@@ -35,7 +35,7 @@ public class MoFFStep extends ProcessingStep {
     /**
      * The moff mbr script file
      */
-    private static final File MOFF_MBR_SCRIPT_FILE = new File(MoffInstaller.getMoFFFolder(), "moff_all.pyy");
+    private static final File MOFF_MBR_SCRIPT_FILE = new File(MoffInstaller.getMoFFFolder(), "moff_all.py");
     /**
      * The mode in which this step will run (APEX or MBR)
      */
@@ -49,12 +49,13 @@ public class MoFFStep extends ProcessingStep {
     public boolean doAction() throws Exception {
         //Determine the script that needs to be used
         File MOFF_SCRIPT_FILE;
-        mode = parameters.getOrDefault("mode", "APEX");
+        mode = parameters.getOrDefault("mode", mode);
         if (mode.equalsIgnoreCase("APEX")) {
             MOFF_SCRIPT_FILE = MOFF_APEX_SCRIPT_FILE;
         } else {
             MOFF_SCRIPT_FILE = MOFF_MBR_SCRIPT_FILE;
         }
+
         LOGGER.info("Running MoFF in " + mode.toUpperCase() + " mode.");
         //check the installation
         if (!MOFF_SCRIPT_FILE.exists()) {
@@ -62,7 +63,7 @@ public class MoFFStep extends ProcessingStep {
             MoffInstaller.installMoff();
             //check if the installation was correct
             if (!MOFF_SCRIPT_FILE.exists()) {
-                throw new FileNotFoundException("MoFF installation could not be found! Please check user privileges and try again.");
+                throw new FileNotFoundException(MOFF_SCRIPT_FILE.getAbsolutePath() + " could not be found! Please check user privileges and try again.");
             }
         }
         tempResources = new File(MoffInstaller.getMoFFFolder(), "temp");
@@ -87,8 +88,10 @@ public class MoFFStep extends ProcessingStep {
         cmdArgs.add("python");
         cmdArgs.add(MOFF_SCRIPT_FILE.getAbsolutePath());
         for (Entry<String, String> aParameter : parameters.entrySet()) {
-            cmdArgs.add(aParameter.getKey());
-            cmdArgs.add(aParameter.getValue());
+            if (!aParameter.getKey().equalsIgnoreCase("mode")) {
+                cmdArgs.add(aParameter.getKey());
+                cmdArgs.add(aParameter.getValue());
+            }
         }
         return cmdArgs;
     }
