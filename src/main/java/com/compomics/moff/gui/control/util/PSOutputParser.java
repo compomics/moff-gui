@@ -75,7 +75,7 @@ public class PSOutputParser {
             writer.append(P_HEADER).append(System.lineSeparator());
             //content
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+                //System.out.println(line);
                 if (!line.isEmpty()) {
                     String[] split = line.split("\t");
                     if (split.length > 1) {

@@ -47,6 +47,8 @@ public class MoFFStep extends ProcessingStep {
 
     @Override
     public boolean doAction() throws Exception {
+        //start logging
+        File logFolder = new File(parameters.get("--output_folder"));
         //Determine the script that needs to be used
         File MOFF_SCRIPT_FILE;
         mode = parameters.getOrDefault("mode", mode);
@@ -71,6 +73,7 @@ public class MoFFStep extends ProcessingStep {
         //convert the arguments
         List<String> constructArguments = constructArguments(MOFF_SCRIPT_FILE);
         //run the scripts
+
         CallbackNotifier callbackNotifier = getCallbackNotifier();
         //add custom error words in case something goes wrong, make sure the processing engine can discover it
         List<String> errorKeyWords = new ArrayList<>();

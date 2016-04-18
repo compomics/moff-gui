@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import javax.xml.stream.XMLStreamException;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -51,6 +52,10 @@ public class MoFFPeptideShakerConversionStep extends PeptideShakerStep {
      * boolean indicating if the temp mgf can be deleted
      */
     private boolean deleteTempMGF;
+    /**
+     * Logging instance
+     */
+    private static final Logger LOGGER = Logger.getLogger(MoFFPeptideShakerConversionStep.class);
 
     public MoFFPeptideShakerConversionStep() {
 
@@ -129,6 +134,7 @@ public class MoFFPeptideShakerConversionStep extends PeptideShakerStep {
         moffFile = new File(reportFile.getAbsolutePath() + ".moff.tsv");
         PSOutputParser.convertReport(reportFile, moffFile);
         clearDataFolder();
+        LOGGER.info("Conversion completed");
         return true;
     }
 

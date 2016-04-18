@@ -8,6 +8,7 @@ package com.compomics.moff.gui.view;
 import com.compomics.moff.gui.control.step.MoFFPeptideShakerConversionStep;
 import com.compomics.moff.gui.control.step.MoFFStep;
 import com.compomics.moff.gui.config.ConfigHolder;
+import com.compomics.moff.gui.control.util.FileChangeScanner;
 import com.compomics.moff.gui.view.filter.CpsFileFilter;
 import com.compomics.moff.gui.view.filter.FastaAndMgfFileFilter;
 import com.compomics.moff.gui.view.filter.RawFileFilter;
@@ -16,11 +17,9 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -788,10 +787,10 @@ public class MainController {
             HashMap<String, String> moffParameters;
             if (mainFrame.getApexModeRadioButton().isSelected()) {
                 moffParameters = getApexParametersFromGUI();
-                moffParameters.put("mode","APEX");
+                moffParameters.put("mode", "APEX");
             } else {
                 moffParameters = getMBRParametersFromGUI();
-                  moffParameters.put("mode","MBR");
+                moffParameters.put("mode", "MBR");
             }
 
             //converting the peptideshaker input files where necessary to the MoFF format
@@ -824,10 +823,15 @@ public class MainController {
             } else {
                 moffParameters.put("mode", "MBR");
             }
+            //prepare to capture the logging
+            //@ToDo in apex it's outputdir, in mbr it can be the file specified?
+            FileChangeScanner fcs = new FileChangeScanner(outPutDirectory);
+            new Thread(fcs).start();
             //execute MoFF itself
-            MoFFStep moffStep = new MoFFStep();
+                        MoFFStep moffStep = new MoFFStep();
             moffStep.setParameters(moffParameters);
             moffStep.doAction();
+            fcs.stop();
             System.out.println("finish ----------------------");
             return null;
         }
