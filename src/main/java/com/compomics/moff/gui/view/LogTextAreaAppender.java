@@ -17,6 +17,12 @@ public class LogTextAreaAppender extends WriterAppender {
      */
     private JTextArea logTextArea;
 
+    /**
+     * No-arg constructor.
+     */
+    public LogTextAreaAppender() {
+    }
+
     public void setLogTextArea(JTextArea logTextArea) {
         this.logTextArea = logTextArea;
     }

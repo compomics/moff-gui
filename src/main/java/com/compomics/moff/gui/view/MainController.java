@@ -16,11 +16,9 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -38,9 +36,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 
 /**
  * The GUI main controller.
@@ -114,18 +110,8 @@ public class MainController {
         //set PeptideShaker directory
         mainFrame.getPeptideShakerDirectoryTextField().setText(ConfigHolder.getInstance().getString("peptide_shaker.directory"));
 
-        //add log text area appender
-        LogTextAreaAppender logTextAreaAppender = new LogTextAreaAppender();
-        logTextAreaAppender.setThreshold(Level.INFO);
-        logTextAreaAppender.setImmediateFlush(true);
-        PatternLayout layout = new org.apache.log4j.PatternLayout();
-        layout.setConversionPattern("%d{yyyy-MM-dd HH:mm:ss} - %m%n");
-        logTextAreaAppender.setLayout(layout);
-
-        //LOGGER.addAppender(logTextAreaAppender);$
-        Logger.getRootLogger().addAppender(logTextAreaAppender);
-        LOGGER.setLevel((Level) Level.INFO);
-
+        //get the gui appender for setting the log text area
+        LogTextAreaAppender logTextAreaAppender = (LogTextAreaAppender) Logger.getRootLogger().getAppender("gui");
         logTextAreaAppender.setLogTextArea(mainFrame.getLogTextArea());
 
         mainFrame.getLogTextArea().setText("..." + System.lineSeparator());
@@ -788,10 +774,10 @@ public class MainController {
             HashMap<String, String> moffParameters;
             if (mainFrame.getApexModeRadioButton().isSelected()) {
                 moffParameters = getApexParametersFromGUI();
-                moffParameters.put("mode","APEX");
+                moffParameters.put("mode", "APEX");
             } else {
                 moffParameters = getMBRParametersFromGUI();
-                  moffParameters.put("mode","MBR");
+                moffParameters.put("mode", "MBR");
             }
 
             //converting the peptideshaker input files where necessary to the MoFF format
