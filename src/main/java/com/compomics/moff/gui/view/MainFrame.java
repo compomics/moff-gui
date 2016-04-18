@@ -39,6 +39,10 @@ public class MainFrame extends javax.swing.JFrame {
      * Tab separated file chooser.
      */
     private final JFileChooser tsvFileChooser = new JFileChooser();
+    /**
+     * FASTA and MGF file chooser.
+     */
+    private final JFileChooser fastaAndMgfFileChooser = new JFileChooser();
 
     /**
      * No-arg constructor.
@@ -165,6 +169,10 @@ public class MainFrame extends javax.swing.JFrame {
 
     public JFileChooser getOutputDirectoryChooser() {
         return outputDirectoryChooser;
+    }
+
+    public JFileChooser getFastaAndMgfFileChooser() {
+        return fastaAndMgfFileChooser;
     }
 
     /**
@@ -322,7 +330,7 @@ public class MainFrame extends javax.swing.JFrame {
         fileLinkerTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         fileLinkerTreeScrollPane.setViewportView(fileLinkerTree);
 
-        fileLinkerTreeInfoLabel.setText("Link the RAW file(s) with the corresponding identification file(s): ");
+        fileLinkerTreeInfoLabel.setText("<html>Link the RAW file(s) to the corresponding identification file(s). Each RAW file has to be linked to one<br>PeptideShaker file (*.cpsx) or a tab separated file (*.tab, *.tsv).<br>For a PeptideShaker file, the used FASTA (*.fasta) and MGF (.mgf) files have to be specified as well.</html> ");
 
         deleteFileButton.setText("delete");
         deleteFileButton.setToolTipText("Select one or more RAW and/or identification files to delete");
@@ -331,7 +339,7 @@ public class MainFrame extends javax.swing.JFrame {
         deleteFileButton.setPreferredSize(new java.awt.Dimension(80, 25));
 
         addFileButton.setText("add");
-        addFileButton.setToolTipText("Select the root node or nothing for adding a RAW file.\nSelect an exisiting RAW file for adding an identification file.");
+        addFileButton.setToolTipText("<html>Select the root node or nothing for adding a RAW file.<br>\nSelect an exisiting RAW file for adding an identification file.<br>\nSelect a PeptideShaker cpsx file for adding a FASTA and MGF file.</html>");
         addFileButton.setMaximumSize(new java.awt.Dimension(80, 25));
         addFileButton.setMinimumSize(new java.awt.Dimension(80, 25));
         addFileButton.setPreferredSize(new java.awt.Dimension(80, 25));
@@ -342,26 +350,24 @@ public class MainFrame extends javax.swing.JFrame {
             secondPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(secondPanelLayout.createSequentialGroup()
                 .addGroup(secondPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(secondPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(fileLinkerTreeScrollPane))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, secondPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 586, Short.MAX_VALUE)
                         .addComponent(addFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deleteFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(deleteFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(secondPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(secondPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fileLinkerTreeScrollPane)
+                            .addComponent(fileLinkerTreeInfoLabel))))
                 .addContainerGap())
-            .addGroup(secondPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(fileLinkerTreeInfoLabel)
-                .addContainerGap(352, Short.MAX_VALUE))
         );
         secondPanelLayout.setVerticalGroup(
             secondPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, secondPanelLayout.createSequentialGroup()
-                .addComponent(fileLinkerTreeInfoLabel)
+                .addComponent(fileLinkerTreeInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(fileLinkerTreeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
+                .addComponent(fileLinkerTreeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(secondPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(deleteFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)

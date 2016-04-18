@@ -9,6 +9,7 @@ import com.compomics.moff.gui.control.step.MoFFPeptideShakerConversionStep;
 import com.compomics.moff.gui.control.step.MoFFStep;
 import com.compomics.moff.gui.view.config.ConfigHolder;
 import com.compomics.moff.gui.view.filter.CpsFileFilter;
+import com.compomics.moff.gui.view.filter.FastaAndMgfFileFilter;
 import com.compomics.moff.gui.view.filter.RawFileFilter;
 import com.compomics.moff.gui.view.filter.TabSeparatedFileFilter;
 import java.awt.CardLayout;
@@ -36,6 +37,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -84,14 +86,17 @@ public class MainController {
         mainFrame.getRawFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
         mainFrame.getCpsFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
         mainFrame.getTsvFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
+        mainFrame.getFastaAndMgfFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
         //disable multiple file selection
         mainFrame.getRawFileChooser().setMultiSelectionEnabled(false);
         mainFrame.getCpsFileChooser().setMultiSelectionEnabled(false);
         mainFrame.getTsvFileChooser().setMultiSelectionEnabled(false);
+        mainFrame.getFastaAndMgfFileChooser().setMultiSelectionEnabled(false);
         //set file filters
         mainFrame.getRawFileChooser().setFileFilter(new RawFileFilter());
         mainFrame.getCpsFileChooser().setFileFilter(new CpsFileFilter());
         mainFrame.getTsvFileChooser().setFileFilter(new TabSeparatedFileFilter());
+        mainFrame.getFastaAndMgfFileChooser().setFileFilter(new FastaAndMgfFileFilter());
 
         //set file linker tree model
         mainFrame.getFileLinkerTree().setRootVisible(true);
@@ -174,9 +179,9 @@ public class MainController {
                             break;
                         case 1:
                             if (selectedNode.getChildCount() == 0) {
-                                returnVal = getCurrentImportFileChooser().showOpenDialog(mainFrame);
+                                returnVal = getCurrentImportFileChooser(level).showOpenDialog(mainFrame);
                                 if (returnVal == JFileChooser.APPROVE_OPTION) {
-                                    File importFile = getCurrentImportFileChooser().getSelectedFile();
+                                    File importFile = getCurrentImportFileChooser(level).getSelectedFile();
 
                                     DefaultMutableTreeNode importFileNode = new DefaultMutableTreeNode(importFile);
                                     fileLinkerTreeModel.insertNodeInto(importFileNode, selectedNode, fileLinkerTreeModel.getChildCount(selectedNode));
@@ -192,11 +197,56 @@ public class MainController {
                                 showMessageDialog("Identification file addition", messages, JOptionPane.WARNING_MESSAGE);
                             }
                             break;
+                        case 2:
+                            if (mainFrame.getPeptideShakerRadioButton().isSelected()) {
+                                if (selectedNode.getChildCount() != 2) {
+                                    returnVal = getCurrentImportFileChooser(level).showOpenDialog(mainFrame);
+                                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                                        File fastaOrMgfFile = getCurrentImportFileChooser(level).getSelectedFile();
+
+                                        //check if the PeptideShaker file is already linked to a file of the same type (FASTA or MGF)
+                                        if (selectedNode.getChildCount() == 0) {
+                                            DefaultMutableTreeNode importFileNode = new DefaultMutableTreeNode(fastaOrMgfFile);
+                                            fileLinkerTreeModel.insertNodeInto(importFileNode, selectedNode, fileLinkerTreeModel.getChildCount(selectedNode));
+                                        } else {
+                                            String alreadyPresentExtension = FilenameUtils.getExtension(((File) ((DefaultMutableTreeNode) selectedNode.getChildAt(0)).getUserObject()).getName());
+                                            if (!alreadyPresentExtension.equals(FilenameUtils.getExtension(fastaOrMgfFile.getName()))) {
+                                                DefaultMutableTreeNode importFileNode = new DefaultMutableTreeNode(fastaOrMgfFile);
+                                                fileLinkerTreeModel.insertNodeInto(importFileNode, selectedNode, fileLinkerTreeModel.getChildCount(selectedNode));
+                                            } else {
+                                                List<String> messages = new ArrayList<>();
+                                                messages.add("The PeptideShaker cpsx file is already linked to a "
+                                                        + alreadyPresentExtension
+                                                        + " file."
+                                                        + System.lineSeparator()
+                                                        + "Please remove that file before adding another one.");
+                                                showMessageDialog("FASTA/MGF file addition", messages, JOptionPane.WARNING_MESSAGE);
+                                            }
+                                        }
+
+                                        //expand the tree
+                                        mainFrame.getFileLinkerTree().expandPath(new TreePath(selectedNode.getPath()));
+                                    }
+                                } else {
+                                    List<String> messages = new ArrayList<>();
+                                    messages.add("The PeptideShaker cpsx file is already linked to a FASTA and an MGF file."
+                                            + System.lineSeparator()
+                                            + "Please remove these files before adding other ones.");
+                                    showMessageDialog("FASTA/MGF file addition", messages, JOptionPane.WARNING_MESSAGE);
+                                }
+                            } else {
+                                List<String> messages = new ArrayList<>();
+                                messages.add("You have selected a tab separated identification file."
+                                        + System.lineSeparator()
+                                        + "Please select a RAW file to add an identification file to.");
+                                showMessageDialog("Identification file addition", messages, JOptionPane.WARNING_MESSAGE);
+                            }
+                            break;
                         default:
                             List<String> messages = new ArrayList<>();
-                            messages.add("You have selected an identification file."
+                            messages.add("You have selected a FASTA or an MGF file."
                                     + System.lineSeparator()
-                                    + "Please select a RAW file to add an identification file to.");
+                                    + "Please select a PeptideShaker cpsx file to add a FASTA or an MGF file to.");
                             showMessageDialog("Identification file addition", messages, JOptionPane.WARNING_MESSAGE);
                             break;
                     }
@@ -464,7 +514,7 @@ public class MainController {
         List<String> validationMessages = new ArrayList<>();
 
         //first check if all RAW files are linked to an identification file
-        if (areAllRawFilesLinked()) {
+        if (areAllFilesLinked()) {
             int childCount = fileLinkerRootNode.getChildCount();
             //in APEX mode, at least one RAW has to be linked to an identification file
             if (mainFrame.getApexModeRadioButton().isSelected()) {
@@ -476,6 +526,9 @@ public class MainController {
             }
         } else {
             validationMessages.add("Each RAW file has to be linked to one and only one identification file.");
+            if (mainFrame.getPeptideShakerRadioButton().isSelected()) {
+                validationMessages.add("Each PeptideShaker cpsx file has to be linked to a FASTA and an MGF file.");
+            }
         }
 
         return validationMessages;
@@ -575,13 +628,19 @@ public class MainController {
     }
 
     /**
-     * Get the correct file choose depending on the import data type.
+     * Get the correct file choose depending on the import data type and the
+     * tree level.
      *
+     * @param the current node level
      * @return the current file chooser.
      */
-    private JFileChooser getCurrentImportFileChooser() {
+    private JFileChooser getCurrentImportFileChooser(int level) {
         if (mainFrame.getPeptideShakerRadioButton().isSelected()) {
-            return mainFrame.getCpsFileChooser();
+            if (level == 1) {
+                return mainFrame.getCpsFileChooser();
+            } else {
+                return mainFrame.getFastaAndMgfFileChooser();
+            }
         } else {
             return mainFrame.getTsvFileChooser();
         }
@@ -595,12 +654,14 @@ public class MainController {
         Enumeration breadthFirstEnumeration = fileLinkerRootNode.breadthFirstEnumeration();
         while (breadthFirstEnumeration.hasMoreElements()) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) breadthFirstEnumeration.nextElement();
-            if (!node.isRoot() && node.getParent().equals(fileLinkerRootNode)) {
-                if (node.getChildCount() == 0) {
-                    node.removeAllChildren();
-                }
+            int level = node.getLevel();
+            if (level == 1) {
+                node.removeAllChildren();
             }
         }
+
+        //reload jtree
+        fileLinkerTreeModel.reload(fileLinkerRootNode);
     }
 
     /**
@@ -624,25 +685,33 @@ public class MainController {
     }
 
     /**
-     * Check if all RAW files in the tree have an identification file child.
+     * Check if all files in the tree are linked correctly. Each RAW file has to
+     * be linked to an identification file and each PeptideShaker file has to be
+     * linked to a FASTA and an MGF file.
      *
-     * @return whether all RAW files are linked or not
+     * @return whether all files are linked correctly
      */
-    private boolean areAllRawFilesLinked() {
-        boolean areAllRawFilesLinked = true;
+    private boolean areAllFilesLinked() {
+        boolean areAllFilesLinked = true;
 
         Enumeration breadthFirstEnumeration = fileLinkerRootNode.breadthFirstEnumeration();
         while (breadthFirstEnumeration.hasMoreElements()) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) breadthFirstEnumeration.nextElement();
-            if (!node.isRoot() && node.getParent().equals(fileLinkerRootNode)) {
+            int level = node.getLevel();
+            if (level == 1) {
                 if (node.getChildCount() == 0) {
-                    areAllRawFilesLinked = false;
+                    areAllFilesLinked = false;
+                    break;
+                }
+            } else if (mainFrame.getPeptideShakerRadioButton().isSelected() && level == 2) {
+                if (node.getChildCount() != 2) {
+                    areAllFilesLinked = false;
                     break;
                 }
             }
         }
 
-        return areAllRawFilesLinked;
+        return areAllFilesLinked;
     }
 
     /**
@@ -661,7 +730,7 @@ public class MainController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            LOGGER.info("starting spectrum similarity score pipeline");
+            LOGGER.info("starting moFF run");
             System.out.println("start ----------------------");
             // make a new mapping for input files and the result files?
             HashMap<File, File> cpsToMoffMapping = new HashMap<>();
@@ -672,11 +741,11 @@ public class MainController {
             } else {
                 moffParameters = getMBRParametersFromGUI();
             }
-            
+
             //get the fasta file and the MGF file mapping?
             File fastaFile = getFastaFile();
             HashMap<File, File> mgfFileMapping = getMgfFileMapping();
-            
+
             //converting the peptideshaker input files where necessary to the MoFF format
             HashMap<File, File> rawFilePeptideShakerMapping = getRAWFileMapping();
             for (Map.Entry<File, File> moffEntry : rawFilePeptideShakerMapping.entrySet()) {
@@ -691,7 +760,7 @@ public class MainController {
                 MoFFPeptideShakerConversionStep conversion = new MoFFPeptideShakerConversionStep();
                 conversion.setParameters(parameters);
                 conversion.doAction();
-                //make the new mapping with the converted files 
+                //make the new mapping with the converted files
                 cpsToMoffMapping.put(conversion.getMoffFile(), moffEntry.getValue());
             }
             //write the cpsToMoffMapping to a File?
@@ -735,7 +804,7 @@ public class MainController {
                 get();
                 LOGGER.info("finished moFF run");
                 List<String> messages = new ArrayList<>();
-                messages.add("The score pipeline has finished.");
+                messages.add("The moFF run has finished successfully.");
                 showMessageDialog("moFF run completed", messages, JOptionPane.INFORMATION_MESSAGE);
             } catch (CancellationException ex) {
                 LOGGER.info("the moFF run was cancelled");
@@ -752,33 +821,41 @@ public class MainController {
         private HashMap<String, String> getApexParametersFromGUI() {
             HashMap<String, String> parameters = new HashMap<>();
             //@ToDo fill the parameters
-          //  parameters.put("--map_file", "");    //                    specify the input file with the of MS2 peptides (automatic)
-            parameters.put("--tol", "");    //                     specify the tollerance parameter in ppm
-            parameters.put("--rt_w", "");    //                    specify rt window for xic (minute). Default value is 3 min
-            parameters.put("--rt_p", "");    //                  specify the time windows for the peak ( minute). Default value is 0.1
-            parameters.put("--rt_p_match", "");    //      specify the time windows for the matched peptide peak ( minute). Default value is 0.4
-            parameters.put("--output_folder", "");    //             specify the folder output
+            //  parameters.put("--map_file", "");    //                    specify the input file with the of MS2 peptides (automatic)
+            parameters.put("--tol", mainFrame.getPrecursorMassToleranceTextField().getText());    //                     specify the tollerance parameter in ppm
+            parameters.put("--rt_w", mainFrame.getXicRetentionTimeWindowTextField().getText());    //                    specify rt window for xic (minute). Default value is 3 min
+            parameters.put("--rt_p", mainFrame.getPeakRetentionTimeWindowTextField().getText());    //                  specify the time windows for the peak ( minute). Default value is 0.1
+            parameters.put("--rt_p_match", mainFrame.getMatchedPeaksRetentionTimeWindowTextField().getText());    //      specify the time windows for the matched peptide peak ( minute). Default value is 0.4
+            parameters.put("--output_folder", mainFrame.getOutputDirectoryChooser().getSelectedFile().getAbsolutePath());    //             specify the folder output
             return parameters;
         }
 
         private HashMap<String, String> getMBRParametersFromGUI() {
             HashMap<String, String> parameters = new HashMap<>();
             //@ToDo fill the parameters --> is this up to date?
-        //    parameters.put("--map_file", "");    // MAP_FILE  specify a map file that contains input files  and raw file     
+            //    parameters.put("--map_file", "");    // MAP_FILE  specify a map file that contains input files  and raw file
             parameters.put("--log_file_name", "");    // LOG_LABEL a label name to use for the log file  (not mandatory, moFF_mbr_.log is the default name)
-            parameters.put("--filt_width", "");    // W_FILT   width value of the filter k * mean(Dist_Malahobis)  Default val = 1.5
-            parameters.put("--out_filt", "");    // OUT_FLAG   filter outlier in each rt time allignment   Default val =1
-            parameters.put("--weight_comb", "");    // W_COMB  weights for model combination combination : 0 for no weight 1 weighted devised by trein err of the model. Default val =1
-            parameters.put("--tol", "");    // TOLL            specify the tollerance parameter in ppm
-            parameters.put("--rt_w", "");    // RT_WINDOW      specify rt window for xic (minute). Default value is  5  min
-            parameters.put("--rt_p", "");    // RT_P_WINDOW    specify the time windows for the peak ( minute). Default value is 0.1
-            parameters.put("--rt_p", "");    //_match RT_P_WINDOW_MATCH  specify the time windows for the matched peptide peak ( minute). Default value is 0.4
-            parameters.put("--output_folder", "");    // LOC_OUT         specify the folder output (mandatory)
+            if (mainFrame.getFilterOutliersCheckBox().isSelected()) {
+                parameters.put("--out_filt", "1");    // OUT_FLAG   filter outlier in each rt time allignment   Default val =1
+                parameters.put("--filt_width", mainFrame.getOutlierThresholdTextField().getText());    // W_FILT   width value of the filter k * mean(Dist_Malahobis)  Default val = 1.5
+            } else {
+                parameters.put("--out_filt", "0");
+            }
+            if (mainFrame.getCombinationWeighingCheckBox().isSelected()) {
+                parameters.put("--weight_comb", "1");    // W_COMB  weights for model combination combination : 0 for no weight 1 weighted devised by trein err of the model. Default val =1
+            } else {
+                parameters.put("--weight_comb", "0");
+            }
+            parameters.put("--tol", mainFrame.getPrecursorMassToleranceTextField().getText());   // TOLL            specify the tollerance parameter in ppm
+            parameters.put("--rt_w", mainFrame.getXicRetentionTimeWindowTextField().getText());    // RT_WINDOW      specify rt window for xic (minute). Default value is  5  min
+            parameters.put("--rt_p", mainFrame.getPeakRetentionTimeWindowTextField().getText());    // RT_P_WINDOW    specify the time windows for the peak ( minute). Default value is 0.1
+            parameters.put("--rt_p_match", mainFrame.getMatchedPeaksRetentionTimeWindowTextField().getText());    //_match RT_P_WINDOW_MATCH  specify the time windows for the matched peptide peak ( minute). Default value is 0.4
+            parameters.put("--output_folder", mainFrame.getOutputDirectoryChooser().getSelectedFile().getAbsolutePath());    // LOC_OUT         specify the folder output (mandatory)
             return parameters;
         }
 
         /**
-         * This method gets the fasta file (should be the same for all files,
+         * This method gets the FASTA file (should be the same for all files,
          * otherwise there's no point in comparing?")
          *
          * @return the used fasta file
@@ -788,10 +865,10 @@ public class MainController {
         }
 
         /**
-         * This method gets a mapping of peptideshaker output files that need to
+         * This method gets a mapping of PeptideShaker output files that need to
          * be processed to their MGF file, only in the case of CPSX files
          *
-         * @return the mapping of peptideshaker output files to their MGF file
+         * @return the mapping of PeptideShaker output files to their MGF file
          * (CPSX ONLY)
          */
         private HashMap<File, File> getMgfFileMapping() {

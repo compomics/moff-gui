@@ -5,15 +5,15 @@ import javax.swing.filechooser.FileFilter;
 import org.apache.commons.io.FilenameUtils;
 
 /**
- * A file filter for tab separated files.
+ * A file filter for FASTA and MGF files.
  *
  * @author Niels Hulstaert
  */
-public class TabSeparatedFileFilter extends FileFilter {
+public class FastaAndMgfFileFilter extends FileFilter {
 
-    private static final String TSV_EXTENSION = "tsv";
-    private static final String TAB_EXTENSION = "tab";
-    private static final String DESCRIPTION = "*.tsv, *.tab";
+    private static final String FASTA_EXTENSION = "fasta";
+    private static final String MGF_EXTENSION = "mgf";
+    private static final String DESCRIPTION = "*.fasta, *.mgf";
 
     @Override
     public boolean accept(File file) {
@@ -21,7 +21,7 @@ public class TabSeparatedFileFilter extends FileFilter {
 
         if (file.isFile()) {
             String extension = FilenameUtils.getExtension(file.getName());
-            if (!extension.isEmpty() && (extension.equals(TSV_EXTENSION) || extension.equals(TAB_EXTENSION))) {
+            if (!extension.isEmpty() && (extension.equals(FASTA_EXTENSION) || extension.equals(MGF_EXTENSION))) {
                 accept = true;
             }
         } else {
