@@ -109,7 +109,8 @@ public class MainController {
         mainFrame.setTitle("moFF GUI " + ConfigHolder.getInstance().getString("moff_gui.version", "N/A"));
 
         //set PeptideShaker directory
-        mainFrame.getPeptideShakerDirectoryTextField().setText(ConfigHolder.getInstance().getString("peptide_shaker.directory"));
+        peptideShakerDirectory = new File(ConfigHolder.getInstance().getString("peptide_shaker.directory"));
+        mainFrame.getPeptideShakerDirectoryTextField().setText(peptideShakerDirectory.getAbsolutePath());
 
         //get the gui appender for setting the log text area
         LogTextAreaAppender logTextAreaAppender = (LogTextAreaAppender) Logger.getRootLogger().getAppender("gui");
