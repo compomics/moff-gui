@@ -625,7 +625,7 @@ public class MainController {
                     validationMessages.add("Please provide an outlier threshold value.");
                 } else {
                     try {
-                        Double outlierThresholdValue = Double.valueOf(mainFrame.getMatchingBetweenRunsRadioButton().getText());
+                        Double outlierThresholdValue = Double.valueOf(mainFrame.getOutlierThresholdTextField().getText());
                         if (outlierThresholdValue < 0.0) {
                             validationMessages.add("Please provide a positive outlier threshold value.");
                         }
