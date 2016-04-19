@@ -41,9 +41,6 @@ public class FileChangeScanner implements Runnable {
             WatchService watcher = FileSystems.getDefault().newWatchService();
             Path dir = Paths.get(folderToCheck.getAbsolutePath());
             dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
-
-            LOGGER.info("Watch Service registered for outputfolder: " + dir.getFileName());
-
             while (!finish) {
                 WatchKey key;
                 try {
@@ -51,7 +48,6 @@ public class FileChangeScanner implements Runnable {
                 } catch (InterruptedException ex) {
                     return;
                 }
-
                 for (WatchEvent<?> event : key.pollEvents()) {
                     WatchEvent.Kind<?> kind = event.kind();
                     WatchEvent<Path> ev = (WatchEvent<Path>) event;

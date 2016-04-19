@@ -385,8 +385,8 @@ public class MainController {
      *
      * @return the link map
      */
-    private Map<String, String> getRawTabSeparatedLinks() {
-        Map<String, String> links = new HashMap<>();
+    private Map<File, File> getRawTabSeparatedLinks() {
+        Map<File, File> links = new HashMap<>();
 
         //iterate over the nodes
         Enumeration children = fileLinkerRootNode.children();
@@ -394,7 +394,7 @@ public class MainController {
             DefaultMutableTreeNode rawFileNode = (DefaultMutableTreeNode) children.nextElement();
             File rawFile = ((File) ((DefaultMutableTreeNode) rawFileNode).getUserObject());
             File tsvFile = ((File) ((DefaultMutableTreeNode) rawFileNode.getChildAt(0)).getUserObject());
-            links.put(rawFile.getAbsolutePath(), tsvFile.getAbsolutePath());
+            links.put(rawFile, tsvFile);
         }
 
         return links;
@@ -767,10 +767,8 @@ public class MainController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            LOGGER.info("starting moFF run");
-            System.out.println("start ----------------------");
-            // make a new mapping for input files and the result files?
-            HashMap<File, File> cpsToMoffMapping = new HashMap<>();
+            LOGGER.info("Preparing to run moFF...");
+
             // get the MoFF parameters
             HashMap<String, String> moffParameters;
             if (mainFrame.getApexModeRadioButton().isSelected()) {
@@ -780,30 +778,38 @@ public class MainController {
                 moffParameters = getMBRParametersFromGUI();
                 moffParameters.put("mode", "MBR");
             }
+            LOGGER.info("MoFF will be run in " + moffParameters.get("mode") + " mode.");
+            Map<File, File> inputMapping;
+            if (mainFrame.getTabSeparatedRadioButton().isSelected()) {
+                inputMapping = getRawTabSeparatedLinks();
+            } else {
+                LOGGER.info("Converting PeptideShaker output files to MoFF compatible tab separated files");
+                inputMapping = new HashMap<>();;
+                //converting the peptideshaker input files where necessary to the MoFF format
+                Map<File, File[]> rawFilePeptideShakerMapping = getRawPeptideShakerLinks();
+                for (Map.Entry<File, File[]> moffEntry : rawFilePeptideShakerMapping.entrySet()) {
+                    File peptideShakerInputFile = moffEntry.getValue()[0];
+                    File fastaFile = moffEntry.getValue()[1];
+                    File mgfFile = moffEntry.getValue()[2];
 
-            //converting the peptideshaker input files where necessary to the MoFF format
-            Map<File, File[]> rawFilePeptideShakerMapping = getRawPeptideShakerLinks();
-            for (Map.Entry<File, File[]> moffEntry : rawFilePeptideShakerMapping.entrySet()) {
-                File peptideShakerInputFile = moffEntry.getValue()[0];
-                File fastaFile = moffEntry.getValue()[1];
-                File mgfFile = moffEntry.getValue()[2];
-
-                HashMap<String, String> parameters = new HashMap<>();
-                parameters.put("ps_folder", peptideShakerDirectory.getAbsolutePath());
-                parameters.put("ps_output", peptideShakerInputFile.getAbsolutePath());
-                if (peptideShakerInputFile.getName().toUpperCase().endsWith(".CPSX")) {
-                    parameters.put("mgf", mgfFile.getAbsolutePath());
-                    parameters.put("fasta", fastaFile.getAbsolutePath());
+                    HashMap<String, String> parameters = new HashMap<>();
+                    parameters.put("ps_folder", peptideShakerDirectory.getAbsolutePath());
+                    parameters.put("ps_output", peptideShakerInputFile.getAbsolutePath());
+                    if (peptideShakerInputFile.getName().toUpperCase().endsWith(".CPSX")) {
+                        parameters.put("mgf", mgfFile.getAbsolutePath());
+                        parameters.put("fasta", fastaFile.getAbsolutePath());
+                    }
+                    MoFFPeptideShakerConversionStep conversion = new MoFFPeptideShakerConversionStep();
+                    conversion.setParameters(parameters);
+                    conversion.doAction();
+                    //make the new mapping with the converted files
+                    //key = raw file, value = tsv
+                    inputMapping.put(moffEntry.getKey(), conversion.getMoffFile());
                 }
-                MoFFPeptideShakerConversionStep conversion = new MoFFPeptideShakerConversionStep();
-                conversion.setParameters(parameters);
-                conversion.doAction();
-                //make the new mapping with the converted files
-                //key = raw file, value = tsv
-                cpsToMoffMapping.put(moffEntry.getKey(), conversion.getMoffFile());
+                LOGGER.info("PeptideShaker output conversion complete...");
             }
             //write the cpsToMoffMapping to a File?
-            File tempMappingFile = writeToTempFile(cpsToMoffMapping);
+            File tempMappingFile = writeToTempFile(inputMapping);
             moffParameters.put("--map_file", tempMappingFile.getAbsolutePath());
 
             if (mainFrame.getApexModeRadioButton().isSelected()) {
@@ -812,7 +818,8 @@ public class MainController {
                 moffParameters.put("mode", "MBR");
             }
             //prepare to capture the logging
-            //@ToDo in apex it's outputdir, in mbr it can be the file specified?
+            LOGGER.info("Starting moFF run");
+            LOGGER.info("Please note that this is a long process.");
             FileChangeScanner fcs = new FileChangeScanner(outPutDirectory);
             new Thread(fcs).start();
             //execute MoFF itself
@@ -820,11 +827,11 @@ public class MainController {
             moffStep.setParameters(moffParameters);
             moffStep.doAction();
             fcs.stop();
-            System.out.println("finish ----------------------");
+            LOGGER.info("MoFF run completed");
             return null;
         }
 
-        private File writeToTempFile(HashMap<File, File> fileMapping) throws IOException {
+        private File writeToTempFile(Map<File, File> fileMapping) throws IOException {
             File tempFile = new File(outPutDirectory, "mapping.tsv");
             if (tempFile.exists()) {
                 //@ToDo how to handle this properly?
