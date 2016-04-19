@@ -88,10 +88,11 @@ public class MainController {
         mainFrame.getCpsFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
         mainFrame.getTsvFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
         mainFrame.getFastaAndMgfFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
+        //enable multple file selection
+        mainFrame.getRawFileChooser().setMultiSelectionEnabled(true);
         //disable multiple file selection
         mainFrame.getOutputDirectoryChooser().setMultiSelectionEnabled(false);
         mainFrame.getPeptideShakerDirectoryChooser().setMultiSelectionEnabled(false);
-        mainFrame.getRawFileChooser().setMultiSelectionEnabled(false);
         mainFrame.getCpsFileChooser().setMultiSelectionEnabled(false);
         mainFrame.getTsvFileChooser().setMultiSelectionEnabled(false);
         mainFrame.getFastaAndMgfFileChooser().setMultiSelectionEnabled(false);
@@ -159,9 +160,10 @@ public class MainController {
                 case 0:
                     returnVal = mainFrame.getRawFileChooser().showOpenDialog(mainFrame);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
-                        File rawFile = mainFrame.getRawFileChooser().getSelectedFile();
-                        DefaultMutableTreeNode rawFileNode = new DefaultMutableTreeNode(rawFile);
-                        fileLinkerTreeModel.insertNodeInto(rawFileNode, fileLinkerRootNode, fileLinkerTreeModel.getChildCount(fileLinkerRootNode));
+                        for (File rawFile : mainFrame.getRawFileChooser().getSelectedFiles()) {
+                            DefaultMutableTreeNode rawFileNode = new DefaultMutableTreeNode(rawFile);
+                            fileLinkerTreeModel.insertNodeInto(rawFileNode, fileLinkerRootNode, fileLinkerTreeModel.getChildCount(fileLinkerRootNode));
+                        }
 
                         //expand the tree
                         mainFrame.getFileLinkerTree().expandPath(new TreePath(fileLinkerRootNode));
