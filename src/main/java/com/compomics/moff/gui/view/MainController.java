@@ -1,9 +1,9 @@
 package com.compomics.moff.gui.view;
 
-import com.compomics.moff.gui.control.step.MoFFPeptideShakerConversionStep;
+import com.compomics.pladipus.moff.logic.step.MoFFPeptideShakerConversionStep;
 import com.compomics.moff.gui.control.step.MoFFStep;
 import com.compomics.moff.gui.config.ConfigHolder;
-import com.compomics.moff.gui.control.util.FileChangeScanner;
+import com.compomics.pladipus.moff.logic.util.FileChangeScanner;
 import com.compomics.moff.gui.view.filter.CpsFileFilter;
 import com.compomics.moff.gui.view.filter.FastaAndMgfFileFilter;
 import com.compomics.moff.gui.view.filter.RawFileFilter;
@@ -821,12 +821,12 @@ public class MainController {
                         parameters.put("mgf", mgfFile.getAbsolutePath());
                         parameters.put("fasta", fastaFile.getAbsolutePath());
                     }
-                    MoFFPeptideShakerConversionStep conversion = new MoFFPeptideShakerConversionStep();
-                    conversion.setParameters(parameters);
-                    conversion.doAction();
+                    MoFFPeptideShakerConversionStep conversionStep = new MoFFPeptideShakerConversionStep();
+                    conversionStep.setParameters(parameters);
+                    conversionStep.doAction();
                     //make the new mapping with the converted files
                     //key = raw file, value = tsv
-                    inputMapping.put(moffEntry.getKey(), conversion.getMoffFile());
+                    inputMapping.put(moffEntry.getKey(), conversionStep.getMoffFile());
                 }
                 LOGGER.info("PeptideShaker output conversion complete...");
             }
