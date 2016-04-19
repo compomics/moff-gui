@@ -32,7 +32,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="790" max="32767" attributes="0"/>
+          <EmptySpace min="0" pref="810" max="32767" attributes="0"/>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Component id="parentPanel" alignment="1" max="32767" attributes="0"/>
           </Group>
@@ -109,38 +109,35 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="identificationDataTypeLabel" pref="580" max="32767" attributes="0"/>
-                                      <Component id="moffModeLabel" alignment="0" max="32767" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="86" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="peptideShakerRadioButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="132" max="-2" attributes="0"/>
-                                  <Component id="peptideShakerDirectoryTextField" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="tabSeparatedRadioButton" min="-2" max="-2" attributes="0"/>
-                                      <Component id="apexModeRadioButton" min="-2" max="-2" attributes="0"/>
-                                      <Component id="matchingBetweenRunsRadioButton" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="outputDirectoryLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="70" max="-2" attributes="0"/>
-                                  <Component id="outputDirectoryTextField" max="32767" attributes="0"/>
-                              </Group>
+                              <Component id="identificationDataTypeLabel" pref="597" max="32767" attributes="0"/>
+                              <Component id="moffModeLabel" alignment="0" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="185" pref="185" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="peptideShakerDirectoryChooseButton" min="-2" max="-2" attributes="0"/>
-                              <Component id="outputDirectoryChooseButton" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="apexModeRadioButton" min="-2" max="-2" attributes="0"/>
+                              <Component id="matchingBetweenRunsRadioButton" min="-2" max="-2" attributes="0"/>
+                              <Component id="tabSeparatedRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="peptideShakerRadioButton" min="-2" max="-2" attributes="0"/>
+                              <Component id="outputDirectoryLabel" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="outputDirectoryTextField" pref="433" max="32767" attributes="0"/>
+                              <Component id="peptideShakerDirectoryTextField" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="unrelated" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="outputDirectoryChooseButton" alignment="0" min="-2" pref="89" max="-2" attributes="0"/>
+                              <Component id="peptideShakerDirectoryChooseButton" alignment="0" min="-2" pref="89" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -181,6 +178,9 @@
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="peptideShakerRadioButton">
                   <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                    </Property>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="identificationDataTypeButtonGroup"/>
                     </Property>
@@ -189,6 +189,9 @@
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="tabSeparatedRadioButton">
                   <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                    </Property>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="identificationDataTypeButtonGroup"/>
                     </Property>
@@ -202,6 +205,9 @@
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="apexModeRadioButton">
                   <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                    </Property>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="moffModeButtonGroup"/>
                     </Property>
@@ -210,6 +216,9 @@
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="matchingBetweenRunsRadioButton">
                   <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                    </Property>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="moffModeButtonGroup"/>
                     </Property>
@@ -638,10 +647,10 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="infoLabel" max="32767" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="73" max="-2" attributes="0"/>
                       <Component id="backButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="proceedButton" min="-2" max="-2" attributes="0"/>
+                      <Component id="proceedButton" min="-2" pref="93" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="startButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
