@@ -23,8 +23,17 @@ import org.apache.log4j.Logger;
  */
 public class FileChangeScanner implements Runnable {
 
+    /**
+     * The folder that needs to be checked for changes
+     */
     private final File folderToCheck;
+    /**
+     * The logging instance
+     */
     private final static Logger LOGGER = Logger.getLogger(FileChangeScanner.class);
+    /**
+     * boolean indicating if the filechanges still have to be monitored
+     */
     private boolean finish = false;
 
     public FileChangeScanner(File folderToCheck) {
@@ -54,7 +63,10 @@ public class FileChangeScanner implements Runnable {
                     File modifiedFile = ev.context().toFile();
                     if (kind == ENTRY_MODIFY && (modifiedFile.getName().toLowerCase().endsWith(".log") || modifiedFile.getName().toLowerCase().endsWith(".txt"))) {
                         try (ReversedLinesFileReader reader = new ReversedLinesFileReader(new File(folderToCheck, modifiedFile.getName()))) {
-                            LOGGER.info(reader.readLine());
+                            String line = reader.readLine();
+                            if (line != null && !line.trim().isEmpty()) {
+                                LOGGER.info(line);
+                            }
                         }
                     }
                     boolean valid = key.reset();
@@ -66,6 +78,7 @@ public class FileChangeScanner implements Runnable {
         } catch (IOException ex) {
             LOGGER.error(ex);
         } finally {
+            finish = true;
             LOGGER.info("Shutting down MoFF logger");
         }
     }

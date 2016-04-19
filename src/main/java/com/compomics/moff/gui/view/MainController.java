@@ -50,7 +50,7 @@ public class MainController {
      * The separator between file links
      */
     private static final String LINK_SEPARATOR = "\t";
-    
+
     //card layout panels
     private static final String FIRST_PANEL = "firstPanel";
     private static final String SECOND_PANEL = "secondPanel";
@@ -348,6 +348,15 @@ public class MainController {
         mainFrame.getCancelButton().addActionListener(e -> {
             if (moffRunSwingWorker != null) {
                 moffRunSwingWorker.cancel(true);
+                MoFFStep step = moffRunSwingWorker.getStep();
+                if (step != null) {
+                    step.stop();
+                }
+                logTextAreaAppender.close();
+                FileChangeScanner fileChangeScanner = moffRunSwingWorker.getFileChangeScanner();
+                if (fileChangeScanner != null) {
+                    fileChangeScanner.stop();
+                }
                 moffRunSwingWorker = null;
             }
             mainFrame.dispose();
@@ -768,6 +777,17 @@ public class MainController {
      */
     private class MoffRunSwingWorker extends SwingWorker<Void, Void> {
 
+        private MoFFStep moffStep;
+        private FileChangeScanner fcs;
+
+        public MoFFStep getStep() {
+            return moffStep;
+        }
+
+        public FileChangeScanner getFileChangeScanner() {
+            return fcs;
+        }
+
         @Override
         protected Void doInBackground() throws Exception {
             LOGGER.info("Preparing to run moFF...");
@@ -820,12 +840,11 @@ public class MainController {
                 moffParameters.put("mode", "MBR");
             }
             //prepare to capture the logging
-            LOGGER.info("Starting moFF run");
-            LOGGER.info("Please note that this is a long process.");
-            FileChangeScanner fcs = new FileChangeScanner(outPutDirectory);
+            LOGGER.info("Starting moFF run, please note that this is a long process...");
+            fcs = new FileChangeScanner(outPutDirectory);
             new Thread(fcs).start();
             //execute MoFF itself
-            MoFFStep moffStep = new MoFFStep();
+            moffStep = new MoFFStep();
             moffStep.setParameters(moffParameters);
             moffStep.doAction();
             fcs.stop();

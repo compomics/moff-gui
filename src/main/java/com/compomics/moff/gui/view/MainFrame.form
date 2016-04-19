@@ -747,6 +747,9 @@
                   <Dimension value="[80, 25]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

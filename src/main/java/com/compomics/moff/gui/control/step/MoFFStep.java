@@ -40,11 +40,19 @@ public class MoFFStep extends ProcessingStep {
      * The mode in which this step will run (APEX or MBR)
      */
     private String mode = "APEX";
+    private ProcessingEngine processingEngine;
 
     public MoFFStep() {
 
     }
 
+    public void stop(){
+        if(processingEngine!=null){
+            processingEngine.stopProcess();
+        }
+    }
+    
+    
     @Override
     public boolean doAction() throws Exception {
         //start logging
@@ -78,8 +86,8 @@ public class MoFFStep extends ProcessingStep {
         //add custom error words in case something goes wrong, make sure the processing engine can discover it
         List<String> errorKeyWords = new ArrayList<>();
         errorKeyWords.add("ERROR");
-        new ProcessingEngine()
-                .startProcess(MOFF_SCRIPT_FILE, constructArguments, callbackNotifier, errorKeyWords);
+        processingEngine = new ProcessingEngine();
+               processingEngine .startProcess(MOFF_SCRIPT_FILE, constructArguments, callbackNotifier, errorKeyWords);
         return true;
     }
 
