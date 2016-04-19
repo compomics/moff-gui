@@ -816,7 +816,7 @@ public class MainController {
             FileChangeScanner fcs = new FileChangeScanner(outPutDirectory);
             new Thread(fcs).start();
             //execute MoFF itself
-                        MoFFStep moffStep = new MoFFStep();
+            MoFFStep moffStep = new MoFFStep();
             moffStep.setParameters(moffParameters);
             moffStep.doAction();
             fcs.stop();
@@ -877,7 +877,8 @@ public class MainController {
             HashMap<String, String> parameters = new HashMap<>();
             //@ToDo fill the parameters --> is this up to date?
             //    parameters.put("--map_file", "");    // MAP_FILE  specify a map file that contains input files  and raw file
-            parameters.put("--log_file_name", "");    // LOG_LABEL a label name to use for the log file  (not mandatory, moFF_mbr_.log is the default name)
+            //  parameters.put("--log_file_name", "");    // LOG_LABEL a label name to use for the log file  (not mandatory, moFF_mbr_.log is the default name)
+
             if (mainFrame.getFilterOutliersCheckBox().isSelected()) {
                 parameters.put("--out_filt", "1");    // OUT_FLAG   filter outlier in each rt time allignment   Default val =1
                 parameters.put("--filt_width", mainFrame.getOutlierThresholdTextField().getText());    // W_FILT   width value of the filter k * mean(Dist_Malahobis)  Default val = 1.5
