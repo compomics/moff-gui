@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.compomics.moff.gui.view;
 
-import com.compomics.moff.gui.control.step.MoFFPeptideShakerConversionStep;
+import com.compomics.pladipus.moff.logic.step.MoFFPeptideShakerConversionStep;
 import com.compomics.moff.gui.control.step.MoFFStep;
 import com.compomics.moff.gui.config.ConfigHolder;
+import com.compomics.pladipus.moff.logic.util.FileChangeScanner;
 import com.compomics.moff.gui.view.filter.CpsFileFilter;
 import com.compomics.moff.gui.view.filter.FastaAndMgfFileFilter;
 import com.compomics.moff.gui.view.filter.RawFileFilter;
@@ -42,6 +38,7 @@ import org.apache.log4j.Logger;
  * The GUI main controller.
  *
  * @author Niels Hulstaert
+ * @author Kenneth Verheggen
  */
 public class MainController {
 
@@ -49,8 +46,12 @@ public class MainController {
      * Logger instance.
      */
     private static final Logger LOGGER = Logger.getLogger(MainController.class);
+    /**
+     * The separator between file links
+     */
     private static final String LINK_SEPARATOR = "\t";
 
+    //card layout panels
     private static final String FIRST_PANEL = "firstPanel";
     private static final String SECOND_PANEL = "secondPanel";
     private static final String THIRD_PANEL = "thirdPanel";
@@ -109,7 +110,8 @@ public class MainController {
         mainFrame.setTitle("moFF GUI " + ConfigHolder.getInstance().getString("moff_gui.version", "N/A"));
 
         //set PeptideShaker directory
-        mainFrame.getPeptideShakerDirectoryTextField().setText(ConfigHolder.getInstance().getString("peptide_shaker.directory"));
+        peptideShakerDirectory = new File(ConfigHolder.getInstance().getString("peptide_shaker.directory"));
+        mainFrame.getPeptideShakerDirectoryTextField().setText(peptideShakerDirectory.getAbsolutePath());
 
         //get the gui appender for setting the log text area
         LogTextAreaAppender logTextAreaAppender = (LogTextAreaAppender) Logger.getRootLogger().getAppender("gui");
@@ -348,6 +350,15 @@ public class MainController {
         mainFrame.getCancelButton().addActionListener(e -> {
             if (moffRunSwingWorker != null) {
                 moffRunSwingWorker.cancel(true);
+                MoFFStep step = moffRunSwingWorker.getStep();
+                if (step != null) {
+                    step.stop();
+                }
+                logTextAreaAppender.close();
+                FileChangeScanner fileChangeScanner = moffRunSwingWorker.getFileChangeScanner();
+                if (fileChangeScanner != null) {
+                    fileChangeScanner.stop();
+                }
                 moffRunSwingWorker = null;
             }
             mainFrame.dispose();
@@ -355,6 +366,8 @@ public class MainController {
 
         //load the parameters from the properties file
         loadParameterValues();
+        //call onCardSwitch
+        onCardSwitch();
     }
 
     /**
@@ -386,8 +399,8 @@ public class MainController {
      *
      * @return the link map
      */
-    private Map<String, String> getRawTabSeparatedLinks() {
-        Map<String, String> links = new HashMap<>();
+    private Map<File, File> getRawTabSeparatedLinks() {
+        Map<File, File> links = new HashMap<>();
 
         //iterate over the nodes
         Enumeration children = fileLinkerRootNode.children();
@@ -395,7 +408,7 @@ public class MainController {
             DefaultMutableTreeNode rawFileNode = (DefaultMutableTreeNode) children.nextElement();
             File rawFile = ((File) ((DefaultMutableTreeNode) rawFileNode).getUserObject());
             File tsvFile = ((File) ((DefaultMutableTreeNode) rawFileNode.getChildAt(0)).getUserObject());
-            links.put(rawFile.getAbsolutePath(), tsvFile.getAbsolutePath());
+            links.put(rawFile, tsvFile);
         }
 
         return links;
@@ -626,7 +639,7 @@ public class MainController {
                     validationMessages.add("Please provide an outlier threshold value.");
                 } else {
                     try {
-                        Double outlierThresholdValue = Double.valueOf(mainFrame.getMatchingBetweenRunsRadioButton().getText());
+                        Double outlierThresholdValue = Double.valueOf(mainFrame.getOutlierThresholdTextField().getText());
                         if (outlierThresholdValue < 0.0) {
                             validationMessages.add("Please provide a positive outlier threshold value.");
                         }
@@ -766,12 +779,20 @@ public class MainController {
      */
     private class MoffRunSwingWorker extends SwingWorker<Void, Void> {
 
+        private MoFFStep moffStep;
+        private FileChangeScanner fcs;
+
+        public MoFFStep getStep() {
+            return moffStep;
+        }
+
+        public FileChangeScanner getFileChangeScanner() {
+            return fcs;
+        }
+
         @Override
         protected Void doInBackground() throws Exception {
-            LOGGER.info("starting moFF run");
-            System.out.println("start ----------------------");
-            // make a new mapping for input files and the result files?
-            HashMap<File, File> cpsToMoffMapping = new HashMap<>();
+            LOGGER.info("Preparing to run moFF...");
             // get the MoFF parameters
             HashMap<String, String> moffParameters;
             if (mainFrame.getApexModeRadioButton().isSelected()) {
@@ -781,30 +802,38 @@ public class MainController {
                 moffParameters = getMBRParametersFromGUI();
                 moffParameters.put("mode", "MBR");
             }
+            LOGGER.info("MoFF will be run in " + moffParameters.get("mode") + " mode.");
+            Map<File, File> inputMapping;
+            if (mainFrame.getTabSeparatedRadioButton().isSelected()) {
+                inputMapping = getRawTabSeparatedLinks();
+            } else {
+                LOGGER.info("Converting PeptideShaker output files to MoFF compatible tab separated files");
+                inputMapping = new HashMap<>();;
+                //converting the peptideshaker input files where necessary to the MoFF format
+                Map<File, File[]> rawFilePeptideShakerMapping = getRawPeptideShakerLinks();
+                for (Map.Entry<File, File[]> moffEntry : rawFilePeptideShakerMapping.entrySet()) {
+                    File peptideShakerInputFile = moffEntry.getValue()[0];
+                    File fastaFile = moffEntry.getValue()[1];
+                    File mgfFile = moffEntry.getValue()[2];
 
-            //converting the peptideshaker input files where necessary to the MoFF format
-            Map<File, File[]> rawFilePeptideShakerMapping = getRawPeptideShakerLinks();
-            for (Map.Entry<File, File[]> moffEntry : rawFilePeptideShakerMapping.entrySet()) {
-                File peptideShakerInputFile = moffEntry.getValue()[0];
-                File fastaFile = moffEntry.getValue()[1];
-                File mgfFile = moffEntry.getValue()[2];
-
-                HashMap<String, String> parameters = new HashMap<>();
-                parameters.put("ps_folder", peptideShakerDirectory.getAbsolutePath());
-                parameters.put("ps_output", peptideShakerInputFile.getAbsolutePath());
-                if (peptideShakerInputFile.getName().toUpperCase().endsWith(".CPSX")) {
-                    parameters.put("mgf", mgfFile.getAbsolutePath());
-                    parameters.put("fasta", fastaFile.getAbsolutePath());
+                    HashMap<String, String> parameters = new HashMap<>();
+                    parameters.put("ps_folder", peptideShakerDirectory.getAbsolutePath());
+                    parameters.put("ps_output", peptideShakerInputFile.getAbsolutePath());
+                    if (peptideShakerInputFile.getName().toUpperCase().endsWith(".CPSX")) {
+                        parameters.put("mgf", mgfFile.getAbsolutePath());
+                        parameters.put("fasta", fastaFile.getAbsolutePath());
+                    }
+                    MoFFPeptideShakerConversionStep conversionStep = new MoFFPeptideShakerConversionStep();
+                    conversionStep.setParameters(parameters);
+                    conversionStep.doAction();
+                    //make the new mapping with the converted files
+                    //key = raw file, value = tsv
+                    inputMapping.put(moffEntry.getKey(), conversionStep.getMoffFile());
                 }
-                MoFFPeptideShakerConversionStep conversion = new MoFFPeptideShakerConversionStep();
-                conversion.setParameters(parameters);
-                conversion.doAction();
-                //make the new mapping with the converted files
-                //key = raw file, value = tsv
-                cpsToMoffMapping.put(moffEntry.getKey(), conversion.getMoffFile());
+                LOGGER.info("PeptideShaker output conversion complete...");
             }
             //write the cpsToMoffMapping to a File?
-            File tempMappingFile = writeToTempFile(cpsToMoffMapping);
+            File tempMappingFile = writeToTempFile(inputMapping);
             moffParameters.put("--map_file", tempMappingFile.getAbsolutePath());
 
             if (mainFrame.getApexModeRadioButton().isSelected()) {
@@ -812,15 +841,20 @@ public class MainController {
             } else {
                 moffParameters.put("mode", "MBR");
             }
+            //prepare to capture the logging
+            LOGGER.info("Starting moFF run, please note that this is a long process...");
+            fcs = new FileChangeScanner(outPutDirectory);
+            new Thread(fcs).start();
             //execute MoFF itself
-            MoFFStep moffStep = new MoFFStep();
+            moffStep = new MoFFStep();
             moffStep.setParameters(moffParameters);
             moffStep.doAction();
-            System.out.println("finish ----------------------");
+            fcs.stop();
+            //  LOGGER.info("MoFF run completed");
             return null;
         }
 
-        private File writeToTempFile(HashMap<File, File> fileMapping) throws IOException {
+        private File writeToTempFile(Map<File, File> fileMapping) throws IOException {
             File tempFile = new File(outPutDirectory, "mapping.tsv");
             if (tempFile.exists()) {
                 //@ToDo how to handle this properly?
@@ -842,12 +876,12 @@ public class MainController {
         protected void done() {
             try {
                 get();
-                LOGGER.info("finished moFF run");
+                LOGGER.info("Finished moFF run");
                 List<String> messages = new ArrayList<>();
                 messages.add("The moFF run has finished successfully.");
-                showMessageDialog("moFF run completed", messages, JOptionPane.INFORMATION_MESSAGE);
+                showMessageDialog("MoFF run completed", messages, JOptionPane.INFORMATION_MESSAGE);
             } catch (CancellationException ex) {
-                LOGGER.info("the moFF run was cancelled");
+                LOGGER.info("The moFF run was cancelled");
             } catch (Exception ex) {
                 LOGGER.error(ex.getMessage(), ex);
                 List<String> messages = new ArrayList<>();
@@ -860,8 +894,6 @@ public class MainController {
 
         private HashMap<String, String> getApexParametersFromGUI() {
             HashMap<String, String> parameters = new HashMap<>();
-            //@ToDo fill the parameters
-            //  parameters.put("--map_file", "");    //                    specify the input file with the of MS2 peptides (automatic)
             parameters.put("--tol", mainFrame.getPrecursorMassToleranceTextField().getText());    //                     specify the tollerance parameter in ppm
             parameters.put("--rt_w", mainFrame.getXicRetentionTimeWindowTextField().getText());    //                    specify rt window for xic (minute). Default value is 3 min
             parameters.put("--rt_p", mainFrame.getPeakRetentionTimeWindowTextField().getText());    //                  specify the time windows for the peak ( minute). Default value is 0.1
@@ -871,9 +903,6 @@ public class MainController {
 
         private HashMap<String, String> getMBRParametersFromGUI() {
             HashMap<String, String> parameters = new HashMap<>();
-            //@ToDo fill the parameters --> is this up to date?
-            //    parameters.put("--map_file", "");    // MAP_FILE  specify a map file that contains input files  and raw file
-            parameters.put("--log_file_name", "");    // LOG_LABEL a label name to use for the log file  (not mandatory, moFF_mbr_.log is the default name)
             if (mainFrame.getFilterOutliersCheckBox().isSelected()) {
                 parameters.put("--out_filt", "1");    // OUT_FLAG   filter outlier in each rt time allignment   Default val =1
                 parameters.put("--filt_width", mainFrame.getOutlierThresholdTextField().getText());    // W_FILT   width value of the filter k * mean(Dist_Malahobis)  Default val = 1.5

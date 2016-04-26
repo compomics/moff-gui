@@ -15,6 +15,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import org.apache.log4j.Logger;
 
 /**
  * The GUI main frame.
@@ -47,6 +48,10 @@ public class MainFrame extends javax.swing.JFrame {
      * FASTA and MGF file chooser.
      */
     private final JFileChooser fastaAndMgfFileChooser = new JFileChooser();
+    /**
+     * The logging instance
+     */
+    private static final Logger LOGGER = Logger.getLogger(MainFrame.class);
 
     /**
      * No-arg constructor.
@@ -262,17 +267,21 @@ public class MainFrame extends javax.swing.JFrame {
 
         identificationDataTypeLabel.setText("Choose the identification data type:");
 
+        peptideShakerRadioButton.setBackground(new java.awt.Color(255, 255, 255));
         identificationDataTypeButtonGroup.add(peptideShakerRadioButton);
         peptideShakerRadioButton.setText("PeptideShaker");
 
+        tabSeparatedRadioButton.setBackground(new java.awt.Color(255, 255, 255));
         identificationDataTypeButtonGroup.add(tabSeparatedRadioButton);
         tabSeparatedRadioButton.setText("Tab-separated (TSV)");
 
         moffModeLabel.setText("Choose the run mode:");
 
+        apexModeRadioButton.setBackground(new java.awt.Color(255, 255, 255));
         moffModeButtonGroup.add(apexModeRadioButton);
         apexModeRadioButton.setText("APEX");
 
+        matchingBetweenRunsRadioButton.setBackground(new java.awt.Color(255, 255, 255));
         moffModeButtonGroup.add(matchingBetweenRunsRadioButton);
         matchingBetweenRunsRadioButton.setText("Matching between runs");
 
@@ -300,30 +309,28 @@ public class MainFrame extends javax.swing.JFrame {
             firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(firstPanelLayout.createSequentialGroup()
                 .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(firstPanelLayout.createSequentialGroup()
-                        .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(identificationDataTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)
-                            .addComponent(moffModeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(86, 86, 86))
-                    .addGroup(firstPanelLayout.createSequentialGroup()
-                        .addComponent(peptideShakerRadioButton)
-                        .addGap(132, 132, 132)
-                        .addComponent(peptideShakerDirectoryTextField))
-                    .addGroup(firstPanelLayout.createSequentialGroup()
-                        .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tabSeparatedRadioButton)
-                            .addComponent(apexModeRadioButton)
-                            .addComponent(matchingBetweenRunsRadioButton))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(firstPanelLayout.createSequentialGroup()
-                        .addComponent(outputDirectoryLabel)
-                        .addGap(70, 70, 70)
-                        .addComponent(outputDirectoryTextField)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(identificationDataTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
+                    .addComponent(moffModeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(185, 185, 185))
+            .addGroup(firstPanelLayout.createSequentialGroup()
                 .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(peptideShakerDirectoryChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(outputDirectoryChooseButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(apexModeRadioButton)
+                    .addComponent(matchingBetweenRunsRadioButton)
+                    .addComponent(tabSeparatedRadioButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(firstPanelLayout.createSequentialGroup()
+                .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(peptideShakerRadioButton)
+                    .addComponent(outputDirectoryLabel))
+                .addGap(18, 18, 18)
+                .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(outputDirectoryTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
+                    .addComponent(peptideShakerDirectoryTextField))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(outputDirectoryChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(peptideShakerDirectoryChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         firstPanelLayout.setVerticalGroup(
             firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -595,6 +602,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         cancelButton.setText("cancel");
         cancelButton.setPreferredSize(new java.awt.Dimension(80, 25));
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
@@ -603,10 +615,10 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(73, 73, 73)
                 .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(proceedButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(proceedButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -652,7 +664,7 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 790, Short.MAX_VALUE)
+            .addGap(0, 810, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(parentPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -673,6 +685,10 @@ public class MainFrame extends javax.swing.JFrame {
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_startButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

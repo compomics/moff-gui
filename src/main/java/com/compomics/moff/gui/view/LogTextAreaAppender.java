@@ -10,17 +10,27 @@ import org.apache.log4j.spi.LoggingEvent;
  *
  * @author Niels Hulstaert
  */
-public class LogTextAreaAppender extends WriterAppender {
+public class LogTextAreaAppender extends WriterAppender implements Runnable {
 
     /**
      * The log text area to log to.
      */
     private JTextArea logTextArea;
+    /**
+     * The cycle of string characters to iterate over during waiting
+     */
+    private String[] cycle = new String[]{"", ".", "..", "..."};
+    private boolean lock;
+    private boolean closed = false;
+    private Thread animationThread;
+    private int currentLength;
 
     /**
      * No-arg constructor.
      */
     public LogTextAreaAppender() {
+        animationThread = new Thread(this);
+        animationThread.start();
     }
 
     public void setLogTextArea(JTextArea logTextArea) {
@@ -28,15 +38,46 @@ public class LogTextAreaAppender extends WriterAppender {
     }
 
     @Override
-    public void append(LoggingEvent event) {
-        final String message = this.layout.format(event);
+    public void close() {
+        closed = true;
+        animationThread.interrupt();
+    }
 
+    @Override
+    public void append(LoggingEvent event) {
+        lock = true;
+        final String message = this.layout.format(event);
         SwingUtilities.invokeLater(() -> {
+            logTextArea.setText(logTextArea.getText().substring(0, currentLength));
             logTextArea.append(message);
             //repaint view
             logTextArea.validate();
             logTextArea.repaint();
+            currentLength = logTextArea.getText().length();
         });
+        lock = false;
+    }
+
+    @Override
+    public void run() {
+
+        int index = 0;
+        while (true) {
+            if (closed) {
+                break;
+            } else if (!lock && logTextArea != null) {
+                logTextArea.setText(logTextArea.getText().substring(0, currentLength) + cycle[index]);
+                index++;
+                if (index > cycle.length - 1) {
+                    index = 0;
+                }
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                //ignore
+            }
+        }
     }
 
 }
