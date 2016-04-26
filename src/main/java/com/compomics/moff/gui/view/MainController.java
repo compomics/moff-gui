@@ -132,7 +132,6 @@ public class MainController {
             int returnVal = mainFrame.getPeptideShakerDirectoryChooser().showOpenDialog(mainFrame);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 peptideShakerDirectory = mainFrame.getPeptideShakerDirectoryChooser().getSelectedFile();
-
                 mainFrame.getPeptideShakerDirectoryTextField().setText(peptideShakerDirectory.getAbsolutePath());
             }
         });
@@ -141,7 +140,6 @@ public class MainController {
             int returnVal = mainFrame.getOutputDirectoryChooser().showOpenDialog(mainFrame);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 outPutDirectory = mainFrame.getOutputDirectoryChooser().getSelectedFile();
-
                 mainFrame.getOutputDirectoryTextField().setText(outPutDirectory.getAbsolutePath());
             }
         });
