@@ -1,13 +1,13 @@
 package com.compomics.moff.gui.view;
 
 import com.compomics.pladipus.moff.logic.step.MoFFPeptideShakerConversionStep;
-import com.compomics.moff.gui.control.step.MoFFStep;
 import com.compomics.moff.gui.config.ConfigHolder;
 import com.compomics.pladipus.moff.logic.util.FileChangeScanner;
 import com.compomics.moff.gui.view.filter.CpsFileFilter;
 import com.compomics.moff.gui.view.filter.FastaAndMgfFileFilter;
 import com.compomics.moff.gui.view.filter.RawFileFilter;
 import com.compomics.moff.gui.view.filter.TabSeparatedFileFilter;
+import com.compomics.pladipus.moff.logic.step.MoFFStep;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
