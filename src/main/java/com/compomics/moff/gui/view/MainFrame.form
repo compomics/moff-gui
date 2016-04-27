@@ -32,7 +32,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="810" max="32767" attributes="0"/>
+          <EmptySpace min="0" pref="850" max="32767" attributes="0"/>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Component id="parentPanel" alignment="1" max="32767" attributes="0"/>
           </Group>
@@ -61,7 +61,7 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="topPanel" max="32767" attributes="0"/>
+                      <Component id="topPanel" pref="838" max="32767" attributes="0"/>
                       <Component id="bottomPanel" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -109,7 +109,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="identificationDataTypeLabel" pref="597" max="32767" attributes="0"/>
+                              <Component id="identificationDataTypeLabel" pref="633" max="32767" attributes="0"/>
                               <Component id="moffModeLabel" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="185" pref="185" max="-2" attributes="0"/>
@@ -128,16 +128,16 @@
                               <Component id="outputDirectoryLabel" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="outputDirectoryTextField" pref="433" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="peptideShakerDirectoryTextField" max="32767" attributes="0"/>
+                              <Component id="outputDirectoryTextField" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace type="unrelated" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="outputDirectoryChooseButton" alignment="0" min="-2" pref="89" max="-2" attributes="0"/>
                               <Component id="peptideShakerDirectoryChooseButton" alignment="0" min="-2" pref="89" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -289,7 +289,7 @@
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace min="0" pref="586" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="646" max="32767" attributes="0"/>
                                   <Component id="addFileButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="deleteFileButton" min="-2" max="-2" attributes="0"/>
@@ -513,7 +513,7 @@
                                   <Component id="matchedPeaksRetentionTimeWindowTextField" pref="200" max="32767" attributes="0"/>
                                   <Component id="outlierThresholdTextField" max="32767" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="212" max="32767" attributes="0"/>
+                              <EmptySpace pref="272" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -580,7 +580,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="logTextAreaScrollPane" pref="758" max="32767" attributes="0"/>
+                      <Component id="logTextAreaScrollPane" pref="818" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           <Component id="clearButton" min="-2" max="-2" attributes="0"/>
