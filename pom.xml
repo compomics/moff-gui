@@ -150,7 +150,12 @@
         </plugins>
     </build>    
             
-    <dependencies>        
+    <dependencies> 
+        <dependency>
+            <groupId>com.compomics</groupId>
+            <artifactId>utilities</artifactId>
+            <version>4.5.15</version>
+        </dependency>       
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>Pladipus-moff</artifactId>
