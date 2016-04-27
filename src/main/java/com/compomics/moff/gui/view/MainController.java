@@ -161,8 +161,14 @@ public class MainController {
                     returnVal = mainFrame.getRawFileChooser().showOpenDialog(mainFrame);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         for (File rawFile : mainFrame.getRawFileChooser().getSelectedFiles()) {
-                            DefaultMutableTreeNode rawFileNode = new DefaultMutableTreeNode(rawFile);
-                            fileLinkerTreeModel.insertNodeInto(rawFileNode, fileLinkerRootNode, fileLinkerTreeModel.getChildCount(fileLinkerRootNode));
+                            if (FilenameUtils.isExtension(rawFile.getName(), ".raw")) {
+                                DefaultMutableTreeNode rawFileNode = new DefaultMutableTreeNode(rawFile);
+                                fileLinkerTreeModel.insertNodeInto(rawFileNode, fileLinkerRootNode, fileLinkerTreeModel.getChildCount(fileLinkerRootNode));
+                            } else {
+                                List<String> messages = new ArrayList<>();
+                                messages.add("Please select a RAW file (*.raw).");
+                                showMessageDialog("RAW file addition", messages, JOptionPane.WARNING_MESSAGE);
+                            }
                         }
 
                         //expand the tree
@@ -177,9 +183,16 @@ public class MainController {
                         case 0:
                             returnVal = mainFrame.getRawFileChooser().showOpenDialog(mainFrame);
                             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                                File rawFile = mainFrame.getRawFileChooser().getSelectedFile();
-                                DefaultMutableTreeNode rawFileNode = new DefaultMutableTreeNode(rawFile);
-                                fileLinkerTreeModel.insertNodeInto(rawFileNode, fileLinkerRootNode, fileLinkerTreeModel.getChildCount(fileLinkerRootNode));
+                                for (File rawFile : mainFrame.getRawFileChooser().getSelectedFiles()) {
+                                    if (FilenameUtils.isExtension(rawFile.getName(), "raw")) {
+                                        DefaultMutableTreeNode rawFileNode = new DefaultMutableTreeNode(rawFile);
+                                        fileLinkerTreeModel.insertNodeInto(rawFileNode, fileLinkerRootNode, fileLinkerTreeModel.getChildCount(fileLinkerRootNode));
+                                    } else {
+                                        List<String> messages = new ArrayList<>();
+                                        messages.add("Please select a RAW file (*.raw).");
+                                        showMessageDialog("RAW file addition", messages, JOptionPane.WARNING_MESSAGE);
+                                    }
+                                }
 
                                 //expand the tree
                                 mainFrame.getFileLinkerTree().expandPath(new TreePath(fileLinkerRootNode));
@@ -190,12 +203,17 @@ public class MainController {
                                 returnVal = getCurrentImportFileChooser(level).showOpenDialog(mainFrame);
                                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                                     File importFile = getCurrentImportFileChooser(level).getSelectedFile();
+                                    if (FilenameUtils.isExtension(importFile.getName(), new String[]{"cpsx", "tsv", "tab"})) {
+                                        DefaultMutableTreeNode importFileNode = new DefaultMutableTreeNode(importFile);
+                                        fileLinkerTreeModel.insertNodeInto(importFileNode, selectedNode, fileLinkerTreeModel.getChildCount(selectedNode));
 
-                                    DefaultMutableTreeNode importFileNode = new DefaultMutableTreeNode(importFile);
-                                    fileLinkerTreeModel.insertNodeInto(importFileNode, selectedNode, fileLinkerTreeModel.getChildCount(selectedNode));
-
-                                    //expand the tree
-                                    mainFrame.getFileLinkerTree().expandPath(new TreePath(selectedNode.getPath()));
+                                        //expand the tree
+                                        mainFrame.getFileLinkerTree().expandPath(new TreePath(selectedNode.getPath()));
+                                    } else {
+                                        List<String> messages = new ArrayList<>();
+                                        messages.add("Please select an identification file (*.cpsx, *.tsv, *.tab).");
+                                        showMessageDialog("Identification file addition", messages, JOptionPane.WARNING_MESSAGE);
+                                    }
                                 }
                             } else {
                                 List<String> messages = new ArrayList<>();
@@ -211,29 +229,34 @@ public class MainController {
                                     returnVal = getCurrentImportFileChooser(level).showOpenDialog(mainFrame);
                                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                                         File fastaOrMgfFile = getCurrentImportFileChooser(level).getSelectedFile();
-
-                                        //check if the PeptideShaker file is already linked to a file of the same type (FASTA or MGF)
-                                        if (selectedNode.getChildCount() == 0) {
-                                            DefaultMutableTreeNode importFileNode = new DefaultMutableTreeNode(fastaOrMgfFile);
-                                            fileLinkerTreeModel.insertNodeInto(importFileNode, selectedNode, fileLinkerTreeModel.getChildCount(selectedNode));
-                                        } else {
-                                            String alreadyPresentExtension = FilenameUtils.getExtension(((File) ((DefaultMutableTreeNode) selectedNode.getChildAt(0)).getUserObject()).getName());
-                                            if (!alreadyPresentExtension.equals(FilenameUtils.getExtension(fastaOrMgfFile.getName()))) {
+                                        if (FilenameUtils.isExtension(fastaOrMgfFile.getName(), new String[]{"fasta", "mgf"})) {
+                                            //check if the PeptideShaker file is already linked to a file of the same type (FASTA or MGF)
+                                            if (selectedNode.getChildCount() == 0) {
                                                 DefaultMutableTreeNode importFileNode = new DefaultMutableTreeNode(fastaOrMgfFile);
                                                 fileLinkerTreeModel.insertNodeInto(importFileNode, selectedNode, fileLinkerTreeModel.getChildCount(selectedNode));
                                             } else {
-                                                List<String> messages = new ArrayList<>();
-                                                messages.add("The PeptideShaker cpsx file is already linked to a "
-                                                        + alreadyPresentExtension
-                                                        + " file."
-                                                        + System.lineSeparator()
-                                                        + "Please remove that file before adding another one.");
-                                                showMessageDialog("FASTA/MGF file addition", messages, JOptionPane.WARNING_MESSAGE);
+                                                String alreadyPresentExtension = FilenameUtils.getExtension(((File) ((DefaultMutableTreeNode) selectedNode.getChildAt(0)).getUserObject()).getName());
+                                                if (!alreadyPresentExtension.equals(FilenameUtils.getExtension(fastaOrMgfFile.getName()))) {
+                                                    DefaultMutableTreeNode importFileNode = new DefaultMutableTreeNode(fastaOrMgfFile);
+                                                    fileLinkerTreeModel.insertNodeInto(importFileNode, selectedNode, fileLinkerTreeModel.getChildCount(selectedNode));
+                                                } else {
+                                                    List<String> messages = new ArrayList<>();
+                                                    messages.add("The PeptideShaker cpsx file is already linked to a "
+                                                            + alreadyPresentExtension
+                                                            + " file."
+                                                            + System.lineSeparator()
+                                                            + "Please remove that file before adding another one.");
+                                                    showMessageDialog("FASTA/MGF file addition", messages, JOptionPane.WARNING_MESSAGE);
+                                                }
                                             }
-                                        }
 
-                                        //expand the tree
-                                        mainFrame.getFileLinkerTree().expandPath(new TreePath(selectedNode.getPath()));
+                                            //expand the tree
+                                            mainFrame.getFileLinkerTree().expandPath(new TreePath(selectedNode.getPath()));
+                                        } else {
+                                            List<String> messages = new ArrayList<>();
+                                            messages.add("Please select an FASTA or MGF file (*.fasta, *.mgf");
+                                            showMessageDialog("FASTA or MGF file addition", messages, JOptionPane.WARNING_MESSAGE);
+                                        }
                                     }
                                 } else {
                                     List<String> messages = new ArrayList<>();
