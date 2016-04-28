@@ -50,9 +50,4 @@ public class ConfigHolder extends PropertiesConfiguration {
         return ourInstance;
     }
 
-    public static ConfigHolder getInstanceProteinDiversity() throws ConfigurationException, IOException {
-        Resource propertiesResource = ResourceUtils.getResourceByRelativePath("resources/ProteinDiversity.properties");
-        ourInstance = new ConfigHolder(propertiesResource);
-        return ourInstance;
-    }
 }

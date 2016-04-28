@@ -11,8 +11,9 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class RawFileFilter extends FileFilter {
 
-    private static final String RAW_EXTENSION = "raw";
-    private static final String DESCRIPTION = "*.raw";
+    public static final String RAW_EXTENSION = "raw";
+    public static final String RAW_EXTENSION_CAPS = "RAW";
+    private static final String DESCRIPTION = "*.raw, *.RAW";
 
     @Override
     public boolean accept(File file) {
@@ -20,7 +21,7 @@ public class RawFileFilter extends FileFilter {
 
         if (file.isFile()) {
             String extension = FilenameUtils.getExtension(file.getName());
-            if (!extension.isEmpty() && extension.equals(RAW_EXTENSION)) {
+            if (!extension.isEmpty() && (extension.equals(RAW_EXTENSION) || extension.equals(RAW_EXTENSION_CAPS))) {
                 accept = true;
             }
         } else {

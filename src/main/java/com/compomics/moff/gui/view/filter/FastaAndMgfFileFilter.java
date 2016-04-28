@@ -11,8 +11,8 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class FastaAndMgfFileFilter extends FileFilter {
 
-    private static final String FASTA_EXTENSION = "fasta";
-    private static final String MGF_EXTENSION = "mgf";
+    public static final String FASTA_EXTENSION = "fasta";
+    public static final String MGF_EXTENSION = "mgf";
     private static final String DESCRIPTION = "*.fasta, *.mgf";
 
     @Override

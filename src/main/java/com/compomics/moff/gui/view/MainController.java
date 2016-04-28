@@ -51,7 +51,7 @@ public class MainController {
      */
     private static final String LINK_SEPARATOR = "\t";
 
-    //card layout panels
+    //card layout panel names
     private static final String FIRST_PANEL = "firstPanel";
     private static final String SECOND_PANEL = "secondPanel";
     private static final String THIRD_PANEL = "thirdPanel";
@@ -161,12 +161,12 @@ public class MainController {
                     returnVal = mainFrame.getRawFileChooser().showOpenDialog(mainFrame);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         for (File rawFile : mainFrame.getRawFileChooser().getSelectedFiles()) {
-                            if (FilenameUtils.isExtension(rawFile.getName(), ".raw")) {
+                            if (FilenameUtils.isExtension(rawFile.getName(), new String[]{RawFileFilter.RAW_EXTENSION, RawFileFilter.RAW_EXTENSION_CAPS})) {
                                 DefaultMutableTreeNode rawFileNode = new DefaultMutableTreeNode(rawFile);
                                 fileLinkerTreeModel.insertNodeInto(rawFileNode, fileLinkerRootNode, fileLinkerTreeModel.getChildCount(fileLinkerRootNode));
                             } else {
                                 List<String> messages = new ArrayList<>();
-                                messages.add("Please select a RAW file (*.raw).");
+                                messages.add("Please select a RAW file (*.raw, *.RAW).");
                                 showMessageDialog("RAW file addition", messages, JOptionPane.WARNING_MESSAGE);
                             }
                         }
@@ -184,12 +184,12 @@ public class MainController {
                             returnVal = mainFrame.getRawFileChooser().showOpenDialog(mainFrame);
                             if (returnVal == JFileChooser.APPROVE_OPTION) {
                                 for (File rawFile : mainFrame.getRawFileChooser().getSelectedFiles()) {
-                                    if (FilenameUtils.isExtension(rawFile.getName(), "raw")) {
+                                    if (FilenameUtils.isExtension(rawFile.getName(), new String[]{RawFileFilter.RAW_EXTENSION, RawFileFilter.RAW_EXTENSION_CAPS})) {
                                         DefaultMutableTreeNode rawFileNode = new DefaultMutableTreeNode(rawFile);
                                         fileLinkerTreeModel.insertNodeInto(rawFileNode, fileLinkerRootNode, fileLinkerTreeModel.getChildCount(fileLinkerRootNode));
                                     } else {
                                         List<String> messages = new ArrayList<>();
-                                        messages.add("Please select a RAW file (*.raw).");
+                                        messages.add("Please select a RAW file (*.raw, *.RAW).");
                                         showMessageDialog("RAW file addition", messages, JOptionPane.WARNING_MESSAGE);
                                     }
                                 }
@@ -203,7 +203,7 @@ public class MainController {
                                 returnVal = getCurrentImportFileChooser(level).showOpenDialog(mainFrame);
                                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                                     File importFile = getCurrentImportFileChooser(level).getSelectedFile();
-                                    if (FilenameUtils.isExtension(importFile.getName(), new String[]{"cpsx", "tsv", "tab"})) {
+                                    if (FilenameUtils.isExtension(importFile.getName(), new String[]{CpsFileFilter.CPS_EXTENSION, TabSeparatedFileFilter.TAB_EXTENSION, TabSeparatedFileFilter.TSV_EXTENSION})) {
                                         DefaultMutableTreeNode importFileNode = new DefaultMutableTreeNode(importFile);
                                         fileLinkerTreeModel.insertNodeInto(importFileNode, selectedNode, fileLinkerTreeModel.getChildCount(selectedNode));
 
@@ -229,7 +229,7 @@ public class MainController {
                                     returnVal = getCurrentImportFileChooser(level).showOpenDialog(mainFrame);
                                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                                         File fastaOrMgfFile = getCurrentImportFileChooser(level).getSelectedFile();
-                                        if (FilenameUtils.isExtension(fastaOrMgfFile.getName(), new String[]{"fasta", "mgf"})) {
+                                        if (FilenameUtils.isExtension(fastaOrMgfFile.getName(), new String[]{FastaAndMgfFileFilter.FASTA_EXTENSION, FastaAndMgfFileFilter.MGF_EXTENSION})) {
                                             //check if the PeptideShaker file is already linked to a file of the same type (FASTA or MGF)
                                             if (selectedNode.getChildCount() == 0) {
                                                 DefaultMutableTreeNode importFileNode = new DefaultMutableTreeNode(fastaOrMgfFile);
@@ -387,6 +387,7 @@ public class MainController {
 
         //load the parameters from the properties file
         loadParameterValues();
+
         //call onCardSwitch
         onCardSwitch();
     }

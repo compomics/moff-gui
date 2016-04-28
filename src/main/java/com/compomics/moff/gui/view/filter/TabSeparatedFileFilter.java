@@ -11,8 +11,8 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class TabSeparatedFileFilter extends FileFilter {
 
-    private static final String TSV_EXTENSION = "tsv";
-    private static final String TAB_EXTENSION = "tab";
+    public static final String TSV_EXTENSION = "tsv";
+    public static final String TAB_EXTENSION = "tab";
     private static final String DESCRIPTION = "*.tsv, *.tab";
 
     @Override

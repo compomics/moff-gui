@@ -11,7 +11,7 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class CpsFileFilter extends FileFilter {
 
-    private static final String CPS_EXTENSION = "cpsx";
+    public static final String CPS_EXTENSION = "cpsx";
     private static final String DESCRIPTION = "*.cpsx";
 
     @Override
