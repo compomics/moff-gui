@@ -1,7 +1,12 @@
 package com.compomics.moff.gui.view;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
 import org.apache.log4j.WriterAppender;
 import org.apache.log4j.spi.LoggingEvent;
 
@@ -19,11 +24,27 @@ public class LogTextAreaAppender extends WriterAppender implements Runnable {
     /**
      * The cycle of string characters to iterate over during waiting
      */
-    private String[] cycle = new String[]{"", ".", "..", "..."};
-    private boolean lock;
+    private String[] cycle = new String[]{"/", "-", "\\", "|"};
+    /**
+     * The status boolean to notify if the appender is being written to
+     */
+    private boolean lock = false;
+    /**
+     * The status boolean indicating the appender should perform the cycle
+     */
+    private boolean loading = false;
+    /**
+     * boolean indicating the logger is closed
+     */
     private boolean closed = false;
+    /**
+     * The animation thread
+     */
     private Thread animationThread;
-    private int currentLength;
+    /**
+     * The current cycling index for an animation
+     */
+    private int index = 0;
 
     /**
      * No-arg constructor.
@@ -43,34 +64,78 @@ public class LogTextAreaAppender extends WriterAppender implements Runnable {
         animationThread.interrupt();
     }
 
+    public void setLoading(boolean loading) {
+        this.loading = loading;
+    }
+
     @Override
     public void append(LoggingEvent event) {
-        lock = true;
+        while (lock) {
+            try {
+                Thread.sleep(100);
+                //give gui time to handle it
+            } catch (InterruptedException ex) {
+                //ignore
+            }
+        }
+
         final String message = this.layout.format(event);
         SwingUtilities.invokeLater(() -> {
-            logTextArea.setText(logTextArea.getText().substring(0, currentLength));
-            logTextArea.append(message);
-            //repaint view
-            logTextArea.validate();
-            logTextArea.repaint();
-            currentLength = logTextArea.getText().length();
+            lock = true;
+            if (loading) {
+                removeCyclePrint();
+            }
+            appendText(message);
+            lock = false;
         });
-        lock = false;
+
+    }
+
+    private void appendText(String message) {
+
+        int previousIndex = index - 1;
+        if (previousIndex < 0) {
+            previousIndex = cycle.length - 1;
+        }
+        //reset the index 
+        index = 0;
+        logTextArea.append(message);
+        logTextArea.append(System.lineSeparator());
+        logTextArea.validate();
+        logTextArea.repaint();
+    }
+
+    private void removeCyclePrint() {
+        Document doc = null;
+        if (doc == null) {
+            doc = logTextArea.getDocument();
+        }
+        try {
+            doc.remove(doc.getLength() - (cycle[index].length()), cycle[index].length());
+        } catch (BadLocationException ex) {
+            ex.printStackTrace();
+            //ignore for now?
+        }
     }
 
     @Override
     public void run() {
-
-        int index = 0;
         while (true) {
             if (closed) {
                 break;
-            } else if (!lock && logTextArea != null) {
-                logTextArea.setText(logTextArea.getText().substring(0, currentLength) + cycle[index]);
-                index++;
-                if (index > cycle.length - 1) {
-                    index = 0;
+            } else if (loading) {
+                //check that nothing is writing to the logging area
+                if (!lock && logTextArea != null) {
+                    removeCyclePrint();
+                    index++;
+                    if (index > cycle.length - 1) {
+                        index = 0;
+                    }
+                    String txt=logTextArea.getText();
+                    
+                    logTextArea.setText( txt+ cycle[index]);
                 }
+
             }
             try {
                 Thread.sleep(1000);
@@ -79,5 +144,4 @@ public class LogTextAreaAppender extends WriterAppender implements Runnable {
             }
         }
     }
-
 }

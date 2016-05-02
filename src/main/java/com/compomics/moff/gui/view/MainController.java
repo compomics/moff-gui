@@ -75,6 +75,7 @@ public class MainController {
      * The views of this controller.
      */
     private final MainFrame mainFrame = new MainFrame();
+    private LogTextAreaAppender logTextAreaAppender;
 
     /**
      * Initialize the controller.
@@ -114,7 +115,7 @@ public class MainController {
         mainFrame.getPeptideShakerDirectoryTextField().setText(peptideShakerDirectory.getAbsolutePath());
 
         //get the gui appender for setting the log text area
-        LogTextAreaAppender logTextAreaAppender = (LogTextAreaAppender) Logger.getRootLogger().getAppender("gui");
+        logTextAreaAppender = (LogTextAreaAppender) Logger.getRootLogger().getAppender("gui");
         logTextAreaAppender.setLogTextArea(mainFrame.getLogTextArea());
 
         mainFrame.getLogTextArea().setText("..." + System.lineSeparator());
@@ -311,6 +312,7 @@ public class MainController {
 
         mainFrame.getClearButton().addActionListener(e -> {
             mainFrame.getLogTextArea().setText("..." + System.lineSeparator());
+            logTextAreaAppender.setLoading(true);
         });
 
         mainFrame.getProceedButton().addActionListener(e -> {
@@ -803,6 +805,7 @@ public class MainController {
 
         private MoFFStep moffStep;
         private FileChangeScanner fcs;
+        private boolean logFromFile = false;
 
         public MoFFStep getStep() {
             return moffStep;
@@ -812,9 +815,19 @@ public class MainController {
             return fcs;
         }
 
+        public MoffRunSwingWorker(boolean logFromFile) {
+            this.logFromFile = logFromFile;
+        }
+
+        public MoffRunSwingWorker() {
+
+        }
+
         @Override
         protected Void doInBackground() throws Exception {
             LOGGER.info("Preparing to run moFF...");
+            // start the waiting animation 
+            logTextAreaAppender.setLoading(true);
             // get the MoFF parameters
             HashMap<String, String> moffParameters;
             if (mainFrame.getApexModeRadioButton().isSelected()) {
@@ -865,14 +878,20 @@ public class MainController {
             }
             //prepare to capture the logging
             LOGGER.info("Starting moFF run, please note that this is a long process...");
-            fcs = new FileChangeScanner(outPutDirectory);
-            new Thread(fcs).start();
+            if (logFromFile) {
+                fcs = new FileChangeScanner(outPutDirectory);
+                new Thread(fcs).start();
+            }
             //execute MoFF itself
             moffStep = new MoFFStep();
             moffStep.setParameters(moffParameters);
             moffStep.doAction();
-            fcs.stop();
+            if (fcs != null) {
+                fcs.stop();
+            }
             //  LOGGER.info("MoFF run completed");
+            // stop the waiting animation 
+            logTextAreaAppender.setLoading(false);
             return null;
         }
 
