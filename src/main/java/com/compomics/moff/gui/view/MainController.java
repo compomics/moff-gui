@@ -311,7 +311,7 @@ public class MainController {
         });
 
         mainFrame.getClearButton().addActionListener(e -> {
-            mainFrame.getLogTextArea().setText("..." + System.lineSeparator());
+            mainFrame.getLogTextArea().setText("");
             logTextAreaAppender.setLoading(true);
         });
 
@@ -826,7 +826,7 @@ public class MainController {
         @Override
         protected Void doInBackground() throws Exception {
             LOGGER.info("Preparing to run moFF...");
-            // start the waiting animation 
+            // start the waiting animation
             logTextAreaAppender.setLoading(true);
             // get the MoFF parameters
             HashMap<String, String> moffParameters;
@@ -890,7 +890,7 @@ public class MainController {
                 fcs.stop();
             }
             //  LOGGER.info("MoFF run completed");
-            // stop the waiting animation 
+            // stop the waiting animation
             logTextAreaAppender.setLoading(false);
             return null;
         }
