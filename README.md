@@ -19,12 +19,12 @@ moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light too
 
 [Go to top of page](#moff-gui)
 
----
 
 # Read me #
   * [Minimum Requirements](#minimum-requirements)
   * [Input data](#Input data)
   * [moFF parameters & options]([moFF parameters & options)
+
 ---
 
 ## Minimum Requirements ##
@@ -79,10 +79,11 @@ moFF  can be run on:
 - Matching between run (MBR) mode : Using all the runs od an experiments  a matching run is performed to increase the number of quantified peptides.
 
 In the apex mode , the parameter that you can edit are :
- -- the tollerance of machine  in ppm
- -- the rt window of the xic (minute). Default value is  3  min
-	-- the time windows user to get tha apex point  ( minute). Default value is 0.1
+ - the tollerance of machine  in ppm
+ - the rt window of the xic (minute). Default value is  3  min
+ - the time windows user to get tha apex point  ( minute). Default value is 0.1
 
 
+[Go to top of page](#moff-gui)
 ---
 
