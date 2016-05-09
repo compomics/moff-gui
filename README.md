@@ -19,9 +19,9 @@ moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light too
 
 
 # Read me #
-* [Minimum Requirements](#minimum-requirements)
-* [Input data](#input-data)
-* [moFF parameters and options](#moFF-parameters-and-options)
+  * [Minimum Requirements](#minimum-requirements)
+  * [Input data](#input-data)
+  * [moFF parameters and options](#moFF-parameters-and-options)
 
 
 ## Minimum Requirements ##
@@ -64,3 +64,17 @@ The tab-delimite files that contain the list of the MS2 identified peptides (you
 
 [Go to top of page](#moff-gui)
 
+---
+## moFF parameters and options ##
+
+moFF  can be run on:
+- Apex mode : moFF will extract only the apex peak for the MS2 input peptides
+- Matching between run (MBR) mode : Using all the runs od an experiments  a matching run is performed to increase the number of quantified peptides.
+
+In the apex mode , the parameter that you can edit are :
+ - the tollerance of machine  in ppm
+ - the rt window of the xic (minute). Default value is  3  min
+ - the time windows user to get tha apex point  ( minute). Default value is 0.1
+
+
+[Go to top of page](#moff-gui)
