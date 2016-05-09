@@ -42,3 +42,27 @@ For the moment it does not work with the Thermo Fusion machine.
 
 [Go to top of page](#moff-gui)
 
+
+### Input data ### 
+
+moFF-GUI  to perform the APEX quantification needs two  type of informations:
+ - RAW file 
+ - MS2 identified peptide information
+ - 
+The mS2 identified peptides should be given in two different ways:
+- The output of peptide-shaker search in cpx file
+- A tab-delimited file where each peptided and its information are speficied
+
+The user can use the moFF-gui with peptide-shaker output or use its idenfied result obtanied with any search engines.
+
+The tab-delimite files that contain the list of the MS2 identified peptides (you can use any search engines) must contains the information showed in *moFF_setting.property* for each peptide. The minimun specificic requirements of the input files are:
+- tab delimited file
+- the header of the input file should contain the following the fields  and columnns names :  
+  - 'peptide' : sequence of the peptide
+  - 'prot': protein ID 
+  - 'rt': retention time of peptide   ( The retention time must be specified in second )
+  - 'mz' : mass over charge
+  - 'mass' : mass of the peptide
+  - 'charge' : charge of the ionized peptide
+
+[Go to top of page](#moff-gui)
