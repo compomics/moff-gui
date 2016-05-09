@@ -24,7 +24,7 @@ moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light too
 * [moFF parameters and options](#moFF-parameters-and-options)
 
 
-## Minimum Requirementss ##
+## Minimum Requirements ##
 
 Java 8 is request to run the gui.
 
