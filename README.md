@@ -65,7 +65,7 @@ The tab-delimite files that contain the list of the MS2 identified peptides (you
 [Go to top of page](#moff-gui)
 
 ---
-## moFF parameters and options ##
+## moFF parameters and options 
 
 moFF  can be run on:
 - Apex mode : moFF will extract only the apex peak for the MS2 input peptides
