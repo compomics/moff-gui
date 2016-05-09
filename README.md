@@ -23,7 +23,7 @@ moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light too
 # Read me #
   * [Minimum Requirements](#minimum-requirements)
   * [Input data](#Input data)
-  * [moFF parameters & options]([moFF parameters & options)
+  * [moFF parameters & options](moFF parameters & options)
 
 ---
 
