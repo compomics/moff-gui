@@ -24,8 +24,7 @@ moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light too
 * [moFF parameters and options](#moFF-parameters-and-options)
 
 
-
-### Minimum Requirements ###
+## Minimum Requirementss ##
 
 Java 8 is request to run the gui.
 
@@ -43,7 +42,7 @@ For the moment it does not work with the Thermo Fusion machine.
 [Go to top of page](#moff-gui)
 
 
-### Input data ### 
+## Input data ## 
 
 moFF-GUI  to perform the APEX quantification needs two  type of informations:
  - RAW file 
