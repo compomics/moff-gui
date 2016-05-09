@@ -41,7 +41,8 @@ For the moment it does not work with the Thermo Fusion machine.
 
 [Go to top of page](#moff-gui)
 
-## Input data ## 
+--- 
+##Input data## 
 
 moFF-GUI to perform the APEX quantification needs two  type of informations:
  - RAW file 
