@@ -1,8 +1,7 @@
 # moFF-GUI #
 
-
-  * [Introduction](#introduction)
-  * [Read Me](#read-me)
+* [Introduction](#introduction)
+* * [Read Me](#read-me)
 
 ---
 
@@ -21,9 +20,9 @@ moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light too
 
 
 # Read me #
-  * [Minimum Requirements](#minimum-requirements)
-  * [Input data](#Input data)
-  * [moFF parameters & options](moFF parameters & options)
+* [Minimum Requirements](#minimum-requirements)
+* [Input data](#Input data)
+* [moFF parameters & options](moFF parameters & options)
 
 ---
 
