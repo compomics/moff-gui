@@ -3,15 +3,13 @@
 * [Introduction](#introduction)
 * [Read Me](#read-me)
 
----
 
----
+
 
 |   |   |   |
 | :------------------------- | :---------------: | :--: |
 | [![download](https://github.com/compomic/xx/wiki/images/download_button.png)](link) | *v1.10.2 - All platforms* | [ReleaseNotes](https://github.com/compomics/xx/wiki/ReleaseNotes) |
 
----
 
 # Introduction #
 moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light tool for the quantification of peptides directly from Thermos RAW files. moFF-gui is platform independent  and it is fully integrated with the peptide-shaker output.
@@ -19,12 +17,13 @@ moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light too
 [Go to top of page](#moff-gui)
 
 
+
 # Read me #
 * [Minimum Requirements](#minimum-requirements)
 * [Input data](#input-data)
 * [moFF parameters and options](#moFF-parameters-and-options)
 
----
+
 
 ### Minimum Requirements ###
 
@@ -43,7 +42,6 @@ For the moment it does not work with the Thermo Fusion machine.
 
 [Go to top of page](#moff-gui)
 
----
 
 ### Input data ### 
 
@@ -69,7 +67,7 @@ The tab-delimite files that contain the list of the MS2 identified peptides (you
 
 [Go to top of page](#moff-gui)
 
---- 
+
 
 ## moFF parameters and options ###
 
@@ -84,5 +82,5 @@ In the apex mode , the parameter that you can edit are :
 
 
 [Go to top of page](#moff-gui)
----
+
 
