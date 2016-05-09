@@ -15,7 +15,7 @@
 ---
 
 # Introduction #
-moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light tool for quantified peptides directly from Thermos RAW file. moFF-gui is platform independent  and it is fully integrated with the peptide-shaker output .
+moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light tool for the quantification of peptides directly from Thermos RAW files. moFF-gui is platform independent  and it is fully integrated with the peptide-shaker output.
 
 [Go to top of page](#moff-gui)
 
