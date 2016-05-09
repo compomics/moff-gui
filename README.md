@@ -76,7 +76,12 @@ The tab-delimite files that contain the list of the MS2 identified peptides (you
 
 moFF  can be run on:
 - Apex mode : moFF will extract only the apex peak for the MS2 input peptides
-- Matching between run (MBR) mode : Using all the runs given in input a matching run is performed to increase the number of quantified peptides in a experiments.
+- Matching between run (MBR) mode : Using all the runs od an experiments  a matching run is performed to increase the number of quantified peptides.
+
+In the apex mode , the parameter that you can edit are :
+ -- the tollerance of machine  in ppm
+ -- the rt window of the xic (minute). Default value is  3  min
+	-- the time windows user to get tha apex point  ( minute). Default value is 0.1
 
 
 ---
