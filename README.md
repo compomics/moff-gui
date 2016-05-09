@@ -49,7 +49,7 @@ moFF-GUI  to perform the APEX quantification needs two  type of informations:
  - RAW file 
  - MS2 identified peptide information
  - 
-The mS2 identified peptides should be given in two different ways:
+The MS2 identified peptides should be given in two different ways:
 - The output of peptide-shaker search in cpx file
 - A tab-delimited file where each peptided and its information are speficied
 
