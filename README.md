@@ -1,4 +1,4 @@
-# moFF-GUI #
+# moFF-gui #
 
 * [Introduction](#introduction)
 * [Read Me](#read-me)
@@ -22,7 +22,7 @@ moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light too
 # Read me #
 * [Minimum Requirements](#minimum-requirements)
 * [Input data](#input-data)
-* [moFF parameters a,d options](#moFF-parameters-and-options)
+* [moFF parameters and options](#moFF-parameters-and-options)
 
 ---
 
@@ -71,7 +71,7 @@ The tab-delimite files that contain the list of the MS2 identified peptides (you
 
 --- 
 
-## moFF parameters & options ###
+## moFF parameters and options ###
 
 moFF  can be run on:
 - Apex mode : moFF will extract only the apex peak for the MS2 input peptides
