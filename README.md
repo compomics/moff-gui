@@ -1,7 +1,7 @@
 # moFF-GUI #
 
 * [Introduction](#introduction)
-* * [Read Me](#read-me)
+* [Read Me](#read-me)
 
 ---
 
@@ -26,7 +26,7 @@ moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light too
 
 ---
 
-## Minimum Requirements ##
+### Minimum Requirements ###
 
 Java 8 is request to run the gui.
 
@@ -45,7 +45,7 @@ For the moment it does not work with the Thermo Fusion machine.
 
 ---
 
-## Input data ## 
+### Input data ### 
 
 moFF-GUI  to perform the APEX quantification needs two  type of informations:
  - RAW file 
@@ -71,7 +71,7 @@ The tab-delimite files that contain the list of the MS2 identified peptides (you
 
 --- 
 
-## moFF parameters & options ##
+## moFF parameters & options ###
 
 moFF  can be run on:
 - Apex mode : moFF will extract only the apex peak for the MS2 input peptides
