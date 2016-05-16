@@ -22,6 +22,7 @@ moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light too
   * [Minimum Requirements](#minimum-requirements)
   * [Input data](#input-data)
   * [moFF parameters and options](#moff-parameters-and-options)
+  * [moFF output](#moff-output)
 
 
 ## Minimum Requirements ##
@@ -83,6 +84,24 @@ In the matching-between-run methos some more parameters are requested:
  -  conbination weighting
  - 	filter outlier and width of the filter (higher value mean less filtering effect)
 
-The for each input file, the ouput consinst in a tab delimeted file that contain the apex intensity value and some other information. The log file and the output file are in the output folder specified by the user at the beginning.
+
+
+[Go to top of page](#moff-gui)
+
+---
+## moFF output
+
+The for each input file, the ouput is a tab delimeted file (with the same name of the input raw file) that contains the apex intensity values and some other information.  For each output file produced by the apex module  a log file is also provided. The matching-between-runs produces a separate  log file where all the information about all the trained linear model are showed. 
+The log files and the output files are in the output folder specified by the user at the beginning. 
+The output file contains the original fields plus the following information:
+
+ rt_peak' : rt of the peak  in the initial state 
+ SNR' :  SNR of the peak for he initial state
+ log_L_R' :  shape of the peak for the initial state
+ log_int' : log transformed intensity at the initial stet
+ intensity
+ 
+
+
 
 [Go to top of page](#moff-gui)
