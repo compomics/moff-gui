@@ -8,7 +8,7 @@
 
 |   |   |   |
 | :------------------------- | :---------------: | :--: |
-| [![download](https://github.com/compomic/xx/wiki/images/download_button.png)](link) | *v1.10.2 - All platforms* | [ReleaseNotes](https://github.com/compomics/xx/wiki/ReleaseNotes) |
+| [![download](https://github.com/compomic/xx/wiki/images/download_button.png)](https://github.com/compomics/moff-gui/releases/download/0.1.0-beta/moff-gui-0.1.0-beta.zip) | *v0.1.0-beta - All platforms* | [ReleaseNotes](https://github.com/compomics/xx/wiki/ReleaseNotes) |
 
 
 # Introduction #
