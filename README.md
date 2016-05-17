@@ -91,15 +91,18 @@ In the matching-between-run methos some more parameters are requested:
 ---
 ## moFF output
 
-The for each input file, the ouput is a tab delimeted file (with the same name of the input raw file) that contains the apex intensity values and some other information.  For each output file produced by the apex module  a log file is also provided. The matching-between-runs produces a separate  log file where all the information about all the trained linear model are showed. 
+The for each input file, the ouput is a tab delimeted file (with the same name of the input raw file) that contains the apex intensity values and some other information.  For each output file produced by the apex module  a log file is also provided. The matching-between-runs produces a separate log file where all the information about all the trained linear model are showed. 
 The log files and the output files are in the output folder specified by the user at the beginning. 
-The output file contains the original fields plus the following information:
 
- rt_peak' : rt of the peak  in the initial state 
- SNR' :  SNR of the peak for he initial state
- log_L_R' :  shape of the peak for the initial state
- log_int' : log transformed intensity at the initial stet
- intensity
+Description of the fields added by moFF in the output file:
+
+  - rt_peak : apex peak rt
+  - SNR :  SNR of the peak 
+  - log_L_R' :  shape of the peak (around 0  means  centered,  log_L_R > 0 means right skewed, log_L_R <0 means left skewed ) 
+  - log_int' : log transformed MS1 intensity 
+  - intensity :  MS1 intensity
+  - lwhm" left : width half maximun of the signal in seconds
+  - rwhm" right:  width half maximun of the signal in seconds
  
 
 
