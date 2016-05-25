@@ -13,8 +13,9 @@
 
 |   |   |
 | :-------------------------------: | :-------------------------------: | 
-| [![](https://github.com/compomics/moff-gui/wiki/images/1_snap_small.png)](https://github.com/compomics/moff-gui/wiki/images/1_snap.PNG) |
-| [![](https://github.com/compomics/moff-gui/wiki/images/2_snap_small.png)](https://github.com/compomics/moff-gui/wiki/images/2_snap.PNG) 
+| [![](https://github.com/compomics/moff-gui/wiki/images/1_snap_small.png)](https://github.com/compomics/moff-gui/wiki/images/1_snap.PNG) |  [![](https://github.com/compomics/moff-gui/wiki/images/2_snap_small.png)](https://github.com/compomics/moff-gui/wiki/images/2_snap.PNG) |
+| [![](https://github.com/compomics/moff-gui/wiki/images/3_snap_small.png)](https://github.com/compomics/moff-gui/wiki/images/3_snap.PNG) |  [![](https://github.com/compomics/moff-gui/wiki/images/4_snap_small.png)](https://github.com/compomics/moff-gui/wiki/images/4_snap.PNG) |
+
 (Click on a figure to see the full size version)
 
 
