@@ -7,12 +7,12 @@
 
 
 |   |   |   |
-| :------------------------- | :---------------: | :--: |
+| :-------------------------: | :---------------: | :--: |
 | [![download](https://github.com/compomics/moff-gui/wiki/images/button_3.png)](https://github.com/compomics/moff-gui/releases/download/0.1.0-beta/moff-gui-0.1.0-beta.zip) | *v0.1.0-beta - All platforms* | [ReleaseNotes](https://github.com/compomics/moff-gui/releases/tag/0.1.0-beta) |
 
 
 |   |   |
-| :-------------------------------: | :-------------------------------: | 
+| :----------------------------------: | :-----------------------------------: | 
 | [![](https://github.com/compomics/moff-gui/wiki/images/1_snap_small.png)](https://github.com/compomics/moff-gui/wiki/images/1_snap.PNG) |  [![](https://github.com/compomics/moff-gui/wiki/images/2_snap_small.png)](https://github.com/compomics/moff-gui/wiki/images/2_snap.PNG) |
 | [![](https://github.com/compomics/moff-gui/wiki/images/3_snap_small.png)](https://github.com/compomics/moff-gui/wiki/images/3_snap.PNG) |  [![](https://github.com/compomics/moff-gui/wiki/images/4_snap_small.png)](https://github.com/compomics/moff-gui/wiki/images/4_snap.PNG) |
 
@@ -23,7 +23,7 @@
 
 
 # Introduction #
-moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light tool for the quantification of peptides directly from Thermo RAW files. moFF-gui is a platform independent(windows and linux) and it is fully integrated with the peptide-shaker output.
+moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light tool for the quantification of peptides directly from Thermo RAW files. moFF-gui is a platform independent (windows and linux) and it is fully integrated with the peptide-shaker output.
 
 [Go to top of page](#moff-gui)
 
@@ -72,7 +72,8 @@ The tab-delimited file that contains the list of the MS2 identified peptides (yo
   - 'mass' : mass of the peptide
   - 'charge' : charge of the ionized peptide
 
-For the cps file, the user must also load the corrispetive respective mgf file and database search (fasta file )  used in Peptide Shaker in order to let the gui automatically  generates the right input file for moFF.
+For the cps file, the user must also load the corrispetive respective mgf file and database search (fasta file) used in PeptideShaker in order to let the gui automatically generates the right input file for moFF.
+A tutorial about the use of PeptideShaker can be found at <http://compomics.com/bioinformatics-for-proteomics/>
 
 In case the tab-delimited file insered by the user contains also other fields (i.e modifications,petides length), those will remain in the result output.
 
@@ -83,18 +84,19 @@ In case the tab-delimited file insered by the user contains also other fields (i
 
 moFF  can be run on:
 - Apex mode : moFF will extract only the apex peak for the MS2 input peptides
-- Matching between run (MBR) mode : Using all the runs of an experiments  a matching run is performed to increase the number of quantified peptides.
+- Matching between run (MBR) mode : Using all the replicates, the approach try to match unidenfied peptides across all the peptides in order to  increase the number of quantified peptides.
 
 In the apex mode , the parameter that you can edit are :
  - precursor match tollerance of the machine in ppm
  - xic retention time window (minute). Default value is 5 min.
  - peak retention time window (minute). Default value is 0.2 min.
 
-In the matching-between-run methos some more parameters are requested:
+In the match-between-run some more parameters are requested:
  - 	matched peak retention time window (minute). Default value is 0.4 
  -  conbination weighting
  - 	filter outlier and width of the filter (higher value mean less filtering effect)
 
+The match-between-run uses all the shared peptides among the replicates to train the RT prediction models as defaoult option. In case the user wants to use a specific set of peptides as training sets he can specify them in tab delimited formats (two fields peptides and mass)
 
 
 [Go to top of page](#moff-gui)
@@ -107,13 +109,13 @@ The log files and the output files are in the output folder specified by the use
 
 Description of the fields added by moFF in the output file:
 
-  - rt_peak : apex peak rt
-  - SNR :  SNR of the peak 
-  - log_L_R' :  shape of the peak (around 0  means  centered,  log_L_R > 0 means right skewed, log_L_R <0 means left skewed ) 
-  - log_int' : log transformed MS1 intensity 
+  - rt_peak : contains the rt in seconds where the apex peak has been found
+  - SNR :  Signal-to-noise  of the peak intensity. Higher values means that peak intensity is far from the noise level 
+  - log_L_R' :  this gives you the shape of the peaks. Values around 0  mean that the peak is centered wheres  log_L_R > 0 and log_L_R   means  respectively right and   means left skewed. 
+  - log_int' : log 2 transformed MS1 intensity 
   - intensity :  MS1 intensity
-  - lwhm" left : width half maximun of the signal in seconds
-  - rwhm" right:  width half maximun of the signal in seconds
+  - lwhm" : descending on the left side peak is the first rt value  where the intensity  is at least the 50% of thee apex peak intensity (left width half maximun of the signal in seconds )
+  - "rwhm" : descending on the right side of the peak  is the first rt value where the intensity is at least the 50% of thea apex peak ( right width half maximun of the signal in seconds)
  
 
 
