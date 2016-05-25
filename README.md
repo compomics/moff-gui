@@ -72,10 +72,12 @@ The tab-delimited file that contains the list of the MS2 identified peptides (yo
   - 'mass' : mass of the peptide
   - 'charge' : charge of the ionized peptide
 
-For the cps file, the user must also load the corrispetive respective mgf file and database search (fasta file) used in PeptideShaker in order to let the gui automatically generates the right input file for moFF.
+For the cpsx file, the user must also load the respective mgf file and database search (fasta file) used in PeptideShaker in order to let the gui generates the right input file for moFF.
 A tutorial about the use of PeptideShaker can be found at <http://compomics.com/bioinformatics-for-proteomics/>
 
 In case the tab-delimited file insered by the user contains also other fields (i.e modifications,petides length), those will remain in the result output.
+
+In the *sample_data* folder,  you can  find the cpsx file related to 3 run of CPTAC Study 6. We also provide the database used  and the mgf for 3 runs. The raw files can be dowloand follow the link in txt file.
 
 [Go to top of page](#moff-gui)
 
