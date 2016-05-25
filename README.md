@@ -11,6 +11,16 @@
 | [![download](https://github.com/compomic/xx/wiki/images/download_button.png)](https://github.com/compomics/moff-gui/releases/download/0.1.0-beta/moff-gui-0.1.0-beta.zip) | *v0.1.0-beta - All platforms* | [ReleaseNotes](https://github.com/compomics/moff-gui/releases/tag/0.1.0-beta) |
 
 
+|  |  |  |
+|:--:|:--:|:--:|
+| [![](https://github.com/compomics/moff-gui/wiki/images/1_snap.png)](hhttps://github.com/compomics/moff-gui/wiki/images/1_snap.png) | [![](https://github.com/compomics/moff-gui/wiki/images/2_snap.png)](https://github.com/compomics/moff-gui/wiki/images/2_snap.png) | 
+
+(Click on a figure to see the full size version)
+
+
+
+
+
 # Introduction #
 moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light tool for the quantification of peptides directly from Thermo RAW files. moFF-gui is a platform independent(windows and linux) and it is fully integrated with the peptide-shaker output.
 
