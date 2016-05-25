@@ -11,10 +11,10 @@
 | [![download](https://github.com/compomics/moff-gui/wiki/images/button_3.png)](https://github.com/compomics/moff-gui/releases/download/0.1.0-beta/moff-gui-0.1.0-beta.zip) | *v0.1.0-beta - All platforms* | [ReleaseNotes](https://github.com/compomics/moff-gui/releases/tag/0.1.0-beta) |
 
 
-|  |  |  |
-|:--:|:--:|
-| [![](https://github.com/compomics/moff-gui/wiki/images/1_snap_small.png)](hhttps://github.com/compomics/moff-gui/wiki/images/1_snap.PNG) 
-| [![](https://github.com/compomics/moff-gui/wiki/images/2_snap_small.png)](hhttps://github.com/compomics/moff-gui/wiki/images/2_snap.PNG) 
+|   |   |
+| :-------------------------------: | :-------------------------------: | 
+| [![](https://github.com/compomics/moff-gui/wiki/images/1_snap_small.png)](https://github.com/compomics/moff-gui/wiki/images/1_snap.PNG) |
+| [![](https://github.com/compomics/moff-gui/wiki/images/2_snap_small.png)](https://github.com/compomics/moff-gui/wiki/images/2_snap.PNG) 
 (Click on a figure to see the full size version)
 
 
