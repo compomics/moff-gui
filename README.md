@@ -84,7 +84,7 @@ In case the tab-delimited file insered by the user contains also other fields (i
 
 moFF  can be run on:
 - Apex mode : moFF will extract only the apex peak for the MS2 input peptides
-- Matching between run (MBR) mode : Using all the replicates, the approach try to match unidenfied peptides across all the peptides in order to  increase the number of quantified peptides.
+- Match-between-run (MBR) mode : Using all the replicates, the approach trys to match unidenfied peptides across all the run in order to  increase the number of quantified peptides.
 
 In the apex mode , the parameter that you can edit are :
  - precursor match tollerance of the machine in ppm
@@ -104,18 +104,21 @@ The match-between-run uses all the shared peptides among the replicates to train
 ---
 ## moFF output
 
-The for each input file, the ouput is a tab delimeted file (with the same name of the input raw file) that contains the apex intensity values and some other information.  For each output file produced by the apex module  a log file is also provided. The matching-between-runs produces a separate log file where all the information about all the trained linear model are showed. 
+The for each input file, the ouput is a tab delimeted file (with the same name of the input raw file) that contains the apex intensity values and some other information.  For each output file produced by the apex module  a log file is also provided. The match-between-runs produces a separate log file where all the information about all the trained linear model are showed. 
 The log files and the output files are in the output folder specified by the user at the beginning. 
 
 Description of the fields added by moFF in the output file:
 
-  - rt_peak : contains the rt in seconds where the apex peak has been found
-  - SNR :  Signal-to-noise  of the peak intensity. Higher values means that peak intensity is far from the noise level 
-  - log_L_R' :  this gives you the shape of the peaks. Values around 0  mean that the peak is centered wheres  log_L_R > 0 and log_L_R   means  respectively right and   means left skewed. 
-  - log_int' : log 2 transformed MS1 intensity 
-  - intensity :  MS1 intensity
-  - lwhm" : descending on the left side peak is the first rt value  where the intensity  is at least the 50% of thee apex peak intensity (left width half maximun of the signal in seconds )
-  - "rwhm" : descending on the right side of the peak  is the first rt value where the intensity is at least the 50% of thea apex peak ( right width half maximun of the signal in seconds)
+  - *rt_peak* : contains the rt in seconds where the apex peak has been found
+  - *SNR* :  Signal-to-noise  of the peak intensity. Higher values means that peak intensity is far from the noise level 
+  - *log_L_R*' :  this gives you the shape of the peaks. Values around 0  mean that the peak is centered wheres  log_L_R > 0 and log_L_R   means  respectively right and   means left skewed. 
+  - *log_int* : log 2 transformed MS1 intensity 
+  - *intensity* :  MS1 intensity
+  - *lwhm* : descending on the left side peak is the first rt value  where the intensity  is at least the 50% of thee apex peak intensity (left width half maximun of the signal in seconds )
+  - *rwhm* : descending on the right side of the peak  is the first rt value where the intensity is at least the 50% of thea apex peak ( right width half maximun of the signal in seconds)
+  - *5p_noise* : 5th percentile of the intensity values contained in the XiC. This value is used for the *SNR* computation
+  - *10p_noise* :  10th percentile of the intensity values contained in the XiC.
+  - *code_unique* : this field is concatenation of the peptide sequence and mass values. It is used by moFF during the match-between-runs.
  
 
 
