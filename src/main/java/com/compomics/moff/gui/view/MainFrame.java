@@ -196,6 +196,18 @@ public class MainFrame extends javax.swing.JFrame {
         return peptideShakerDirectoryChooser;
     }
 
+    public JCheckBox getCustomPeptidesCheckBox() {
+        return customPeptidesCheckBox;
+    }
+
+    public JButton getCustomPeptidesChooseButton() {
+        return customPeptidesChooseButton;
+    }
+
+    public JTextField getCustomPeptidesFileTextField() {
+        return customPeptidesFileTextField;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -242,6 +254,9 @@ public class MainFrame extends javax.swing.JFrame {
         filterOutliersCheckBox = new javax.swing.JCheckBox();
         outlierThresholdLabel = new javax.swing.JLabel();
         outlierThresholdTextField = new javax.swing.JTextField();
+        customPeptidesCheckBox = new javax.swing.JCheckBox();
+        customPeptidesFileTextField = new javax.swing.JTextField();
+        customPeptidesChooseButton = new javax.swing.JButton();
         lastPanel = new javax.swing.JPanel();
         logTextAreaScrollPane = new javax.swing.JScrollPane();
         logTextArea = new javax.swing.JTextArea();
@@ -354,7 +369,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(outputDirectoryLabel)
                     .addComponent(outputDirectoryChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(outputDirectoryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 85, Short.MAX_VALUE))
+                .addGap(0, 124, Short.MAX_VALUE))
         );
 
         topPanel.add(firstPanel, "firstPanel");
@@ -415,7 +430,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, secondPanelLayout.createSequentialGroup()
                 .addComponent(fileLinkerTreeInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(fileLinkerTreeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                .addComponent(fileLinkerTreeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(secondPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(deleteFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -488,23 +503,41 @@ public class MainFrame extends javax.swing.JFrame {
 
         outlierThresholdLabel.setText("Width:");
 
+        customPeptidesCheckBox.setText("use custom peptides");
+        customPeptidesCheckBox.setToolTipText("Select a tab separated file with custom peptides used to train the RT prediction models. The first column must contain the peptide sequence, the second column the peptide mass.");
+
+        customPeptidesFileTextField.setEnabled(false);
+
+        customPeptidesChooseButton.setText("choose");
+        customPeptidesChooseButton.setMaximumSize(new java.awt.Dimension(80, 25));
+        customPeptidesChooseButton.setMinimumSize(new java.awt.Dimension(80, 25));
+        customPeptidesChooseButton.setPreferredSize(new java.awt.Dimension(80, 25));
+
         javax.swing.GroupLayout matchingBetweenRunsSettingsPanelLayout = new javax.swing.GroupLayout(matchingBetweenRunsSettingsPanel);
         matchingBetweenRunsSettingsPanel.setLayout(matchingBetweenRunsSettingsPanelLayout);
         matchingBetweenRunsSettingsPanelLayout.setHorizontalGroup(
             matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(matchingBetweenRunsSettingsPanelLayout.createSequentialGroup()
-                .addGroup(matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(matchedPeakRetentionTimeWindowLabel)
-                    .addComponent(combinationWeighingCheckBox)
-                    .addGroup(matchingBetweenRunsSettingsPanelLayout.createSequentialGroup()
-                        .addComponent(filterOutliersCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(outlierThresholdLabel)))
+                .addGroup(matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(matchedPeakRetentionTimeWindowLabel)
+                        .addComponent(combinationWeighingCheckBox)
+                        .addGroup(matchingBetweenRunsSettingsPanelLayout.createSequentialGroup()
+                            .addComponent(filterOutliersCheckBox)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(outlierThresholdLabel)))
+                    .addComponent(customPeptidesCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(matchedPeaksRetentionTimeWindowTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                    .addComponent(outlierThresholdTextField))
-                .addContainerGap(272, Short.MAX_VALUE))
+                .addGroup(matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(matchingBetweenRunsSettingsPanelLayout.createSequentialGroup()
+                        .addComponent(customPeptidesFileTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(customPeptidesChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(matchingBetweenRunsSettingsPanelLayout.createSequentialGroup()
+                        .addGroup(matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(matchedPeaksRetentionTimeWindowTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(outlierThresholdTextField))
+                        .addContainerGap())))
         );
         matchingBetweenRunsSettingsPanelLayout.setVerticalGroup(
             matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -519,6 +552,11 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(filterOutliersCheckBox)
                     .addComponent(outlierThresholdLabel)
                     .addComponent(outlierThresholdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(customPeptidesCheckBox)
+                    .addComponent(customPeptidesFileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customPeptidesChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -564,7 +602,7 @@ public class MainFrame extends javax.swing.JFrame {
         lastPanelLayout.setVerticalGroup(
             lastPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(lastPanelLayout.createSequentialGroup()
-                .addComponent(logTextAreaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+                .addComponent(logTextAreaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -646,7 +684,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(parentPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(parentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(topPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE)
+                    .addComponent(topPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(bottomPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -700,6 +738,9 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton clearButton;
     private javax.swing.JCheckBox combinationWeighingCheckBox;
+    private javax.swing.JCheckBox customPeptidesCheckBox;
+    private javax.swing.JButton customPeptidesChooseButton;
+    private javax.swing.JTextField customPeptidesFileTextField;
     private javax.swing.JButton deleteFileButton;
     private javax.swing.JTree fileLinkerTree;
     private javax.swing.JLabel fileLinkerTreeInfoLabel;

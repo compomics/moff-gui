@@ -61,7 +61,7 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="topPanel" pref="838" max="32767" attributes="0"/>
+                      <Component id="topPanel" max="32767" attributes="0"/>
                       <Component id="bottomPanel" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -165,7 +165,7 @@
                               <Component id="outputDirectoryChooseButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="outputDirectoryTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="85" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="124" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -311,7 +311,7 @@
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="fileLinkerTreeInfoLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="fileLinkerTreeScrollPane" pref="207" max="32767" attributes="0"/>
+                          <Component id="fileLinkerTreeScrollPane" pref="246" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="deleteFileButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -499,21 +499,33 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="matchedPeakRetentionTimeWindowLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="combinationWeighingCheckBox" min="-2" max="-2" attributes="0"/>
-                                  <Group type="102" attributes="0">
-                                      <Component id="filterOutliersCheckBox" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="32767" attributes="0"/>
-                                      <Component id="outlierThresholdLabel" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="matchedPeakRetentionTimeWindowLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="combinationWeighingCheckBox" min="-2" max="-2" attributes="0"/>
+                                      <Group type="102" attributes="0">
+                                          <Component id="filterOutliersCheckBox" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="32767" attributes="0"/>
+                                          <Component id="outlierThresholdLabel" min="-2" max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
+                                  <Component id="customPeptidesCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="matchedPeaksRetentionTimeWindowTextField" pref="200" max="32767" attributes="0"/>
-                                  <Component id="outlierThresholdTextField" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Component id="customPeptidesFileTextField" pref="386" max="32767" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="customPeptidesChooseButton" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="matchedPeaksRetentionTimeWindowTextField" pref="200" max="32767" attributes="0"/>
+                                          <Component id="outlierThresholdTextField" max="32767" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace max="32767" attributes="0"/>
+                                  </Group>
                               </Group>
-                              <EmptySpace pref="272" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -531,6 +543,12 @@
                                   <Component id="filterOutliersCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="outlierThresholdLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="outlierThresholdTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="customPeptidesCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="customPeptidesFileTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="customPeptidesChooseButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
@@ -562,6 +580,31 @@
                     </Component>
                     <Component class="javax.swing.JTextField" name="outlierThresholdTextField">
                     </Component>
+                    <Component class="javax.swing.JCheckBox" name="customPeptidesCheckBox">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="use custom peptides"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Select a tab separated file with custom peptides used to train the RT prediction models. The first column must contain the peptide sequence, the second column the peptide mass."/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="customPeptidesFileTextField">
+                      <Properties>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="customPeptidesChooseButton">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="choose"/>
+                        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[80, 25]"/>
+                        </Property>
+                        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[80, 25]"/>
+                        </Property>
+                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[80, 25]"/>
+                        </Property>
+                      </Properties>
+                    </Component>
                   </SubComponents>
                 </Container>
               </SubComponents>
@@ -590,7 +633,7 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="logTextAreaScrollPane" pref="264" max="32767" attributes="0"/>
+                          <Component id="logTextAreaScrollPane" pref="303" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="clearButton" min="-2" max="-2" attributes="0"/>
                       </Group>

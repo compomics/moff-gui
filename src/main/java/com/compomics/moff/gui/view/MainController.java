@@ -15,6 +15,8 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -72,6 +75,10 @@ public class MainController {
      */
     private File outPutDirectory;
     /**
+     * The custom peptide tab separated file.
+     */
+    private File customPeptidesFile;
+    /**
      * The views of this controller.
      */
     private final MainFrame mainFrame = new MainFrame();
@@ -90,7 +97,7 @@ public class MainController {
         mainFrame.getCpsFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
         mainFrame.getTsvFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
         mainFrame.getFastaAndMgfFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
-        //enable multple file selection
+        //enable multiple file selection
         mainFrame.getRawFileChooser().setMultiSelectionEnabled(true);
         //disable multiple file selection
         mainFrame.getOutputDirectoryChooser().setMultiSelectionEnabled(false);
@@ -124,6 +131,9 @@ public class MainController {
         mainFrame.getPeptideShakerRadioButton().setSelected(true);
         //select the APEX radio button
         mainFrame.getApexModeRadioButton().setSelected(true);
+
+        //disable custom peptides file choose button
+        mainFrame.getCustomPeptidesChooseButton().setEnabled(false);
 
         //show info
         updateInfo("Click on \"proceed\" to link the RAW and identification files.");
@@ -308,6 +318,22 @@ public class MainController {
 
         mainFrame.getFilterOutliersCheckBox().addActionListener(e -> {
             mainFrame.getOutlierThresholdTextField().setEnabled(mainFrame.getFilterOutliersCheckBox().isSelected());
+        });
+
+        mainFrame.getCustomPeptidesCheckBox().addActionListener(e -> {
+            mainFrame.getCustomPeptidesChooseButton().setEnabled(mainFrame.getCustomPeptidesCheckBox().isSelected());
+            if (!mainFrame.getCustomPeptidesCheckBox().isSelected()) {
+                mainFrame.getCustomPeptidesFileTextField().setText("");
+                customPeptidesFile = null;
+            }
+        });
+
+        mainFrame.getCustomPeptidesChooseButton().addActionListener(e -> {
+            int returnVal = mainFrame.getTsvFileChooser().showOpenDialog(mainFrame);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                customPeptidesFile = mainFrame.getTsvFileChooser().getSelectedFile();
+                mainFrame.getCustomPeptidesFileTextField().setText(customPeptidesFile.getAbsolutePath());
+            }
         });
 
         mainFrame.getClearButton().addActionListener(e -> {
@@ -569,7 +595,6 @@ public class MainController {
         }
         if (mainFrame.getPeptideShakerRadioButton().isSelected() && !mainFrame.getPeptideShakerDirectoryTextField().getText().isEmpty()) {
             //check if the PeptideShaker directory exists
-            File peptideShakerDirectory = new File(mainFrame.getPeptideShakerDirectoryTextField().getText());
             if (!peptideShakerDirectory.exists()) {
                 validationMessages.add("The specified PeptideShaker directory location doesn't exist.");
             }
@@ -669,6 +694,29 @@ public class MainController {
                         }
                     } catch (NumberFormatException nfe) {
                         validationMessages.add("Please provide a numeric outlier threshold value.");
+                    }
+                }
+            }
+            if (mainFrame.getCustomPeptidesCheckBox().isSelected()) {
+                if (mainFrame.getCustomPeptidesFileTextField().getText().isEmpty()) {
+                    validationMessages.add("Please provide a tab separated file with custom peptides.");
+                } else if (!customPeptidesFile.exists()) {
+                    validationMessages.add("The specified peptides file doesn't exist.");
+                } else {
+                    try (Stream<String> stream = Files.lines(customPeptidesFile.toPath(), Charset.defaultCharset())) {
+                        stream.forEach(line -> {
+                            String[] split = line.split("\t");
+                            if (split.length != 2) {
+                                throw new IllegalArgumentException();
+                            }
+                            Double peptideMass = Double.parseDouble(split[1]);
+                        });
+                    } catch (IOException ex) {
+                        validationMessages.add("Could not validate the custom peptides file.");
+                    } catch (NumberFormatException ex) {
+                        validationMessages.add("One of the peptide masses is invalid.");
+                    } catch (IllegalArgumentException ex) {
+                        validationMessages.add("Incorrect file structure (First column: peptide sequence TAB second column: peptide mass).");
                     }
                 }
             }
@@ -954,6 +1002,9 @@ public class MainController {
                 parameters.put("--weight_comb", "1");    // W_COMB  weights for model combination combination : 0 for no weight 1 weighted devised by trein err of the model. Default val =1
             } else {
                 parameters.put("--weight_comb", "0");
+            }
+            if (mainFrame.getCustomPeptidesCheckBox().isSelected()) {
+                parameters.put("--rt_feat_file", customPeptidesFile.getAbsolutePath());
             }
             parameters.put("--tol", mainFrame.getPrecursorMassToleranceTextField().getText());   // TOLL            specify the tollerance parameter in ppm
             parameters.put("--rt_w", mainFrame.getXicRetentionTimeWindowTextField().getText());    // RT_WINDOW      specify rt window for xic (minute). Default value is  5  min
