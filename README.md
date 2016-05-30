@@ -31,10 +31,10 @@ moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light too
 
 # Read me #
   * [Minimum Requirements](#minimum-requirements)
-  * [Input data](#input-data)
-  * [Sample data](#sample-data)
-  * [moFF parameters and options](#moff-parameters-and-options)
-  * [moFF output](#moff-output)
+  * [Input Data](#input-data)
+  * [Sample Data](#sample-data)
+  * [moFF Parameters and Options](#moff-parameters-and-options)
+  * [moFF Output](#moff-output)
 
 
 ## Minimum Requirements ##
@@ -55,7 +55,7 @@ For the moment it does not work with the Thermo Fusion machine.
 [Go to top of page](#moff-gui)
 
 --- 
-##Input data
+##Input Data
 
 moFF-GUI to perform the quantification needs two type of informations:
  - Thermo RAW file 
@@ -90,7 +90,7 @@ In order to use the cpsx files you need to specify in the gui where the PeptideS
 [Go to top of page](#moff-gui)
 
 ---
-## moFF parameters and options 
+## moFF Parameters and Options 
 
 moFF  can be run on:
 - Apex mode : moFF will extract only the apex peak for the MS2 input peptides
@@ -112,7 +112,7 @@ The match-between-run uses all the shared peptides among the replicates to train
 [Go to top of page](#moff-gui)
 
 ---
-## moFF output
+## moFF Output
 
 The for each input file, the ouput is a tab delimeted file (with the same name of the input raw file) that contains the apex intensity values and some other information.  For each output file produced by the apex module  a log file is also provided. The match-between-runs produces a separate log file where all the information about all the trained linear model are showed. 
 The log files and the output files are in the output folder specified by the user at the beginning. 
