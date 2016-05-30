@@ -32,6 +32,7 @@ moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light too
 # Read me #
   * [Minimum Requirements](#minimum-requirements)
   * [Input data](#input-data)
+  * [Sample data](#sample-data)
   * [moFF parameters and options](#moff-parameters-and-options)
   * [moFF output](#moff-output)
 
@@ -62,7 +63,7 @@ moFF-GUI to perform the quantification needs two type of informations:
 
 The MS2 identified peptides should be given in two different ways:
 - The output of peptide-shaker search as cpx file
-- A tab-delimited file where for each  peptided and the minimun required information are speficied
+- A tab-delimited file where for each  peptide the minimun required information are speficied
 
 The tab-delimited file that contains the list of the MS2 identified peptides (you can use any search engines) must contains the following information for all the peptides:
   - 'peptide' : sequence of the peptide
@@ -75,9 +76,16 @@ The tab-delimited file that contains the list of the MS2 identified peptides (yo
 For the cpsx file, the user must also load the respective mgf file and database search (fasta file) used in PeptideShaker in order to let the gui generates the right input file for moFF.
 A tutorial about the use of PeptideShaker can be found at <http://compomics.com/bioinformatics-for-proteomics/>
 
-In case the tab-delimited file insered by the user contains also other fields (i.e modifications,petides length), those will remain in the result output.
+In case the tab-delimited file provided by the user contains also other fields (i.e modifications,petides length), those will remain in the result output.
 
-In the *sample_data* folder,  you can  find the cpsx file related to 3 run of CPTAC Study 6. We also provide the database used  and the mgf for 3 runs. The raw files can be dowloand follow the link in txt file.
+[Go to top of page](#moff-gui)
+
+---
+###Sample Data
+
+The sample data can be found in this [folder] (genesis.ugent.be/uvpublicdata/moff_sample_data.zip) that contains the cpsx and the raw files related to 3 runs of CPTAC Study 6 (Paulovich, MCP Proteomics, 2010).
+The cpsx files contain the result of tandem and msgf+ runned in SearchGui/PeptidesShaker. We also provide the search database(.fasta) and the mgf file  for the 3 runs used in PeptideShaker. 
+In order to use the cpsx files you need to specify in the gui where the PeptideShaker jar is stored.
 
 [Go to top of page](#moff-gui)
 
