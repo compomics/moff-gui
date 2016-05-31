@@ -48,10 +48,6 @@ public class MainFrame extends javax.swing.JFrame {
      * FASTA and MGF file chooser.
      */
     private final JFileChooser fastaAndMgfFileChooser = new JFileChooser();
-    /**
-     * The logging instance
-     */
-    private static final Logger LOGGER = Logger.getLogger(MainFrame.class);
 
     /**
      * No-arg constructor.
