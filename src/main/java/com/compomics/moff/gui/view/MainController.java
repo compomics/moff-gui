@@ -12,6 +12,7 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -144,14 +145,26 @@ public class MainController {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 peptideShakerDirectory = mainFrame.getPeptideShakerDirectoryChooser().getSelectedFile();
                 mainFrame.getPeptideShakerDirectoryTextField().setText(peptideShakerDirectory.getAbsolutePath());
+
+                //set the directory of output directory file chooser
+                mainFrame.getOutputDirectoryChooser().setCurrentDirectory(peptideShakerDirectory);
             }
         });
 
         mainFrame.getOutputDirectoryChooseButton().addActionListener(e -> {
+            if (peptideShakerDirectory != null) {
+                mainFrame.getOutputDirectoryChooser().setCurrentDirectory(peptideShakerDirectory);
+            }
             int returnVal = mainFrame.getOutputDirectoryChooser().showOpenDialog(mainFrame);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 outPutDirectory = mainFrame.getOutputDirectoryChooser().getSelectedFile();
                 mainFrame.getOutputDirectoryTextField().setText(outPutDirectory.getAbsolutePath());
+
+                //set the directory of the other file choosers to the output directory to avoid unnecessary clicking
+                mainFrame.getRawFileChooser().setCurrentDirectory(outPutDirectory);
+                mainFrame.getCpsFileChooser().setCurrentDirectory(outPutDirectory);
+                mainFrame.getTsvFileChooser().setCurrentDirectory(outPutDirectory);
+                mainFrame.getFastaAndMgfFileChooser().setCurrentDirectory(outPutDirectory);
             }
         });
 
@@ -703,20 +716,33 @@ public class MainController {
                 } else if (!customPeptidesFile.exists()) {
                     validationMessages.add("The specified peptides file doesn't exist.");
                 } else {
-                    try (Stream<String> stream = Files.lines(customPeptidesFile.toPath(), Charset.defaultCharset())) {
-                        stream.forEach(line -> {
-                            String[] split = line.split("\t");
+                    try (BufferedReader br = Files.newBufferedReader(customPeptidesFile.toPath(), Charset.defaultCharset())) {
+                        String line = br.readLine();
+                        //read header line
+                        String[] split = line.split("\t");
+                        if (split.length != 2) {
+                            throw new IllegalArgumentException();
+                        } else if (!split[0].equals("peptide") || !split[1].equals("mass")) {
+                            throw new IllegalArgumentException();
+                        }
+                        //read the other lines
+                        while ((line = br.readLine()) != null) {
+                            split = line.split("\t");
                             if (split.length != 2) {
                                 throw new IllegalArgumentException();
                             }
                             Double peptideMass = Double.parseDouble(split[1]);
-                        });
+                        }
                     } catch (IOException ex) {
                         validationMessages.add("Could not validate the custom peptides file.");
                     } catch (NumberFormatException ex) {
                         validationMessages.add("One of the peptide masses is invalid.");
                     } catch (IllegalArgumentException ex) {
-                        validationMessages.add("Incorrect file structure (First column: peptide sequence TAB second column: peptide mass).");
+                        validationMessages.add("Incorrect file structure. The file columns must be tab separated."
+                                + System.lineSeparator()
+                                + "First column header: peptide; second column header: mass)."
+                                + System.lineSeparator()
+                                + "First column value: peptide sequence; second column value; peptide mass.");
                     }
                 }
             }
