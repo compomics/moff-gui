@@ -23,7 +23,7 @@
 
 
 # Introduction #
-moFF-gui a java-based gui for moFF (modest FEature Finder), a fast and light tool for the quantification of peptides directly from Thermo RAW files. moFF-gui is a platform independent (windows and linux) and it is fully integrated with the peptide-shaker output.
+moFF-gui a java-based gui for moFF (modest Feature Finder), a fast and light tool for the quantification of peptides directly from Thermo RAW files. moFF-gui is a platform independent (windows and linux) and it is fully integrated with the peptide-shaker output.
 
 [Go to top of page](#moff-gui)
 
@@ -62,7 +62,7 @@ moFF-GUI to perform the quantification needs two type of informations:
  - MS2 identified peptide information
 
 The MS2 identified peptides should be given in two different ways:
-- The output of peptide-shaker search as cpx file
+- The output of peptide-shaker search as cpsx file
 - A tab-delimited file where for each  peptide the minimun required information are speficied
 
 The tab-delimited file that contains the list of the MS2 identified peptides (you can use any search engines) must contains the following information for all the peptides:
@@ -84,7 +84,7 @@ In case the tab-delimited file provided by the user contains also other fields (
 ###Sample Data
 
 The sample data can be found in this [folder] (genesis.ugent.be/uvpublicdata/moff_sample_data.zip) that contains the cpsx and the raw files related to 3 runs of CPTAC Study 6 (Paulovich, MCP Proteomics, 2010).
-The cpsx files contain the result of tandem and msgf+ runned in SearchGui/PeptidesShaker. We also provide the search database(.fasta) and the mgf file  for the 3 runs used in PeptideShaker. 
+The cpsx files contain the result of tandem and msgf+ runned in SearchGui/PeptidesShaker. We also provide the search database (.fasta) and the mgf file for the 3 runs used in PeptideShaker. 
 In order to use the cpsx files you need to specify in the gui where the PeptideShaker jar is stored.
 
 [Go to top of page](#moff-gui)
@@ -103,10 +103,11 @@ In the apex mode , the parameter that you can edit are :
 
 In the match-between-run some more parameters are requested:
  - 	matched peak retention time window (minute). Default value is 0.4 
- -  conbination weighting
+ -  combination weighting (on/off)
  - 	filter outlier and width of the filter (higher value mean less filtering effect)
+ - 	
 
-The match-between-run uses all the shared peptides among the replicates to train the RT prediction models as defaoult option. In case the user wants to use a specific set of peptides as training sets he can specify them in tab delimited formats (two fields peptides and mass)
+The match-between-run uses all the shared peptides among the replicates to train the RT prediction models as defoult option. In case the user wants to use a specific set of peptides insted of all the shared peptides as training sets it is possible  specify them in tab delimited formats (two fields peptides and mass).
 
 
 [Go to top of page](#moff-gui)
