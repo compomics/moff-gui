@@ -143,6 +143,6 @@ Parameter | Meaning
 
 (c) A log file where all the information about all the trained linear model are displayed.
 
-NOTE : The log files and the output files are in the output folder specified by the user at the beginning. 
+NOTE : The log files and the output files are in the output folder specified by the user. 
 
 [Go to top of page](#moff-gui)
