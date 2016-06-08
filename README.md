@@ -140,6 +140,7 @@ Parameter | Meaning
 
 
 (b) A log file is also provided containing the process output. 
+
 (c) A log file where all the information about all the trained linear model are displayed.
 
 NOTE : The log files and the output files are in the output folder specified by the user at the beginning. 
