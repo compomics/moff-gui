@@ -23,7 +23,7 @@
 
 
 # Introduction #
-moFF-gui is an intuitive graphical user interface for the moFF (modest Feature Finder) algorithm. MoFF is a fast and lightweight tool for the quantification of peptides directly from Thermo RAW files. Being programmed in the JAVA programming language, moFF-gui is able to run platform independently and was extensively tested on windows and linux. The tool can be readily be integrated in pipelines using PeptideShaker as it accepts cps files as input. Alternatively, a tab separated file (tsv) can be provided with minimal [annotation requirements](##Input Data) on the level of peptide identifications.
+moFF-gui is an intuitive graphical user interface for the moFF (modest Feature Finder) algorithm. MoFF is a fast and lightweight tool for the quantification of peptides directly from Thermo RAW files. Being programmed in the JAVA programming language, moFF-gui is able to run platform independently and was extensively tested on windows and linux. The tool can be readily be integrated in pipelines using PeptideShaker as it accepts cps files as input. Alternatively, a tab separated file (tsv) can be provided with minimal [annotation requirements](##Input Data) on the level of peptide identifications. A [command-line version]<https://github.com/compomics/moFF> of moFF is also available.
 
 [Go to top of page](#moff-gui)
 
@@ -137,7 +137,7 @@ Parameter | Meaning
 *5p_noise* | 5th percentile of the intensity values contained in the XiC. This value is used for the *SNR* computation
 *10p_noise* |  10th percentile of the intensity values contained in the XiC.
 *code_unique* | this field is concatenation of the peptide sequence and mass values. It is used by moFF during the match-between-runs.
-
+*matched* | this value indicated if the featured has been added by the match-between-run (1) or is a ms2 identified features (0) 
 
 (b) A log file is also provided containing the process output. 
 
