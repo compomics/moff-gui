@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -740,7 +739,7 @@ public class MainController {
                     } catch (IllegalArgumentException ex) {
                         validationMessages.add("Incorrect file structure. The file columns must be tab separated."
                                 + System.lineSeparator()
-                                + "First column header: peptide; second column header: mass)."
+                                + "First column header: peptide; second column header: mass."
                                 + System.lineSeparator()
                                 + "First column value: peptide sequence; second column value; peptide mass.");
                     }
