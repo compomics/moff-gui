@@ -9,11 +9,11 @@ import org.apache.commons.io.FilenameUtils;
  *
  * @author Niels Hulstaert
  */
-public class RawFileFilter extends FileFilter {
+public class RawAndMzmlFileFilter extends FileFilter {
 
     public static final String RAW_EXTENSION = "raw";
-    public static final String RAW_EXTENSION_CAPS = "RAW";
-    private static final String DESCRIPTION = "*.raw, *.RAW";
+    public static final String MZML_EXTENSION = "mzml";
+    private static final String DESCRIPTION = "*.raw, *.mzml";
 
     @Override
     public boolean accept(File file) {
@@ -21,7 +21,7 @@ public class RawFileFilter extends FileFilter {
 
         if (file.isFile()) {
             String extension = FilenameUtils.getExtension(file.getName());
-            if (!extension.isEmpty() && (extension.equals(RAW_EXTENSION) || extension.equals(RAW_EXTENSION_CAPS))) {
+            if (!extension.isEmpty() && (extension.equalsIgnoreCase(RAW_EXTENSION) || extension.equalsIgnoreCase(MZML_EXTENSION))) {
                 accept = true;
             }
         } else {

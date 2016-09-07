@@ -21,7 +21,7 @@ public class FastaAndMgfFileFilter extends FileFilter {
 
         if (file.isFile()) {
             String extension = FilenameUtils.getExtension(file.getName());
-            if (!extension.isEmpty() && (extension.equals(FASTA_EXTENSION) || extension.equals(MGF_EXTENSION))) {
+            if (!extension.isEmpty() && (extension.equalsIgnoreCase(FASTA_EXTENSION) || extension.equalsIgnoreCase(MGF_EXTENSION))) {
                 accept = true;
             }
         } else {

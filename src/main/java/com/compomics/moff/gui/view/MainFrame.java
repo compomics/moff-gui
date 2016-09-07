@@ -33,9 +33,9 @@ public class MainFrame extends javax.swing.JFrame {
      */
     private final JFileChooser peptideShakerDirectoryChooser = new JFileChooser();
     /**
-     * RAW file chooser.
+     * RAW/mzML file chooser.
      */
-    private final JFileChooser rawFileChooser = new JFileChooser();
+    private final JFileChooser rawMzmlFileChooser = new JFileChooser();
     /**
      * PeptideShaker .cps file chooser.
      */
@@ -112,8 +112,8 @@ public class MainFrame extends javax.swing.JFrame {
         return matchingBetweenRunsRadioButton;
     }
 
-    public JFileChooser getRawFileChooser() {
-        return rawFileChooser;
+    public JFileChooser getRawMzmlFileChooser() {
+        return rawMzmlFileChooser;
     }
 
     public JFileChooser getCpsFileChooser() {
@@ -389,7 +389,7 @@ public class MainFrame extends javax.swing.JFrame {
         fileLinkerTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         fileLinkerTreeScrollPane.setViewportView(fileLinkerTree);
 
-        fileLinkerTreeInfoLabel.setText("<html>Link the RAW file(s) to the corresponding identification file(s). Each RAW file has to be linked to one<br>PeptideShaker file (*.cpsx) or a tab separated file (*.tab, *.tsv).<br>For a PeptideShaker file, the used FASTA (*.fasta) and MGF (.mgf) files have to be specified as well.</html> ");
+        fileLinkerTreeInfoLabel.setText("<html>Link the RAW/mzML file(s) to the corresponding identification file(s). Each RAW/mzML file has to be linked to one<br>PeptideShaker file (*.cpsx) or a tab separated file (*.tab, *.tsv).<br>For a PeptideShaker file, the used FASTA (*.fasta) and MGF (*.mgf) files have to be specified as well.</html> ");
 
         deleteFileButton.setText("delete");
         deleteFileButton.setToolTipText("Select one or more RAW and/or identification files to delete");

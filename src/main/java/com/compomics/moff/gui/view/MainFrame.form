@@ -341,7 +341,7 @@
                 </Container>
                 <Component class="javax.swing.JLabel" name="fileLinkerTreeInfoLabel">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="&lt;html&gt;Link the RAW file(s) to the corresponding identification file(s). Each RAW file has to be linked to one&lt;br&gt;PeptideShaker file (*.cpsx) or a tab separated file (*.tab, *.tsv).&lt;br&gt;For a PeptideShaker file, the used FASTA (*.fasta) and MGF (.mgf) files have to be specified as well.&lt;/html&gt; "/>
+                    <Property name="text" type="java.lang.String" value="&lt;html&gt;Link the RAW/mzML file(s) to the corresponding identification file(s). Each RAW/mzML file has to be linked to one&lt;br&gt;PeptideShaker file (*.cpsx) or a tab separated file (*.tab, *.tsv).&lt;br&gt;For a PeptideShaker file, the used FASTA (*.fasta) and MGF (*.mgf) files have to be specified as well.&lt;/html&gt; "/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JButton" name="deleteFileButton">

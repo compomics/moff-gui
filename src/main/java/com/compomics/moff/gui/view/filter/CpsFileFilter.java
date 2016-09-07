@@ -20,7 +20,7 @@ public class CpsFileFilter extends FileFilter {
 
         if (file.isFile()) {
             String extension = FilenameUtils.getExtension(file.getName());
-            if (!extension.isEmpty() && extension.equals(CPS_EXTENSION)) {
+            if (!extension.isEmpty() && extension.equalsIgnoreCase(CPS_EXTENSION)) {
                 accept = true;
             }
         } else {
