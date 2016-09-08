@@ -519,14 +519,14 @@ public class MainController {
 
     /**
      * Show a message dialog with a text area if the messages list contains more
-     * than one message.
+     * than one message or if the message is an error message.
      *
      * @param title the dialog title
      * @param messages the dialog messages list
      * @param messageType the dialog message type
      */
     private void showMessageDialog(final String title, final List<String> messages, final int messageType) {
-        if (messages.size() > 1) {
+        if (messages.size() > 1 || messageType == JOptionPane.ERROR_MESSAGE) {
             String message = messages.stream().collect(Collectors.joining(System.lineSeparator()));
 
             //add message to JTextArea
@@ -971,6 +971,7 @@ public class MainController {
             //  LOGGER.info("MoFF run completed");
             // stop the waiting animation
             logTextAreaAppender.setLoading(false);
+
             return null;
         }
 
@@ -1007,6 +1008,7 @@ public class MainController {
                 List<String> messages = new ArrayList<>();
                 messages.add(ex.getMessage());
                 showMessageDialog("Unexpected error", messages, JOptionPane.ERROR_MESSAGE);
+                logTextAreaAppender.setLoading(false);
             } finally {
 
             }

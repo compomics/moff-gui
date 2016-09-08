@@ -22,27 +22,27 @@ public class LogTextAreaAppender extends WriterAppender implements Runnable {
      */
     private JTextArea logTextArea;
     /**
-     * The cycle of string characters to iterate over during waiting
+     * The cycle of string characters to iterate over during waiting.
      */
     private String[] cycle = new String[]{"/", "-", "\\", "|"};
     /**
-     * The status boolean to notify if the appender is being written to
+     * The status boolean to notify if the appender is being written to.
      */
     private boolean lock = false;
     /**
-     * The status boolean indicating the appender should perform the cycle
+     * The status boolean indicating the appender should perform the cycle.
      */
     private boolean loading = false;
     /**
-     * boolean indicating the logger is closed
+     * boolean indicating the logger is closed.
      */
     private boolean closed = false;
     /**
-     * The animation thread
+     * The animation thread.
      */
     private Thread animationThread;
     /**
-     * The current cycling index for an animation
+     * The current cycling index for an animation.
      */
     private int index = 0;
 
@@ -97,7 +97,7 @@ public class LogTextAreaAppender extends WriterAppender implements Runnable {
         if (previousIndex < 0) {
             previousIndex = cycle.length - 1;
         }
-        //reset the index 
+        //reset the index
         index = 0;
         logTextArea.append(message);
         logTextArea.append(System.lineSeparator());
@@ -113,8 +113,7 @@ public class LogTextAreaAppender extends WriterAppender implements Runnable {
         try {
             doc.remove(doc.getLength() - (cycle[index].length()), cycle[index].length());
         } catch (BadLocationException ex) {
-            ex.printStackTrace();
-            //ignore for now?
+            //ignore
         }
     }
 
@@ -131,9 +130,9 @@ public class LogTextAreaAppender extends WriterAppender implements Runnable {
                     if (index > cycle.length - 1) {
                         index = 0;
                     }
-                    String txt=logTextArea.getText();
-                    
-                    logTextArea.setText( txt+ cycle[index]);
+                    String txt = logTextArea.getText();
+
+                    logTextArea.setText(txt + cycle[index]);
                 }
 
             }
