@@ -916,7 +916,7 @@ public class MainController {
                 moffParameters = getMBRParametersFromGUI();
                 moffParameters.put("mode", "MBR");
             }
-            LOGGER.info("MoFF will be run in " + moffParameters.get("mode") + " mode.");
+            LOGGER.info("MoFF will be ran in " + moffParameters.get("mode") + " mode.");
             Map<File, File> inputMapping;
             if (mainFrame.getTabSeparatedRadioButton().isSelected()) {
                 inputMapping = getRawMzmlTabSeparatedLinks();
@@ -947,8 +947,16 @@ public class MainController {
                 LOGGER.info("PeptideShaker output conversion complete...");
             }
             //write the cpsToMoffMapping to a File?
-            File tempMappingFile = writeToTempFile(inputMapping);
-            moffParameters.put("--map_file", tempMappingFile.getAbsolutePath());
+            //File tempMappingFile = writeToTempFile(inputMapping);
+            //moffParameters.put("--map_file", tempMappingFile.getAbsolutePath());
+            List<String> raws = new ArrayList<>();
+            List<String> tsvs = new ArrayList<>();
+            inputMapping.forEach((rawFile, tsvFile) -> {
+                raws.add(rawFile.getAbsolutePath());
+                tsvs.add(tsvFile.getAbsolutePath());
+            });
+            moffParameters.put("--intputraw", raws.stream().collect(Collectors.joining(" ")));
+            moffParameters.put("--inputtsv", tsvs.stream().collect(Collectors.joining(" ")));
 
             if (mainFrame.getApexModeRadioButton().isSelected()) {
                 moffParameters.put("mode", "APEX");
