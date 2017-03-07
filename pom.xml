@@ -155,12 +155,12 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>4.5.15</version>
+            <version>4.5.18</version>
         </dependency>    
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>Pladipus-moff</artifactId>
-            <version>1.1.1-SNAPSHOT</version>
+            <version>1.2.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.compomics</groupId>
@@ -192,6 +192,9 @@
             <name>Genesis maven2 repository</name>
             <url>http://genesis.UGent.be/maven2</url>
             <layout>default</layout>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>    
                               
