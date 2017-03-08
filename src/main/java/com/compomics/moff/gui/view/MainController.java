@@ -946,16 +946,13 @@ public class MainController {
                 }
                 LOGGER.info("PeptideShaker output conversion complete...");
             }
-            //write the cpsToMoffMapping to a File?
-            //File tempMappingFile = writeToTempFile(inputMapping);
-            //moffParameters.put("--map_file", tempMappingFile.getAbsolutePath());
             List<String> raws = new ArrayList<>();
             List<String> tsvs = new ArrayList<>();
             inputMapping.forEach((rawFile, tsvFile) -> {
                 raws.add(rawFile.getAbsolutePath());
                 tsvs.add(tsvFile.getAbsolutePath());
             });
-            moffParameters.put("--intputraw", raws.stream().collect(Collectors.joining(" ")));
+            moffParameters.put("--inputraw", raws.stream().collect(Collectors.joining(" ")));
             moffParameters.put("--inputtsv", tsvs.stream().collect(Collectors.joining(" ")));
 
             if (mainFrame.getApexModeRadioButton().isSelected()) {
@@ -981,25 +978,7 @@ public class MainController {
             logTextAreaAppender.setLoading(false);
 
             return null;
-        }
-
-        private File writeToTempFile(Map<File, File> fileMapping) throws IOException {
-            File tempFile = new File(outPutDirectory, "mapping.tsv");
-            if (tempFile.exists()) {
-                //@ToDo how to handle this properly?
-                LOGGER.warn("Mapping file already exists, overriding...");
-            }
-            try (FileWriter writer = new FileWriter(tempFile)) {
-                for (Map.Entry<File, File> aPeptideShakerFile : fileMapping.entrySet()) {
-                    writer.append(aPeptideShakerFile.getKey().getAbsolutePath()
-                            + LINK_SEPARATOR
-                            + aPeptideShakerFile.getValue().getAbsolutePath())
-                            .append(System.lineSeparator())
-                            .flush();
-                }
-            }
-            return tempFile;
-        }
+        }      
 
         @Override
         protected void done() {
