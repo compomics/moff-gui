@@ -14,11 +14,11 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +65,7 @@ public class MainController {
      */
     private final DefaultMutableTreeNode fileLinkerRootNode = new DefaultMutableTreeNode("RAW/mzML - identification file links");
     private final DefaultTreeModel fileLinkerTreeModel = new DefaultTreeModel(fileLinkerRootNode);
+//    private final FileTreeModel fileTreeModel = new FileTreeModel();
     private MoffRunSwingWorker moffRunSwingWorker;
     /**
      * The PeptideShaker directory.
@@ -91,29 +92,12 @@ public class MainController {
         //select directories only
         mainFrame.getOutputDirectoryChooser().setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         mainFrame.getPeptideShakerDirectoryChooser().setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-        //select only files
-        mainFrame.getRawMzmlFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
-        mainFrame.getCpsFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
-        mainFrame.getTsvFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
-        mainFrame.getFastaAndMgfFileChooser().setFileSelectionMode(JFileChooser.FILES_ONLY);
-        //enable multiple file selection
-        mainFrame.getRawMzmlFileChooser().setMultiSelectionEnabled(true);
-        //disable multiple file selection
-        mainFrame.getOutputDirectoryChooser().setMultiSelectionEnabled(false);
-        mainFrame.getPeptideShakerDirectoryChooser().setMultiSelectionEnabled(false);
-        mainFrame.getCpsFileChooser().setMultiSelectionEnabled(false);
-        mainFrame.getTsvFileChooser().setMultiSelectionEnabled(false);
-        mainFrame.getFastaAndMgfFileChooser().setMultiSelectionEnabled(false);
-        //set file filters
-        mainFrame.getRawMzmlFileChooser().setFileFilter(new RawAndMzmlFileFilter());
-        mainFrame.getCpsFileChooser().setFileFilter(new CpsFileFilter());
-        mainFrame.getTsvFileChooser().setFileFilter(new TabSeparatedFileFilter());
-        mainFrame.getFastaAndMgfFileChooser().setFileFilter(new FastaAndMgfFileFilter());
+        mainFrame.getDirectoryChooser().setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         //set file linker tree model
-        mainFrame.getFileLinkerTree().setRootVisible(true);
         mainFrame.getFileLinkerTree().setModel(fileLinkerTreeModel);
+
+        mainFrame.getFileChooserTree().setRootVisible(false);
 
         mainFrame.setTitle("moFF GUI " + ConfigHolder.getInstance().getString("moff_gui.version", "N/A"));
 
@@ -128,7 +112,7 @@ public class MainController {
         mainFrame.getLogTextArea().setText("..." + System.lineSeparator());
 
         //select the PeptideShaker radio button
-        mainFrame.getPeptideShakerRadioButton().setSelected(true);
+        mainFrame.getTabSeparatedRadioButton().setSelected(true);
         //select the APEX radio button
         mainFrame.getApexModeRadioButton().setSelected(true);
 
@@ -160,10 +144,7 @@ public class MainController {
                 mainFrame.getOutputDirectoryTextField().setText(outPutDirectory.getAbsolutePath());
 
                 //set the directory of the other file choosers to the output directory to avoid unnecessary clicking
-                mainFrame.getRawMzmlFileChooser().setCurrentDirectory(outPutDirectory);
-                mainFrame.getCpsFileChooser().setCurrentDirectory(outPutDirectory);
                 mainFrame.getTsvFileChooser().setCurrentDirectory(outPutDirectory);
-                mainFrame.getFastaAndMgfFileChooser().setCurrentDirectory(outPutDirectory);
             }
         });
 
@@ -175,27 +156,45 @@ public class MainController {
             removeAllIdentificationFiles();
         });
 
+        mainFrame.getBrowseDirectoriesButton().addActionListener(e -> {
+            int returnVal = mainFrame.getDirectoryChooser().showOpenDialog(mainFrame);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File selectedDirectory = mainFrame.getDirectoryChooser().getSelectedFile();
+                FileTreeModel fileTreeModel = new FileTreeModel(selectedDirectory);
+                mainFrame.getFileChooserTree().setModel(fileTreeModel);
+            }
+        });
+
         mainFrame.getAddFileButton().addActionListener(e -> {
+            //get the selected files
+            List<File> selectedFiles = getSelectedFiles();
+
+            Map<String, String> messages = new HashMap<>();
+
             TreeSelectionModel selectionModel = mainFrame.getFileLinkerTree().getSelectionModel();
             int selectionCount = selectionModel.getSelectionCount();
-            int returnVal;
             switch (selectionCount) {
                 case 0:
-                    returnVal = mainFrame.getRawMzmlFileChooser().showOpenDialog(mainFrame);
-                    if (returnVal == JFileChooser.APPROVE_OPTION) {
-                        for (File rawMzmlFile : mainFrame.getRawMzmlFileChooser().getSelectedFiles()) {
+                    if (!selectedFiles.isEmpty()) {
+                        for (File rawMzmlFile : selectedFiles) {
                             if (FilenameUtils.isExtension(rawMzmlFile.getName().toLowerCase(), new String[]{RawAndMzmlFileFilter.RAW_EXTENSION, RawAndMzmlFileFilter.MZML_EXTENSION})) {
                                 DefaultMutableTreeNode rawMzmlFileNode = new DefaultMutableTreeNode(rawMzmlFile);
                                 fileLinkerTreeModel.insertNodeInto(rawMzmlFileNode, fileLinkerRootNode, fileLinkerTreeModel.getChildCount(fileLinkerRootNode));
+
+                                mainFrame.getFileLinkerTree().clearSelection();
                             } else {
-                                List<String> messages = new ArrayList<>();
-                                messages.add("Please select a RAW/mzML file (*.raw, *.mzml).");
-                                showMessageDialog("RAW/mzML file addition", messages, JOptionPane.WARNING_MESSAGE);
+                                messages.putIfAbsent("RAW/mzML file addition", "Please select only RAW/mzML files (*.raw, *.mzml)."
+                                        + System.lineSeparator()
+                                        + "Click on a RAW/mzML file in the rigth panel to link it with an identification file.");
                             }
                         }
 
                         //expand the tree
                         mainFrame.getFileLinkerTree().expandPath(new TreePath(fileLinkerRootNode));
+                    } else {
+                        messages.put("RAW/mzML file addition", "Please select at least one RAW/mzML file (*.raw, *.mzml)."
+                                + System.lineSeparator()
+                                + "Click on a RAW/mzML file in the rigth panel to link it with an identification file.");
                     }
                     break;
                 case 1:
@@ -204,54 +203,62 @@ public class MainController {
                     int level = selectedNode.getLevel();
                     switch (level) {
                         case 0:
-                            returnVal = mainFrame.getRawMzmlFileChooser().showOpenDialog(mainFrame);
-                            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                                for (File rawFile : mainFrame.getRawMzmlFileChooser().getSelectedFiles()) {
-                                    if (FilenameUtils.isExtension(rawFile.getName().toLowerCase(), new String[]{RawAndMzmlFileFilter.RAW_EXTENSION, RawAndMzmlFileFilter.MZML_EXTENSION})) {
-                                        DefaultMutableTreeNode rawFileNode = new DefaultMutableTreeNode(rawFile);
-                                        fileLinkerTreeModel.insertNodeInto(rawFileNode, fileLinkerRootNode, fileLinkerTreeModel.getChildCount(fileLinkerRootNode));
+                            if (!selectedFiles.isEmpty()) {
+                                for (File rawMzmlFile : selectedFiles) {
+                                    if (FilenameUtils.isExtension(rawMzmlFile.getName().toLowerCase(), new String[]{RawAndMzmlFileFilter.RAW_EXTENSION, RawAndMzmlFileFilter.MZML_EXTENSION})) {
+                                        DefaultMutableTreeNode rawMzmlFileNode = new DefaultMutableTreeNode(rawMzmlFile);
+                                        fileLinkerTreeModel.insertNodeInto(rawMzmlFileNode, fileLinkerRootNode, fileLinkerTreeModel.getChildCount(fileLinkerRootNode));
+
+                                        mainFrame.getFileLinkerTree().clearSelection();
                                     } else {
-                                        List<String> messages = new ArrayList<>();
-                                        messages.add("Please select a RAW/mzML file (*.raw, *.mzml).");
-                                        showMessageDialog("RAW/mzML file addition", messages, JOptionPane.WARNING_MESSAGE);
+                                        messages.putIfAbsent("RAW/mzML file addition", "Please select only RAW/mzML files (*.raw, *.mzml)."
+                                                + System.lineSeparator()
+                                                + "Click on a RAW/mzML file in the rigth panel to link it with an identification file.");
                                     }
                                 }
 
                                 //expand the tree
                                 mainFrame.getFileLinkerTree().expandPath(new TreePath(fileLinkerRootNode));
+                            } else {
+                                messages.putIfAbsent("RAW/mzML file addition", "Please select at least one RAW/mzML file (*.raw, *.mzml)."
+                                        + System.lineSeparator()
+                                        + "Click on a RAW/mzML file in the rigth panel to link it with an identification file.");
                             }
                             break;
                         case 1:
                             if (selectedNode.getChildCount() == 0) {
-                                returnVal = getCurrentImportFileChooser(level).showOpenDialog(mainFrame);
-                                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                                    File importFile = getCurrentImportFileChooser(level).getSelectedFile();
-                                    if (FilenameUtils.isExtension(importFile.getName().toLowerCase(), new String[]{CpsFileFilter.CPS_EXTENSION, TabSeparatedFileFilter.TAB_EXTENSION, TabSeparatedFileFilter.TSV_EXTENSION})) {
-                                        DefaultMutableTreeNode importFileNode = new DefaultMutableTreeNode(importFile);
+                                if (selectedFiles.size() == 1) {
+                                    File selectedFile = selectedFiles.get(0);
+                                    if (FilenameUtils.isExtension(selectedFile.getName().toLowerCase(), new String[]{CpsFileFilter.CPS_EXTENSION, TabSeparatedFileFilter.TAB_EXTENSION, TabSeparatedFileFilter.TSV_EXTENSION, TabSeparatedFileFilter.TXT_EXTENSION})) {
+                                        DefaultMutableTreeNode importFileNode = new DefaultMutableTreeNode(selectedFile);
                                         fileLinkerTreeModel.insertNodeInto(importFileNode, selectedNode, fileLinkerTreeModel.getChildCount(selectedNode));
+
+                                        if (mainFrame.getTabSeparatedRadioButton().isSelected()) {
+                                            mainFrame.getFileLinkerTree().clearSelection();
+                                        }
 
                                         //expand the tree
                                         mainFrame.getFileLinkerTree().expandPath(new TreePath(selectedNode.getPath()));
                                     } else {
-                                        List<String> messages = new ArrayList<>();
-                                        messages.add("Please select an identification file (*.cpsx, *.tsv, *.tab).");
-                                        showMessageDialog("Identification file addition", messages, JOptionPane.WARNING_MESSAGE);
+                                        messages.put("Identification file addition", "Please select an identification file (*.cpsx, *.tsv, *.tab, *.txt)."
+                                                + System.lineSeparator()
+                                                + "Click on \"RAW/mzML - identification file links\" for adding more RAW/mzML files.");
                                     }
+                                } else {
+                                    messages.put("Identification file addition", "Please select one and only one identification file (*.cpsx, *.tsv, *.tab, *.txt)." + System.lineSeparator()
+                                            + "Click on \"RAW/mzML - identification file links\" for adding more RAW/mzML files.");
                                 }
                             } else {
-                                List<String> messages = new ArrayList<>();
-                                messages.add("The RAW/mzML file is already linked to an identification file."
+                                messages.put("Identification file addition", "The RAW/mzML file is already linked to an identification file."
                                         + System.lineSeparator()
                                         + "Please remove the identification file before adding another one.");
-                                showMessageDialog("Identification file addition", messages, JOptionPane.WARNING_MESSAGE);
                             }
                             break;
                         case 2:
                             if (mainFrame.getPeptideShakerRadioButton().isSelected()) {
                                 if (selectedNode.getChildCount() != 2) {
-                                    returnVal = getCurrentImportFileChooser(level).showOpenDialog(mainFrame);
-                                    if (returnVal == JFileChooser.APPROVE_OPTION) {
-                                        File fastaOrMgfFile = getCurrentImportFileChooser(level).getSelectedFile();
+                                    if (selectedFiles.size() > 0 && selectedFiles.size() <= 2) {
+                                        File fastaOrMgfFile = selectedFiles.get(0);
                                         if (FilenameUtils.isExtension(fastaOrMgfFile.getName().toLowerCase(), new String[]{FastaAndMgfFileFilter.FASTA_EXTENSION, FastaAndMgfFileFilter.MGF_EXTENSION})) {
                                             //check if the PeptideShaker file is already linked to a file of the same type (FASTA or MGF)
                                             if (selectedNode.getChildCount() == 0) {
@@ -262,55 +269,52 @@ public class MainController {
                                                 if (!alreadyPresentExtension.equals(FilenameUtils.getExtension(fastaOrMgfFile.getName()))) {
                                                     DefaultMutableTreeNode importFileNode = new DefaultMutableTreeNode(fastaOrMgfFile);
                                                     fileLinkerTreeModel.insertNodeInto(importFileNode, selectedNode, fileLinkerTreeModel.getChildCount(selectedNode));
+
+                                                    mainFrame.getFileLinkerTree().clearSelection();
                                                 } else {
-                                                    List<String> messages = new ArrayList<>();
-                                                    messages.add("The PeptideShaker cpsx file is already linked to a "
+                                                    messages.put("FASTA/MGF file addition", "The PeptideShaker cpsx file is already linked to a "
                                                             + alreadyPresentExtension
                                                             + " file."
                                                             + System.lineSeparator()
                                                             + "Please remove that file before adding another one.");
-                                                    showMessageDialog("FASTA/MGF file addition", messages, JOptionPane.WARNING_MESSAGE);
                                                 }
                                             }
 
                                             //expand the tree
                                             mainFrame.getFileLinkerTree().expandPath(new TreePath(selectedNode.getPath()));
                                         } else {
-                                            List<String> messages = new ArrayList<>();
-                                            messages.add("Please select an FASTA or MGF file (*.fasta, *.mgf");
-                                            showMessageDialog("FASTA or MGF file addition", messages, JOptionPane.WARNING_MESSAGE);
+                                            messages.put("FASTA/MGF file addition", "Please select an FASTA or MGF file (*.fasta, *.mgf");
                                         }
+                                    } else {
+                                        messages.put("FASTA/MGF file addition", "Please select at most one FASTA and one MGF file (*.fasta, *.mgf");
                                     }
                                 } else {
-                                    List<String> messages = new ArrayList<>();
-                                    messages.add("The PeptideShaker cpsx file is already linked to a FASTA and an MGF file."
+                                    messages.put("FASTA/MGF file addition", "The PeptideShaker cpsx file is already linked to a FASTA and an MGF file."
                                             + System.lineSeparator()
                                             + "Please remove these files before adding other ones.");
-                                    showMessageDialog("FASTA/MGF file addition", messages, JOptionPane.WARNING_MESSAGE);
                                 }
                             } else {
-                                List<String> messages = new ArrayList<>();
-                                messages.add("You have selected a tab separated identification file."
+                                messages.put("Identification file addition", "You have selected a tab separated identification file."
                                         + System.lineSeparator()
                                         + "Please select a RAW/mzML file to add an identification file to.");
-                                showMessageDialog("Identification file addition", messages, JOptionPane.WARNING_MESSAGE);
                             }
                             break;
                         default:
-                            List<String> messages = new ArrayList<>();
-                            messages.add("You have selected a FASTA or an MGF file."
+                            messages.put("Identification file addition", "You have selected a FASTA or an MGF file."
                                     + System.lineSeparator()
                                     + "Please select a PeptideShaker cpsx file to add a FASTA or an MGF file to.");
-                            showMessageDialog("Identification file addition", messages, JOptionPane.WARNING_MESSAGE);
                             break;
                     }
                     break;
                 default:
-                    List<String> messages = new ArrayList<>();
-                    messages.add("Please select only one RAW/mzML file to add an identification file to.");
-                    showMessageDialog("Identification file addition", messages, JOptionPane.WARNING_MESSAGE);
+                    messages.put("Identification file addition", "Please select only one RAW/mzML file to link to an identification file.");
                     break;
             }
+            messages.forEach((k, v) -> {
+                showMessageDialog(k, Arrays.asList(v), JOptionPane.WARNING_MESSAGE);
+            });
+
+            mainFrame.getFileChooserTree().clearSelection();
         });
 
         mainFrame.getDeleteFileButton().addActionListener(e -> {
@@ -346,6 +350,10 @@ public class MainController {
                 customPeptidesFile = mainFrame.getTsvFileChooser().getSelectedFile();
                 mainFrame.getCustomPeptidesFileTextField().setText(customPeptidesFile.getAbsolutePath());
             }
+        });
+
+        mainFrame.getSummedIntensityCheckbox().addActionListener(e -> {
+            mainFrame.getPeptideTagNameTextField().setEnabled(mainFrame.getSummedIntensityCheckbox().isSelected());
         });
 
         mainFrame.getClearButton().addActionListener(e -> {
@@ -454,6 +462,7 @@ public class MainController {
         mainFrame.getFilterOutliersCheckBox().setSelected(ConfigHolder.getInstance().getBoolean("outliers_filtering"));
         mainFrame.getOutlierThresholdTextField().setEnabled(mainFrame.getFilterOutliersCheckBox().isSelected());
         mainFrame.getOutlierThresholdTextField().setText(Double.toString(ConfigHolder.getInstance().getDouble("outliers_filtering.window")));
+        mainFrame.getPeptideTagNameTextField().setText(ConfigHolder.getInstance().getString("peptide_file.tag_name"));
     }
 
     /**
@@ -515,6 +524,24 @@ public class MainController {
         }
 
         return links;
+    }
+
+    private List<File> getSelectedFiles() {
+        List<File> files = new ArrayList<>();
+
+        TreeSelectionModel selectionModel = mainFrame.getFileChooserTree().getSelectionModel();
+        int selectionCount = selectionModel.getSelectionCount();
+        TreePath[] selectionPaths = selectionModel.getSelectionPaths();
+
+        for (TreePath treePath : selectionPaths) {
+            //check which level has been selected
+            File selectedFile = (File) treePath.getLastPathComponent();
+            if (selectedFile.isFile()) {
+                files.add(selectedFile);
+            }
+        }
+
+        return files;
     }
 
     /**
@@ -749,6 +776,11 @@ public class MainController {
                 }
             }
         }
+        if(mainFrame.getSummedIntensityCheckbox().isSelected()){
+            if(mainFrame.getPeptideTagNameTextField().getText().isEmpty()){
+                validationMessages.add("Please provide a peptide name tag or don't select the summed intensities check box");
+            }
+        }
 
         return validationMessages;
     }
@@ -776,25 +808,6 @@ public class MainController {
         }
 
         return isValidDeleteSelection;
-    }
-
-    /**
-     * Get the correct file choose depending on the import data type and the
-     * tree level.
-     *
-     * @param the current node level
-     * @return the current file chooser.
-     */
-    private JFileChooser getCurrentImportFileChooser(int level) {
-        if (mainFrame.getPeptideShakerRadioButton().isSelected()) {
-            if (level == 1) {
-                return mainFrame.getCpsFileChooser();
-            } else {
-                return mainFrame.getFastaAndMgfFileChooser();
-            }
-        } else {
-            return mainFrame.getTsvFileChooser();
-        }
     }
 
     /**
@@ -978,7 +991,7 @@ public class MainController {
             logTextAreaAppender.setLoading(false);
 
             return null;
-        }      
+        }
 
         @Override
         protected void done() {
@@ -1025,6 +1038,13 @@ public class MainController {
             }
             if (mainFrame.getCustomPeptidesCheckBox().isSelected()) {
                 parameters.put("--rt_feat_file", customPeptidesFile.getAbsolutePath());
+            }
+            if(!mainFrame.getSummedIntensityCheckbox().isSelected()){
+                parameters.put("--peptide_summary", "0");
+            }
+            else{
+                parameters.put("--peptide_summary", "1");
+                parameters.put("--tag_pep_sum_file", mainFrame.getPeptideTagNameTextField().getText());
             }
             parameters.put("--tol", mainFrame.getPrecursorMassToleranceTextField().getText());   // TOLL            specify the tollerance parameter in ppm
             parameters.put("--rt_w", mainFrame.getXicRetentionTimeWindowTextField().getText());    // RT_WINDOW      specify rt window for xic (minute). Default value is  5  min

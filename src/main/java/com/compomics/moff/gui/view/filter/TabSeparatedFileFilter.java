@@ -13,7 +13,8 @@ public class TabSeparatedFileFilter extends FileFilter {
 
     public static final String TSV_EXTENSION = "tsv";
     public static final String TAB_EXTENSION = "tab";
-    private static final String DESCRIPTION = "*.tsv, *.tab";
+    public static final String TXT_EXTENSION = "txt";
+    private static final String DESCRIPTION = "*.tsv, *.tab, *.txt";
 
     @Override
     public boolean accept(File file) {
@@ -21,7 +22,7 @@ public class TabSeparatedFileFilter extends FileFilter {
 
         if (file.isFile()) {
             String extension = FilenameUtils.getExtension(file.getName());
-            if (!extension.isEmpty() && (extension.equals(TSV_EXTENSION) || extension.equals(TAB_EXTENSION))) {
+            if (!extension.isEmpty() && (extension.equals(TSV_EXTENSION) || extension.equals(TAB_EXTENSION) || extension.equals(TXT_EXTENSION))) {
                 accept = true;
             }
         } else {

@@ -15,7 +15,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import org.apache.log4j.Logger;
 
 /**
  * The GUI main frame.
@@ -33,31 +32,25 @@ public class MainFrame extends javax.swing.JFrame {
      */
     private final JFileChooser peptideShakerDirectoryChooser = new JFileChooser();
     /**
-     * RAW/mzML file chooser.
-     */
-    private final JFileChooser rawMzmlFileChooser = new JFileChooser();
-    /**
-     * PeptideShaker .cps file chooser.
-     */
-    private final JFileChooser cpsFileChooser = new JFileChooser();
-    /**
-     * Tab separated file chooser.
+     * TSV directory chooser.
      */
     private final JFileChooser tsvFileChooser = new JFileChooser();
     /**
-     * FASTA and MGF file chooser.
+     * File directory chooser.
      */
-    private final JFileChooser fastaAndMgfFileChooser = new JFileChooser();
+    private final JFileChooser directoryChooser = new JFileChooser();
 
     /**
      * No-arg constructor.
      */
     public MainFrame() {
         initComponents();
-    }
 
-    public JButton getAddFileButton() {
-        return addFileButton;
+        fileChooserTree.setPreferredSize(null);
+        fileLinkerTree.setPreferredSize(null);
+
+        fileChooserTreeScrollPane.getViewport().setOpaque(false);
+        fileLinkerTreeScrollPane.getViewport().setOpaque(false);
     }
 
     public JButton getBackButton() {
@@ -110,14 +103,6 @@ public class MainFrame extends javax.swing.JFrame {
 
     public JRadioButton getMatchingBetweenRunsRadioButton() {
         return matchingBetweenRunsRadioButton;
-    }
-
-    public JFileChooser getRawMzmlFileChooser() {
-        return rawMzmlFileChooser;
-    }
-
-    public JFileChooser getCpsFileChooser() {
-        return cpsFileChooser;
     }
 
     public JFileChooser getTsvFileChooser() {
@@ -176,10 +161,6 @@ public class MainFrame extends javax.swing.JFrame {
         return outputDirectoryChooser;
     }
 
-    public JFileChooser getFastaAndMgfFileChooser() {
-        return fastaAndMgfFileChooser;
-    }
-
     public JButton getPeptideShakerDirectoryChooseButton() {
         return peptideShakerDirectoryChooseButton;
     }
@@ -204,6 +185,30 @@ public class MainFrame extends javax.swing.JFrame {
         return customPeptidesFileTextField;
     }
 
+    public JTree getFileChooserTree() {
+        return fileChooserTree;
+    }
+
+    public JButton getBrowseDirectoriesButton() {
+        return browseDirectoriesButton;
+    }
+
+    public JFileChooser getDirectoryChooser() {
+        return directoryChooser;
+    }
+
+    public JButton getAddFileButton() {
+        return addFileButton;
+    }
+
+    public JTextField getPeptideTagNameTextField() {
+        return peptideTagNameTextField;
+    }
+
+    public JCheckBox getSummedIntensityCheckbox() {
+        return summedIntensityCheckbox;
+    }        
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -212,6 +217,7 @@ public class MainFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         identificationDataTypeButtonGroup = new javax.swing.ButtonGroup();
         moffModeButtonGroup = new javax.swing.ButtonGroup();
@@ -230,11 +236,18 @@ public class MainFrame extends javax.swing.JFrame {
         peptideShakerDirectoryTextField = new javax.swing.JTextField();
         peptideShakerDirectoryChooseButton = new javax.swing.JButton();
         secondPanel = new javax.swing.JPanel();
+        deleteFileButton = new javax.swing.JButton();
+        treesPanel = new javax.swing.JPanel();
+        fileChooserTreeParentPanel = new javax.swing.JPanel();
+        fileChooserTreeScrollPane = new javax.swing.JScrollPane();
+        fileChooserTree = new javax.swing.JTree();
+        fileLinkerTreePanel = new javax.swing.JPanel();
         fileLinkerTreeScrollPane = new javax.swing.JScrollPane();
         fileLinkerTree = new javax.swing.JTree();
-        fileLinkerTreeInfoLabel = new javax.swing.JLabel();
-        deleteFileButton = new javax.swing.JButton();
         addFileButton = new javax.swing.JButton();
+        browseDirectoriesButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         thirdPanel = new javax.swing.JPanel();
         apexSettingsPanel = new javax.swing.JPanel();
         xicRetentionTimeWindowLabel = new javax.swing.JLabel();
@@ -253,6 +266,10 @@ public class MainFrame extends javax.swing.JFrame {
         customPeptidesCheckBox = new javax.swing.JCheckBox();
         customPeptidesFileTextField = new javax.swing.JTextField();
         customPeptidesChooseButton = new javax.swing.JButton();
+        exportSettingsPanel = new javax.swing.JPanel();
+        summedIntensityCheckbox = new javax.swing.JCheckBox();
+        peptideTagNameTextField = new javax.swing.JTextField();
+        peptideTagNameLabel = new javax.swing.JLabel();
         lastPanel = new javax.swing.JPanel();
         logTextAreaScrollPane = new javax.swing.JScrollPane();
         logTextArea = new javax.swing.JTextArea();
@@ -280,11 +297,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         peptideShakerRadioButton.setBackground(new java.awt.Color(255, 255, 255));
         identificationDataTypeButtonGroup.add(peptideShakerRadioButton);
-        peptideShakerRadioButton.setText("PeptideShaker");
+        peptideShakerRadioButton.setText("PeptideShaker (*.cpsx)");
 
         tabSeparatedRadioButton.setBackground(new java.awt.Color(255, 255, 255));
         identificationDataTypeButtonGroup.add(tabSeparatedRadioButton);
-        tabSeparatedRadioButton.setText("Tab-separated (TSV)");
+        tabSeparatedRadioButton.setText("Tab-separated (*.tsv or *.txt, PeptideShaker default PSM reports are supported as well) ");
 
         moffModeLabel.setText("Choose the run mode:");
 
@@ -320,7 +337,7 @@ public class MainFrame extends javax.swing.JFrame {
             firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(firstPanelLayout.createSequentialGroup()
                 .addGroup(firstPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(identificationDataTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 633, Short.MAX_VALUE)
+                    .addComponent(identificationDataTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE)
                     .addComponent(moffModeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(185, 185, 185))
             .addGroup(firstPanelLayout.createSequentialGroup()
@@ -365,7 +382,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(outputDirectoryLabel)
                     .addComponent(outputDirectoryChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(outputDirectoryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 124, Short.MAX_VALUE))
+                .addGap(0, 199, Short.MAX_VALUE))
         );
 
         topPanel.add(firstPanel, "firstPanel");
@@ -373,64 +390,115 @@ public class MainFrame extends javax.swing.JFrame {
         secondPanel.setName("secondPanel"); // NOI18N
         secondPanel.setOpaque(false);
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Raw file 1");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("CPS file 1");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Raw file 2");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("CPS file 2");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Raw file 3");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("CPS file 3");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        fileLinkerTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        fileLinkerTreeScrollPane.setViewportView(fileLinkerTree);
-
-        fileLinkerTreeInfoLabel.setText("<html>Link the RAW/mzML file(s) to the corresponding identification file(s). Each RAW/mzML file has to be linked to one<br>PeptideShaker file (*.cpsx) or a tab separated file (*.tab, *.tsv).<br>For a PeptideShaker file, the used FASTA (*.fasta) and MGF (*.mgf) files have to be specified as well.</html> ");
-
         deleteFileButton.setText("delete");
         deleteFileButton.setToolTipText("Select one or more RAW and/or identification files to delete");
         deleteFileButton.setMaximumSize(new java.awt.Dimension(80, 25));
         deleteFileButton.setMinimumSize(new java.awt.Dimension(80, 25));
         deleteFileButton.setPreferredSize(new java.awt.Dimension(80, 25));
 
-        addFileButton.setText("add");
-        addFileButton.setToolTipText("<html>Select the root node or nothing for adding a RAW file.<br>\nSelect an exisiting RAW file for adding an identification file.<br>\nSelect a PeptideShaker cpsx file for adding a FASTA and MGF file.</html>");
-        addFileButton.setMaximumSize(new java.awt.Dimension(80, 25));
-        addFileButton.setMinimumSize(new java.awt.Dimension(80, 25));
-        addFileButton.setPreferredSize(new java.awt.Dimension(80, 25));
+        treesPanel.setOpaque(false);
+        treesPanel.setLayout(new java.awt.GridBagLayout());
+
+        fileChooserTreeScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("File selection"));
+        fileChooserTreeScrollPane.setPreferredSize(new java.awt.Dimension(10, 10));
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        fileChooserTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        fileChooserTree.setMaximumSize(new java.awt.Dimension(600, 600));
+        fileChooserTree.setPreferredSize(new java.awt.Dimension(50, 50));
+        fileChooserTreeScrollPane.setViewportView(fileChooserTree);
+
+        javax.swing.GroupLayout fileChooserTreeParentPanelLayout = new javax.swing.GroupLayout(fileChooserTreeParentPanel);
+        fileChooserTreeParentPanel.setLayout(fileChooserTreeParentPanelLayout);
+        fileChooserTreeParentPanelLayout.setHorizontalGroup(
+            fileChooserTreeParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(fileChooserTreeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
+        );
+        fileChooserTreeParentPanelLayout.setVerticalGroup(
+            fileChooserTreeParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(fileChooserTreeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        treesPanel.add(fileChooserTreeParentPanel, gridBagConstraints);
+
+        fileLinkerTreeScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("File linking"));
+        fileLinkerTreeScrollPane.setPreferredSize(new java.awt.Dimension(10, 10));
+
+        treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        fileLinkerTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        fileLinkerTree.setPreferredSize(new java.awt.Dimension(50, 50));
+        fileLinkerTreeScrollPane.setViewportView(fileLinkerTree);
+
+        javax.swing.GroupLayout fileLinkerTreePanelLayout = new javax.swing.GroupLayout(fileLinkerTreePanel);
+        fileLinkerTreePanel.setLayout(fileLinkerTreePanelLayout);
+        fileLinkerTreePanelLayout.setHorizontalGroup(
+            fileLinkerTreePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(fileLinkerTreeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
+        );
+        fileLinkerTreePanelLayout.setVerticalGroup(
+            fileLinkerTreePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(fileLinkerTreeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        treesPanel.add(fileLinkerTreePanel, gridBagConstraints);
+
+        addFileButton.setText(">>>");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
+        treesPanel.add(addFileButton, gridBagConstraints);
+
+        browseDirectoriesButton.setText("browse");
+        browseDirectoriesButton.setMaximumSize(new java.awt.Dimension(80, 25));
+        browseDirectoriesButton.setMinimumSize(new java.awt.Dimension(80, 25));
+        browseDirectoriesButton.setPreferredSize(new java.awt.Dimension(80, 25));
+
+        jTextArea1.setEditable(false);
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jTextArea1.setText("Link the RAW/mzML file(s) to the corresponding identification file(s). Each RAW/mzML file has to be linked to one.\nPeptideShaker file (*.cpsx) or a tab separated file (*.tab, *.tsv, *.txt).\nFor a PeptideShaker file, the used FASTA (*.fasta) and MGF (*.mgf) files have to be specified as well.\nSelect file(s) on the left and move to the right with the \">>>\" button.\nSelect \"RAW/mzML - identification file links\" for adding RAW/mzML files,\nselect a RAW/mzML file for linking it with an identification file,\nselect a PeptideShaker .cpsx file for linking it FASTA and MGF files.");
+        jScrollPane1.setViewportView(jTextArea1);
 
         javax.swing.GroupLayout secondPanelLayout = new javax.swing.GroupLayout(secondPanel);
         secondPanel.setLayout(secondPanelLayout);
         secondPanelLayout.setHorizontalGroup(
             secondPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(secondPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(secondPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, secondPanelLayout.createSequentialGroup()
-                        .addGap(0, 646, Short.MAX_VALUE)
-                        .addComponent(addFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deleteFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(secondPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(secondPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fileLinkerTreeScrollPane)
-                            .addComponent(fileLinkerTreeInfoLabel))))
+                        .addComponent(browseDirectoriesButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(deleteFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(treesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 747, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         secondPanelLayout.setVerticalGroup(
             secondPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, secondPanelLayout.createSequentialGroup()
-                .addComponent(fileLinkerTreeInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(fileLinkerTreeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
+                .addComponent(treesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(secondPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(deleteFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(browseDirectoriesButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -514,26 +582,26 @@ public class MainFrame extends javax.swing.JFrame {
         matchingBetweenRunsSettingsPanelLayout.setHorizontalGroup(
             matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(matchingBetweenRunsSettingsPanelLayout.createSequentialGroup()
-                .addGroup(matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(matchedPeakRetentionTimeWindowLabel)
-                        .addComponent(combinationWeighingCheckBox)
-                        .addGroup(matchingBetweenRunsSettingsPanelLayout.createSequentialGroup()
-                            .addComponent(filterOutliersCheckBox)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(outlierThresholdLabel)))
-                    .addComponent(customPeptidesCheckBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(combinationWeighingCheckBox)
+                    .addGroup(matchingBetweenRunsSettingsPanelLayout.createSequentialGroup()
+                        .addComponent(filterOutliersCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(outlierThresholdLabel))
+                    .addComponent(customPeptidesCheckBox)
+                    .addComponent(matchedPeakRetentionTimeWindowLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(matchingBetweenRunsSettingsPanelLayout.createSequentialGroup()
-                        .addComponent(customPeptidesFileTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
+                        .addGap(7, 7, 7)
+                        .addComponent(customPeptidesFileTextField)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(customPeptidesChooseButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(matchingBetweenRunsSettingsPanelLayout.createSequentialGroup()
-                        .addGroup(matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(matchedPeaksRetentionTimeWindowTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                            .addComponent(outlierThresholdTextField))
-                        .addContainerGap())))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(outlierThresholdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(matchedPeaksRetentionTimeWindowTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         matchingBetweenRunsSettingsPanelLayout.setVerticalGroup(
             matchingBetweenRunsSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -556,20 +624,56 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
+        exportSettingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Export settings"));
+        exportSettingsPanel.setOpaque(false);
+
+        summedIntensityCheckbox.setText("include peptide summed intensity");
+
+        peptideTagNameTextField.setEnabled(false);
+
+        peptideTagNameLabel.setText("Peptide tag name: ");
+
+        javax.swing.GroupLayout exportSettingsPanelLayout = new javax.swing.GroupLayout(exportSettingsPanel);
+        exportSettingsPanel.setLayout(exportSettingsPanelLayout);
+        exportSettingsPanelLayout.setHorizontalGroup(
+            exportSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(exportSettingsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(summedIntensityCheckbox)
+                .addGap(87, 87, 87)
+                .addComponent(peptideTagNameLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(peptideTagNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(87, 87, 87))
+        );
+        exportSettingsPanelLayout.setVerticalGroup(
+            exportSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(exportSettingsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(exportSettingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(summedIntensityCheckbox)
+                    .addComponent(peptideTagNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(peptideTagNameLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout thirdPanelLayout = new javax.swing.GroupLayout(thirdPanel);
         thirdPanel.setLayout(thirdPanelLayout);
         thirdPanelLayout.setHorizontalGroup(
             thirdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(matchingBetweenRunsSettingsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(apexSettingsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(exportSettingsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         thirdPanelLayout.setVerticalGroup(
             thirdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(thirdPanelLayout.createSequentialGroup()
                 .addComponent(apexSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(matchingBetweenRunsSettingsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(matchingBetweenRunsSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(exportSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         topPanel.add(thirdPanel, "thirdPanel");
@@ -590,7 +694,7 @@ public class MainFrame extends javax.swing.JFrame {
         lastPanel.setLayout(lastPanelLayout);
         lastPanelLayout.setHorizontalGroup(
             lastPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(logTextAreaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 818, Short.MAX_VALUE)
+            .addComponent(logTextAreaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 759, Short.MAX_VALUE)
             .addGroup(lastPanelLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -598,7 +702,7 @@ public class MainFrame extends javax.swing.JFrame {
         lastPanelLayout.setVerticalGroup(
             lastPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(lastPanelLayout.createSequentialGroup()
-                .addComponent(logTextAreaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
+                .addComponent(logTextAreaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -647,9 +751,9 @@ public class MainFrame extends javax.swing.JFrame {
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(4, 4, 4)
                 .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(73, 73, 73)
+                .addGap(18, 18, 18)
                 .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(proceedButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -666,10 +770,10 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(proceedButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(proceedButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -681,16 +785,16 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(parentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(topPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bottomPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(bottomPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 779, Short.MAX_VALUE))
                 .addContainerGap())
         );
         parentPanelLayout.setVerticalGroup(
             parentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, parentPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(topPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(topPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 429, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bottomPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(bottomPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -698,13 +802,13 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 850, Short.MAX_VALUE)
+            .addGap(0, 791, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(parentPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(parentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 390, Short.MAX_VALUE)
+            .addGap(0, 504, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(parentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -716,13 +820,13 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_precursorMassToleranceTextFieldActionPerformed
 
-    private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_startButtonActionPerformed
-
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_startButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -731,6 +835,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel apexSettingsPanel;
     private javax.swing.JButton backButton;
     private javax.swing.JPanel bottomPanel;
+    private javax.swing.JButton browseDirectoriesButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton clearButton;
     private javax.swing.JCheckBox combinationWeighingCheckBox;
@@ -738,14 +843,20 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton customPeptidesChooseButton;
     private javax.swing.JTextField customPeptidesFileTextField;
     private javax.swing.JButton deleteFileButton;
+    private javax.swing.JPanel exportSettingsPanel;
+    private javax.swing.JTree fileChooserTree;
+    private javax.swing.JPanel fileChooserTreeParentPanel;
+    private javax.swing.JScrollPane fileChooserTreeScrollPane;
     private javax.swing.JTree fileLinkerTree;
-    private javax.swing.JLabel fileLinkerTreeInfoLabel;
+    private javax.swing.JPanel fileLinkerTreePanel;
     private javax.swing.JScrollPane fileLinkerTreeScrollPane;
     private javax.swing.JCheckBox filterOutliersCheckBox;
     private javax.swing.JPanel firstPanel;
     private javax.swing.ButtonGroup identificationDataTypeButtonGroup;
     private javax.swing.JLabel identificationDataTypeLabel;
     private javax.swing.JLabel infoLabel;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JPanel lastPanel;
     private javax.swing.JTextArea logTextArea;
     private javax.swing.JScrollPane logTextAreaScrollPane;
@@ -766,14 +877,18 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton peptideShakerDirectoryChooseButton;
     private javax.swing.JTextField peptideShakerDirectoryTextField;
     private javax.swing.JRadioButton peptideShakerRadioButton;
+    private javax.swing.JLabel peptideTagNameLabel;
+    private javax.swing.JTextField peptideTagNameTextField;
     private javax.swing.JLabel precursorMassToleranceLabel;
     private javax.swing.JTextField precursorMassToleranceTextField;
     private javax.swing.JButton proceedButton;
     private javax.swing.JPanel secondPanel;
     private javax.swing.JButton startButton;
+    private javax.swing.JCheckBox summedIntensityCheckbox;
     private javax.swing.JRadioButton tabSeparatedRadioButton;
     private javax.swing.JPanel thirdPanel;
     private javax.swing.JPanel topPanel;
+    private javax.swing.JPanel treesPanel;
     private javax.swing.JLabel xicRetentionTimeWindowLabel;
     private javax.swing.JTextField xicRetentionTimeWindowTextField;
     // End of variables declaration//GEN-END:variables
