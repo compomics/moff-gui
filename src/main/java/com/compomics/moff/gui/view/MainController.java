@@ -185,7 +185,7 @@ public class MainController {
                             } else {
                                 messages.putIfAbsent("RAW/mzML file addition", "Please select only RAW/mzML files (*.raw, *.mzml)."
                                         + System.lineSeparator()
-                                        + "Click on a RAW/mzML file in the rigth panel to link it with an identification file.");
+                                        + "Click on a RAW/mzML file in the right panel to link it with an identification file.");
                             }
                         }
 
@@ -194,7 +194,7 @@ public class MainController {
                     } else {
                         messages.put("RAW/mzML file addition", "Please select at least one RAW/mzML file (*.raw, *.mzml)."
                                 + System.lineSeparator()
-                                + "Click on a RAW/mzML file in the rigth panel to link it with an identification file.");
+                                + "Click on a RAW/mzML file in the right panel to link it with an identification file.");
                     }
                     break;
                 case 1:
@@ -213,7 +213,7 @@ public class MainController {
                                     } else {
                                         messages.putIfAbsent("RAW/mzML file addition", "Please select only RAW/mzML files (*.raw, *.mzml)."
                                                 + System.lineSeparator()
-                                                + "Click on a RAW/mzML file in the rigth panel to link it with an identification file.");
+                                                + "Click on a RAW/mzML file in the right panel to link it with an identification file.");
                                     }
                                 }
 
@@ -222,7 +222,7 @@ public class MainController {
                             } else {
                                 messages.putIfAbsent("RAW/mzML file addition", "Please select at least one RAW/mzML file (*.raw, *.mzml)."
                                         + System.lineSeparator()
-                                        + "Click on a RAW/mzML file in the rigth panel to link it with an identification file.");
+                                        + "Click on a RAW/mzML file in the right panel to link it with an identification file.");
                             }
                             break;
                         case 1:
@@ -776,8 +776,8 @@ public class MainController {
                 }
             }
         }
-        if(mainFrame.getSummedIntensityCheckbox().isSelected()){
-            if(mainFrame.getPeptideTagNameTextField().getText().isEmpty()){
+        if (mainFrame.getSummedIntensityCheckbox().isSelected()) {
+            if (mainFrame.getPeptideTagNameTextField().getText().isEmpty()) {
                 validationMessages.add("Please provide a peptide name tag or don't select the summed intensities check box");
             }
         }
@@ -1019,6 +1019,12 @@ public class MainController {
             parameters.put("--tol", mainFrame.getPrecursorMassToleranceTextField().getText());    //                     specify the tollerance parameter in ppm
             parameters.put("--rt_w", mainFrame.getXicRetentionTimeWindowTextField().getText());    //                    specify rt window for xic (minute). Default value is 3 min
             parameters.put("--rt_p", mainFrame.getPeakRetentionTimeWindowTextField().getText());    //                  specify the time windows for the peak ( minute). Default value is 0.1
+            if (!mainFrame.getSummedIntensityCheckbox().isSelected()) {
+                parameters.put("--peptide_summary", "0");
+            } else {
+                parameters.put("--peptide_summary", "1");
+                parameters.put("--tag_pep_sum_file", mainFrame.getPeptideTagNameTextField().getText());
+            }
             parameters.put("--output_folder", mainFrame.getOutputDirectoryChooser().getSelectedFile().getAbsolutePath());    //             specify the folder output
             return parameters;
         }
@@ -1039,10 +1045,9 @@ public class MainController {
             if (mainFrame.getCustomPeptidesCheckBox().isSelected()) {
                 parameters.put("--rt_feat_file", customPeptidesFile.getAbsolutePath());
             }
-            if(!mainFrame.getSummedIntensityCheckbox().isSelected()){
+            if (!mainFrame.getSummedIntensityCheckbox().isSelected()) {
                 parameters.put("--peptide_summary", "0");
-            }
-            else{
+            } else {
                 parameters.put("--peptide_summary", "1");
                 parameters.put("--tag_pep_sum_file", mainFrame.getPeptideTagNameTextField().getText());
             }
