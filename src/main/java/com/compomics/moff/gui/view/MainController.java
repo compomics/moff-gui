@@ -935,7 +935,7 @@ public class MainController {
                 inputMapping = getRawMzmlTabSeparatedLinks();
             } else {
                 LOGGER.info("Converting PeptideShaker output files to MoFF compatible tab separated files");
-                inputMapping = new HashMap<>();;
+                inputMapping = new HashMap<>();
                 //converting the peptideshaker input files where necessary to the MoFF format
                 Map<File, File[]> rawFilePeptideShakerMapping = getRawPeptideShakerLinks();
                 for (Map.Entry<File, File[]> moffEntry : rawFilePeptideShakerMapping.entrySet()) {
@@ -965,8 +965,8 @@ public class MainController {
                 raws.add(rawFile.getAbsolutePath());
                 tsvs.add(tsvFile.getAbsolutePath());
             });
-            moffParameters.put("--inputraw", raws.stream().collect(Collectors.joining(" ")));
-            moffParameters.put("--inputtsv", tsvs.stream().collect(Collectors.joining(" ")));
+            moffParameters.put("--inputraw", raws.stream().map(rawFile -> '"' + rawFile + '"').collect(Collectors.joining(" ")));
+            moffParameters.put("--inputtsv", tsvs.stream().map(tsvFile -> '"' + tsvFile + '"').collect(Collectors.joining(" ")));
 
             if (mainFrame.getApexModeRadioButton().isSelected()) {
                 moffParameters.put("mode", "APEX");
