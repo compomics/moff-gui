@@ -49,10 +49,6 @@ public class MainController {
      * Logger instance.
      */
     private static final Logger LOGGER = Logger.getLogger(MainController.class);
-    /**
-     * The separator between file links
-     */
-    private static final String LINK_SEPARATOR = "\t";
 
     //card layout panel names
     private static final String FIRST_PANEL = "firstPanel";
