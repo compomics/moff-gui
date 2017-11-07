@@ -160,7 +160,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>Pladipus-moff</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.compomics</groupId>
