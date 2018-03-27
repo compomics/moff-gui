@@ -8,7 +8,7 @@
 
 |   |   |   |
 | :-------------------------: | :---------------: | :--: |
-| [![download](https://github.com/compomics/moff-gui/wiki/images/button_3.png)](https://github.com/compomics/moff-gui/releases/download/v1.1.2/moff-gui-1.1.2.zip) | *v1.1.0 - All platforms* | [ReleaseNotes](https://github.com/compomics/moff-gui/releases/tag/0.1.0-beta) |
+| [![download](https://github.com/compomics/moff-gui/wiki/images/button_3.png)](https://github.com/compomics/moff-gui/releases/download/v1.1.2/moff-gui-1.1.2.zip) | *v1.1.2 - All platforms* | [ReleaseNotes](https://github.com/compomics/moff-gui/releases/tag/v1.1.2) |
 
 
 |   |   |
