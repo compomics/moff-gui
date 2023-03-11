@@ -59,7 +59,7 @@ Txic is compatible with the raw outputfiles originating from any Orbitrap or tri
 [Go to top of page](#moff-gui)
 
 --- 
-##Input Data
+## Input Data
 
 moFF-GUI requires two types of input for the quantification procedure :
  - Thermo RAW file 
@@ -84,7 +84,7 @@ NOTE : In case the tab-delimited file provided by the user contains also other f
 [Go to top of page](#moff-gui)
 
 ---
-###Sample Data
+### Sample Data
 
 Sample data is provided at [folder] (genesis.ugent.be/uvpublicdata/moff_sample_data.zip) . It contains the cpsx and the raw files related to 3 runs of CPTAC Study 6 (Paulovich, MCP Proteomics, 2010). 
 
